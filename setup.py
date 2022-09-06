@@ -43,7 +43,7 @@ setup(
     long_description_content_type="text/x-rst",  # Optional (see note above)
     url="https://github.com/jaadt7/lvlspy",  # Optional
     author="Clemson University",  # Optional
-    author_email="mbradle@clemson.edu",  # Optional
+    author_email="jtannou@g.clemson.edu",  # Optional
     license="GPLv3+",
     # For a list of valid classifiers, see https://pypi.org/classifiers/
     classifiers=[  # Optional
