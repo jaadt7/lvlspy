@@ -1,4 +1,5 @@
 """
-A package of python routines to work with quantum level data.
+A package of python routines to handle quantum-level system data.
 """
-from lvlspy import *
+from lvlspy.level import *
+from lvlspy.species import *
