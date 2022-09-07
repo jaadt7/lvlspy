@@ -25,6 +25,15 @@ class Transition(lp.Properties):
         self.lower_level = lower_level
         self.Einstein_A = Einstein_A
 
+    def __eq__(self, other):
+        if not isinstance(other, Transition):
+            return NotImplemented
+
+        return \
+           self.upper_level == other.upper_level and \
+           self.lower_level == other.lower_level and \
+           self.Einstein_A == other.Einstein_A
+
     def get_upper_level(self):
         """Method to retrieve the `upper_level` for the transition.
 
@@ -60,7 +69,8 @@ class Transition(lp.Properties):
         to lower level transition (induced emission).
 
         Returns:
-            :obj:`float`: The Einstein coefficient in cm2 steradian per erg per s.
+            :obj:`float`: The Einstein coefficient in cm\ :sup:`2`
+            steradian per erg per s.
 
         """
 
@@ -75,7 +85,8 @@ class Transition(lp.Properties):
         to upper level transition (induced absorption).
 
         Returns:
-            :obj:`float`: The Einstein coefficient in cm2 steradian per erg per s.
+            :obj:`float`: The Einstein coefficient in cm\ :sup:`2`
+            steradian per erg per s.
 
         """
 

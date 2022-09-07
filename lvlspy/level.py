@@ -25,6 +25,13 @@ class Level(lp.Properties):
         self.properties = {}
         self.units = "keV"
 
+    def __eq__(self, other):
+        if not isinstance(other, Level):
+            return NotImplemented
+
+        return \
+           self.energy == other.energy and self.multiplicity == other.multiplicity
+
     def get_energy(self, units="keV"):
         """Method to retrieve the energy for a level.
 
