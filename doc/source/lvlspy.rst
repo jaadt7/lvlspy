@@ -21,3 +21,11 @@ lvlspy.species module
    :members:
    :undoc-members:
    :show-inheritance:
+
+lvlspy.transition module
+------------------------
+
+.. automodule:: lvlspy.transition
+   :members:
+   :undoc-members:
+   :show-inheritance:
