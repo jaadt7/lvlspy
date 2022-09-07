@@ -1,6 +1,7 @@
 import numpy as np
+import lvlspy.props as lp
 
-class Species():
+class Species(lp.Properties):
     """A class for storing and retrieving data about a species.
 
     Args:
@@ -17,10 +18,12 @@ class Species():
     def __init__(self, name):
         self.name = name
         self.levels = []
+        self.properties = {}
 
     def __init__(self, name, levels):
         self.name = name
         self.levels = []
+        self.properties = {}
         for level in levels:
             self.levels.append(level)
 

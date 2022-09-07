@@ -1,6 +1,7 @@
 import numpy as np
+import lvlspy.props as lp
 
-class Transition():
+class Transition(lp.Properties):
     """A class for storing and retrieving data about a transition.
 
     Args:
@@ -16,6 +17,7 @@ class Transition():
     """
 
     def __init__(self, upper_level, lower_level, Einstein_A):
+        self.properties = {}
         self.upper_level = upper_level
         self.lower_level = lower_level
         self.Einstein_A = Einstein_A
