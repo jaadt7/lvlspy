@@ -1,5 +1,8 @@
 import numpy as np
 import lvlspy.props as lp
+from astropy import units as u
+from astropy.constants import astropyconst20 as const
+
 
 class Transition(lp.Properties):
     """A class for storing and retrieving data about a transition.
@@ -52,35 +55,33 @@ class Transition(lp.Properties):
 
         return self.Einstein_A
 
-    def compute_Einstein_B_upper_to_lower(self, T):
-        """Method to compute the Einstein B coefficient for the upper level
+    def get_Einstein_B_upper_to_lower(self):
+        """Method to get the Einstein B coefficient for the upper level
         to lower level transition (induced emission).
 
-        Args:
-            ``T`` (:obj:`float`:) The temperature in K at which to compute
-            the coefficient.
-
         Returns:
-            :obj:`float`: The Einstein coefficient.
+            :obj:`float`: The Einstein coefficient in cm2 steradian per erg per s.
 
         """
 
-#       Do the computation.  Return in cgs units.
+        nu = self.get_frequency()
 
-    def compute_Einstein_B_lower_to_upper(self, T):
-        """Method to compute the Einstein B coefficient for the lower level
+        result = self.Einstein_A / self._fnu()
+
+        return result
+
+    def get_Einstein_B_lower_to_upper(self):
+        """Method to get the Einstein B coefficient for the lower level
         to upper level transition (induced absorption).
 
-        Args:
-            ``T`` (:obj:`float`:) The temperature in K at which to compute
-            the coefficient.
-
         Returns:
-            :obj:`float`: The Einstein coefficient.
+            :obj:`float`: The Einstein coefficient in cm2 steradian per erg per s.
 
         """
 
-#       Do the computation.  Return in cgs units.
+        return self.get_Einstein_B_upper_to_lower() * (
+            self.upper_level.get_multiplicity() / self.lower_level.get_multiplicity()
+        )
 
     def compute_lower_to_upper_rate(self, T):
         """Method to compute the total rate for transition from the lower level to
@@ -88,14 +89,14 @@ class Transition(lp.Properties):
 
         Args:
             ``T`` (:obj:`float`:) The temperature in K at which to compute
-            the coefficient.
+            the rate.
 
         Returns:
             :obj:`float`: The rate (per second).
 
         """
 
-#       Do the computation.  Return in per second.
+        return self.get_Einstein_B_lower_to_upper() * self._bb(T)
 
     def compute_upper_to_lower_rate(self, T):
         """Method to compute the total rate for transition from the upper level to
@@ -103,12 +104,43 @@ class Transition(lp.Properties):
 
         Args:
             ``T`` (:obj:`float`:) The temperature in K at which to compute
-            the coefficient.
+            the rate.
 
         Returns:
             :obj:`float`: The rate (per second).
 
         """
 
-#       Do the computation.  Return in per second.
+        return self.get_Einstein_A() + self.get_Einstein_B_upper_to_lower() * self._bb(
+            T
+        )
 
+    def get_frequency(self):
+        """Method to compute the frequency of the transition.
+
+        Returns:
+            :obj:`float`: The frequency (in Hz) of the transition.
+
+        """
+
+        deltaE = self.upper_level.get_energy() - self.lower_level.get_energy()
+
+        deltaE_erg = (deltaE * u.keV).to("erg")
+
+        return (deltaE_erg / const.h.cgs).value
+
+    def _fnu(self):
+        return (
+            2.0
+            * const.h.cgs
+            * np.power(self.get_frequency() * u.Hz, 3)
+            / np.power(const.c.cgs, 2)
+        ).value
+
+    def _bb(self, T):
+        T_K = T * u.K
+        T_keV = T_K.to(u.keV, equivalencies=u.temperature_energy())
+
+        deltaE = self.upper_level.get_energy() - self.lower_level.get_energy()
+
+        return self._fnu() / (np.exp((deltaE * u.keV / T_keV).value) - 1.0)

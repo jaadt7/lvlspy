@@ -1,5 +1,7 @@
 import numpy as np
 import lvlspy.props as lp
+import lvlspy.level as lv
+
 
 class Species(lp.Properties):
     """A class for storing and retrieving data about a species.
@@ -37,3 +39,27 @@ class Species(lp.Properties):
         """
 
         return sorted(self.levels, key=lambda x: x.energy)
+
+    def compute_equilibrium_probabilities(self, T):
+        """Method to compute the equilibrium probabilities for levels in a species.
+
+        Args:
+            ``T`` (:obj:`float`): The temperature in K at which to compute the
+            equilibrium probabilities.
+
+            Returns:
+                :obj:`numpy.array`: A numpy array of the probabilities of the levels.
+                The levels are sorted in ascending energy.
+
+        """
+
+        levs = self.get_levels()
+
+        p = np.empty(len(levs))
+
+        for i in range(len(levs)):
+            p[i] = levs[i].compute_Boltzmann_factor(T)
+
+        p /= np.sum(p)
+
+        return p

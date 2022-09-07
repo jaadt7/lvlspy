@@ -2,7 +2,8 @@ import lvlspy.props as lp
 import numpy as np
 from astropy import units as u
 
-units_dict = {'eV': 1000, 'keV': 1, 'MeV': 1.e-3, 'GeV': 1.e-6}
+units_dict = {"eV": 1000, "keV": 1, "MeV": 1.0e-3, "GeV": 1.0e-6}
+
 
 class Level(lp.Properties):
     """A class for storing and retrieving data about a level.
@@ -12,20 +13,19 @@ class Level(lp.Properties):
         given by the keyword `units`.
 
         ``multiplicity`` (:obj:`int`): The multiplicity of the level.
-        given by the keyword `units`.
 
         ``units`` (:obj:`str`, optional):  A string giving the
         units for the energy.
 
     """
 
-    def __init__(self, energy, multiplicity, units = 'keV'):
+    def __init__(self, energy, multiplicity, units="keV"):
         self.energy = energy / units_dict[units]
         self.multiplicity = multiplicity
         self.properties = {}
-        self.units = 'keV'
+        self.units = "keV"
 
-    def get_energy(self, units = 'keV'):
+    def get_energy(self, units="keV"):
         """Method to retrieve the energy for a level.
 
         Args:
@@ -49,8 +49,7 @@ class Level(lp.Properties):
 
         return self.multiplicity
 
-
-    def update_energy(self, energy, units = 'keV'):
+    def update_energy(self, energy, units="keV"):
         """Method to update the energy for a level.
 
         Args:

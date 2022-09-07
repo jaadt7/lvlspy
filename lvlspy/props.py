@@ -1,7 +1,5 @@
-class Properties():
-    """A class for storing and retrieving optional properties.
-
-    """
+class Properties:
+    """A class for storing and retrieving optional properties."""
 
     def __init__(self):
         self.properties = {}
@@ -15,7 +13,7 @@ class Properties():
         """
 
         return self.properties
- 
+
     def update_properties(self, properties):
         """Method to update the optional properties.
 
@@ -29,4 +27,3 @@ class Properties():
         """
 
         self.properties = {**self.properties, **properties}
-
