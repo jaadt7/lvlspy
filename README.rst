@@ -11,10 +11,17 @@ typing in your favorite terminal::
 
     $ pip install lvlspy
 
+Usage
+-----
+
+To get familiar with the classes in lvlspy, you can find the tutorials in the jupyter notebook found in the repo. You can also load it in 
+`Google Colab <https://colab.research.google.com/github/jaadt7/lvlspy/blob/develop/notebook.ipynb>`_
+
+
 Authors
 -------
 
-- Jaad Tannous <jtannou@g.clemson.edu>
+- Jaad A. Tannous <jtannou@g.clemson.edu>
 - Bradley S. Meyer <mbradle@g.clemson.edu>
 
 Contribute
