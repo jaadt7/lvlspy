@@ -22,6 +22,14 @@ lvlspy.props module
    :undoc-members:
    :show-inheritance:
 
+lvlspy.transition module
+------------------------
+
+.. automodule:: lvlspy.transition
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 lvlspy.species module
 ---------------------
 
@@ -30,10 +38,11 @@ lvlspy.species module
    :undoc-members:
    :show-inheritance:
 
-lvlspy.transition module
-------------------------
+lvlspy.spcoll module
+--------------------
 
-.. automodule:: lvlspy.transition
+.. automodule:: lvlspy.spcoll
    :members:
    :undoc-members:
    :show-inheritance:
+

@@ -29,10 +29,11 @@ class Transition(lp.Properties):
         if not isinstance(other, Transition):
             return NotImplemented
 
-        return \
-           self.upper_level == other.upper_level and \
-           self.lower_level == other.lower_level and \
-           self.Einstein_A == other.Einstein_A
+        return (
+            self.upper_level == other.upper_level
+            and self.lower_level == other.lower_level
+            and self.Einstein_A == other.Einstein_A
+        )
 
     def get_upper_level(self):
         """Method to retrieve the `upper_level` for the transition.

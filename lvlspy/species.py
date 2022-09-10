@@ -21,7 +21,7 @@ class Species(lp.Properties):
 
     """
 
-    def __init__(self, name, levels = None, transitions = None):
+    def __init__(self, name, levels=None, transitions=None):
         self.name = name
         self.levels = []
         self.transitions = []
@@ -33,9 +33,19 @@ class Species(lp.Properties):
             for transition in transitions:
                 self.transitions.append(transition)
 
+    def get_name(self):
+        """Retrieve the name of the species.
+
+        Return:
+            The :obj:`str` giving the species name.
+
+        """
+
+        return self.name
+
     def add_level(self, level):
         """Method to add a level to a species.
-     
+
         Args:
             ``level`` (:obj:`lvlspy.level.Level`) The level to be added.
 
@@ -48,7 +58,7 @@ class Species(lp.Properties):
 
     def remove_level(self, level):
         """Method to remove a level from a species.
-     
+
         Args:
             ``level`` (:obj:`lvlspy.level.Level`) The level to be removed.
 
@@ -61,7 +71,7 @@ class Species(lp.Properties):
 
     def add_transition(self, transition):
         """Method to add a transition to a species.
-     
+
         Args:
             ``transition`` (:obj:`lvlspy.transition.Transition`) The transition
             to be added.
@@ -75,7 +85,7 @@ class Species(lp.Properties):
 
     def remove_transition(self, transition):
         """Method to remove a transition from a species.
-     
+
         Args:
             ``transition`` (:obj:`lvlspy.transition.Transition`) The transition
             to be removed.
@@ -159,8 +169,8 @@ class Species(lp.Properties):
 
             rate_matrix[i_lower, i_upper] += r_upper_to_lower
             rate_matrix[i_upper, i_upper] -= r_upper_to_lower
-    
+
             rate_matrix[i_upper, i_lower] += r_lower_to_upper
             rate_matrix[i_lower, i_lower] -= r_lower_to_upper
-    
+
         return rate_matrix
