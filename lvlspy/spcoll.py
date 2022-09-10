@@ -58,7 +58,7 @@ class SpColl(lp.Properties):
 
         return self.spcoll
 
-    def write_to_xml(self, file, pretty_print=True):
+    def write_to_xml(self, file, pretty_print=True, units="keV"):
         """Method to write the collection to XML.
 
         Args:
@@ -66,6 +66,8 @@ class SpColl(lp.Properties):
 
             ``pretty_print`` (:obj:`bool`, optional): If set to True,
             routine outputs the xml in nice indented format.
+
+            ``units`` (:obj:`str`, optional): A string for the energy units.
 
         Return:
             On successful return, the species collection data have been
@@ -104,8 +106,11 @@ class SpColl(lp.Properties):
                 my_level = etree.SubElement(my_levels, "level")
                 self._add_optional_properties(my_level, level)
                 my_level_props = etree.SubElement(my_level, "properties")
-                my_energy = etree.SubElement(my_level_props, "energy")
-                my_energy.text = str(level.get_energy())
+                if units is not "keV":
+                    my_energy = etree.SubElement(my_level_props, "energy", units=units)
+                else:
+                    my_energy = etree.SubElement(my_level_props, "energy")
+                my_energy.text = self._get_energy_text(level.get_energy(), units)
                 my_multiplicity = etree.SubElement(my_level_props, "multiplicity")
                 my_multiplicity.text = str(level.get_multiplicity())
 
@@ -117,8 +122,15 @@ class SpColl(lp.Properties):
                             my_trans = etree.SubElement(my_transitions, "transition")
                             self._add_optional_properties(my_trans, transition)
                             lower_level = transition.get_lower_level()
-                            my_to_energy = etree.SubElement(my_trans, "to_energy")
-                            my_to_energy.text = str(lower_level.get_energy())
+                            if units is not "keV":
+                                my_to_energy = etree.SubElement(
+                                    my_trans, "to_energy", units=units
+                                )
+                            else:
+                                my_to_energy = etree.SubElement(my_trans, "to_energy")
+                            my_to_energy.text = self._get_energy_text(
+                                lower_level.get_energy(), units
+                            )
                             my_to_multiplicity = etree.SubElement(
                                 my_trans, "to_multiplicity"
                             )
@@ -129,6 +141,9 @@ class SpColl(lp.Properties):
                             my_a.text = str(transition.get_Einstein_A())
 
         xml.write(file, pretty_print=pretty_print)
+
+    def _get_energy_text(self, energy, units):
+        return str(energy * lv.units_dict[units])
 
     def _add_optional_properties(self, my_element, my_object):
         my_props = my_object.get_properties()
@@ -235,10 +250,20 @@ class SpColl(lp.Properties):
                 props = lev.xpath(".//properties")
                 energy = props[0].xpath(".//energy")
                 multiplicity = props[0].xpath(".//multiplicity")
-                my_level = lv.Level(float(energy[0].text), int(multiplicity[0].text))
+                attributes = energy[0].attrib
+                if "units" in attributes:
+                    my_level = lv.Level(
+                        float(energy[0].text),
+                        int(multiplicity[0].text),
+                        units=attributes["units"],
+                    )
+                else:
+                    my_level = lv.Level(
+                        float(energy[0].text), int(multiplicity[0].text)
+                    )
                 self._update_optional_properties(lev, my_level)
 
-                level_dict[float(energy[0].text)] = my_level
+                level_dict[my_level.get_energy()] = my_level
 
                 my_species.add_level(my_level)
 
@@ -248,7 +273,7 @@ class SpColl(lp.Properties):
                     to_multiplicity = trans.xpath(".//to_multiplicity")
                     to_a = trans.xpath(".//a")
 
-                    f_to_energy = float(to_energy[0].text)
+                    f_to_energy = self._convert_to_keV(to_energy)
                     if f_to_energy in level_dict:
                         my_trans = lt.Transition(
                             my_level, level_dict[f_to_energy], float(to_a[0].text)
@@ -257,3 +282,10 @@ class SpColl(lp.Properties):
                         my_species.add_transition(my_trans)
 
             self.add_species(my_species)
+
+    def _convert_to_keV(self, energy):
+        attributes = energy[0].attrib
+        result = float(energy[0].text)
+        if "units" in attributes:
+            result /= lv.units_dict[attributes["units"]]
+        return result
