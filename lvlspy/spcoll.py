@@ -1,6 +1,9 @@
 import numpy as np
 from lxml import etree
 import lvlspy.props as lp
+import lvlspy.species as ls
+import lvlspy.level as lv
+import lvlspy.transition as lt
 
 
 class SpColl(lp.Properties):
@@ -150,6 +153,36 @@ class SpColl(lp.Properties):
 
                 my_prop.text = my_props[prop]
 
+    def _update_optional_properties(self, my_element, my_object):
+        opt_props = my_element.xpath("optional_properties")
+
+        if len(opt_props) > 0:
+            props = opt_props[0].xpath("property")
+
+            my_props = {}
+            for prop in props:
+                attributes = prop.attrib
+                my_keys = attributes.keys()
+                if len(my_keys) == 1:
+                    my_props[attributes[my_keys[0]]] = prop.text
+                elif len(my_keys) == 2:
+                    my_props[
+                        (attributes[my_keys[0]], attributes[my_keys[1]])
+                    ] = prop.text
+                elif len(my_keys) == 3:
+                    my_props[
+                        (
+                            attributes[my_keys[0]],
+                            attributes[my_keys[1]],
+                            attributes[my_keys[2]],
+                        )
+                    ] = prop.text
+                else:
+                    print("Improper keys for property")
+                    exit()
+
+            my_object.update_properties(my_props)
+
     def validate(self, file):
         """Method to validate a species collection XML file.
 
@@ -169,3 +202,58 @@ class SpColl(lp.Properties):
 
         xml_validator = etree.XMLSchema(file=url)
         xml_validator.assert_(xml)
+
+    def update_from_xml(self, file):
+        """Method to update a species collection from an XML file.
+
+        Args:
+            ``file`` (:obj:`str`) The name of the XML file from which to update.
+
+        Returns:
+            On successful return, the species collection has been updated.
+
+        """
+
+        parser = etree.XMLParser(remove_blank_text=True)
+        xml = etree.parse(file, parser)
+        xml.xinclude()
+
+        spcoll = xml.getroot()
+
+        self._update_optional_properties(spcoll, self)
+
+        el_species = spcoll.xpath("//species")
+
+        species = []
+
+        for sp in el_species:
+            level_dict = {}
+            my_species = ls.Species(sp.attrib["name"])
+            self._update_optional_properties(sp, my_species)
+            el_level = sp.xpath(".//level")
+            for lev in el_level:
+                props = lev.xpath(".//properties")
+                energy = props[0].xpath(".//energy")
+                multiplicity = props[0].xpath(".//multiplicity")
+                my_level = lv.Level(float(energy[0].text), int(multiplicity[0].text))
+                self._update_optional_properties(lev, my_level)
+
+                level_dict[float(energy[0].text)] = my_level
+
+                my_species.add_level(my_level)
+
+                el_trans = lev.xpath(".//transition")
+                for trans in el_trans:
+                    to_energy = trans.xpath(".//to_energy")
+                    to_multiplicity = trans.xpath(".//to_multiplicity")
+                    to_a = trans.xpath(".//a")
+
+                    f_to_energy = float(to_energy[0].text)
+                    if f_to_energy in level_dict:
+                        my_trans = lt.Transition(
+                            my_level, level_dict[f_to_energy], float(to_a[0].text)
+                        )
+                        self._update_optional_properties(trans, my_trans)
+                        my_species.add_transition(my_trans)
+
+            self.add_species(my_species)
