@@ -14,9 +14,8 @@ typing in your favorite terminal::
 Usage
 -----
 
-To get familiar with the classes in lvlspy, you can find the tutorials in the jupyter notebook found in the repo. You can also load it in 
-`Google Colab <https://colab.research.google.com/github/jaadt7/lvlspy/blob/develop/notebook.ipynb>`_
-
+To get familiar with lvlspy, please see our tutorial Jupyter
+`notebook <https://github.com/jaadt7/lvlspy_tutorial>`_.
 
 Authors
 -------
