@@ -106,7 +106,7 @@ class SpColl(lp.Properties):
                 my_level = etree.SubElement(my_levels, "level")
                 self._add_optional_properties(my_level, level)
                 my_level_props = etree.SubElement(my_level, "properties")
-                if units is not "keV":
+                if units != "keV":
                     my_energy = etree.SubElement(my_level_props, "energy", units=units)
                 else:
                     my_energy = etree.SubElement(my_level_props, "energy")
