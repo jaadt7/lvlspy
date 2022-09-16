@@ -122,7 +122,7 @@ class SpColl(lp.Properties):
                             my_trans = etree.SubElement(my_transitions, "transition")
                             self._add_optional_properties(my_trans, transition)
                             lower_level = transition.get_lower_level()
-                            if units is not "keV":
+                            if units != "keV":
                                 my_to_energy = etree.SubElement(
                                     my_trans, "to_energy", units=units
                                 )
