@@ -6,7 +6,7 @@ lvlspy is a python package for working with quantum-level system data.
 Installation
 ------------
 
-Install from `PyPI <https://pypi.org/project/wnutils>`_ with pip by
+Install from `PyPI <https://pypi.org/project/lvlspy>`_ with pip by
 typing in your favorite terminal::
 
     $ pip install lvlspy
