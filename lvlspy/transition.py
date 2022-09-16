@@ -155,4 +155,10 @@ class Transition(lp.Properties):
 
         deltaE = self.upper_level.get_energy() - self.lower_level.get_energy()
 
-        return self._fnu() / (np.exp((deltaE * u.keV / T_keV).value) - 1.0)
+        x = (deltaE * u.keV / T_keV).value
+
+        if x < 500:
+            return self._fnu() / np.expm1(x)
+        else:
+            return self._fnu() * np.exp(-x)
+
