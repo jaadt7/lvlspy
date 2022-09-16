@@ -15,7 +15,7 @@ Usage
 -----
 
 To get familiar with lvlspy, please see our tutorial Jupyter
-`notebook <https://github.com/jaadt7/lvlspy_tutorial>`_.
+`notebooks <https://github.com/jaadt7/lvlspy_tutorial>`_.
 
 Authors
 -------
