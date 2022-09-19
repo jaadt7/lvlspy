@@ -10,6 +10,7 @@ Version 1.0.1
 Internal:
 
   * The base class Properties namespace has been renamed.
+  * A configuration variable has been set to avoid warnings.
 
 Fix:
 
