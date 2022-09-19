@@ -14,10 +14,10 @@ lvlspy.level module
    :undoc-members:
    :show-inheritance:
 
-lvlspy.props module
--------------------
+lvlspy.properties module
+------------------------
 
-.. automodule:: lvlspy.props
+.. automodule:: lvlspy.properties
    :members:
    :undoc-members:
    :show-inheritance:

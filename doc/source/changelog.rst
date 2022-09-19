@@ -7,9 +7,14 @@ project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`_.
 Version 1.0.1
 -------------
 
+Internal:
+
+  * The base class Properties namespace has been renamed.
+
 Fix:
 
   * A URL link has been fixed.
+  * Some documentation has been extended.
 
 Version 1.0.0
 -------------
