@@ -1,6 +1,6 @@
 import numpy as np
 from lxml import etree
-import lvlspy.props as lp
+import lvlspy.properties as lp
 import lvlspy.species as ls
 import lvlspy.level as lv
 import lvlspy.transition as lt

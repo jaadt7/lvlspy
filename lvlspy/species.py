@@ -1,5 +1,5 @@
 import numpy as np
-import lvlspy.props as lp
+import lvlspy.properties as lp
 import lvlspy.level as lv
 import lvlspy.transition as lt
 

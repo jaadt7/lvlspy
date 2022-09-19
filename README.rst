@@ -1,7 +1,7 @@
 Overview
 ========
 
-lvlspy is a python package for working with quantum-level system data.
+lvlspy is a python package for working with quantum level-system data.
 
 Installation
 ------------

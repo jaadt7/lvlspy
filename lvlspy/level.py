@@ -1,4 +1,4 @@
-import lvlspy.props as lp
+import lvlspy.properties as lp
 import numpy as np
 from astropy import units as u
 
@@ -15,7 +15,8 @@ class Level(lp.Properties):
         ``multiplicity`` (:obj:`int`): The multiplicity of the level.
 
         ``units`` (:obj:`str`, optional):  A string giving the
-        units for the energy.
+        units for the energy.  Possible values are 'eV',
+        'keV' (the default), 'MeV', or 'GeV'.
 
     """
 
@@ -39,7 +40,8 @@ class Level(lp.Properties):
             units for the energy.
 
         Returns:
-            :obj:`float`: The energy.
+            :obj:`float`: The energy in units given by the `units` keyword.
+            The default is 'keV'.
 
         """
 

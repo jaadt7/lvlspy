@@ -1,5 +1,5 @@
 import numpy as np
-import lvlspy.props as lp
+import lvlspy.properties as lp
 from astropy import units as u
 from astropy.constants import astropyconst20 as const
 
