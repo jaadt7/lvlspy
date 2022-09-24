@@ -166,7 +166,7 @@ class SpColl(lp.Properties):
                     print("Improper property key")
                     exit()
 
-                my_prop.text = my_props[prop]
+                my_prop.text = str(my_props[prop])
 
     def _update_optional_properties(self, my_element, my_object):
         opt_props = my_element.xpath("optional_properties")
