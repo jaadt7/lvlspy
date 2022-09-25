@@ -218,11 +218,14 @@ class SpColl(lp.Properties):
         xml_validator = etree.XMLSchema(file=url)
         xml_validator.assert_(xml)
 
-    def update_from_xml(self, file):
+    def update_from_xml(self, file, xpath = ""):
         """Method to update a species collection from an XML file.
 
         Args:
             ``file`` (:obj:`str`) The name of the XML file from which to update.
+
+            ``xpath`` (:obj:`str`, optional): XPath expression to select
+            species.  Defaults to all species.
 
         Returns:
             On successful return, the species collection has been updated.
@@ -237,7 +240,7 @@ class SpColl(lp.Properties):
 
         self._update_optional_properties(spcoll, self)
 
-        el_species = spcoll.xpath("//species")
+        el_species = spcoll.xpath("//species" + xpath)
 
         species = []
 
