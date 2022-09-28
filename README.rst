@@ -10,7 +10,13 @@ Install from `PyPI <https://pypi.org/project/lvlspy>`_ with pip by
 typing in your favorite terminal::
 
     $ pip install lvlspy
+    
+For those using python via `Anaconda <https://anaconda.org>`_, please note that conda
+will not handle the installation nor upgrading. If you wish to update lvlspy to the latest 
+version, you will have to do it via::
 
+	$ pip install lvlspy --upgrade
+	
 Usage
 -----
 
