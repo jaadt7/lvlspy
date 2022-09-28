@@ -9,8 +9,8 @@ Version 1.1.1
 
 Fix:
 
-  * Updated ReadMe to inlcude note about handling the package with an 
-  	Anaconda installation
+  * Updated ReadMe with note about installing the package with Anaconda
+  	
   	
 Version 1.1.0
 -------------

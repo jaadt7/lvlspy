@@ -11,9 +11,10 @@ typing in your favorite terminal::
 
     $ pip install lvlspy
     
-For those using python via `Anaconda <https://anaconda.org>`_, please note that conda
-will not handle the installation nor upgrading. If you wish to update lvlspy to the latest 
-version, you will have to do it via::
+For those using python via `Anaconda <https://anaconda.org>`_, please note that you will not
+be able to install lvlspy nor update the verion via the `conda' command. You can still install it via pip. 
+
+If you wish to update lvlspy to the latest version, you will have to do it via::
 
 	$ pip install lvlspy --upgrade
 	
