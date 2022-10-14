@@ -1,3 +1,4 @@
+import os
 import numpy as np
 from lxml import etree
 import lvlspy.properties as lp
@@ -213,9 +214,10 @@ class SpColl(lp.Properties):
         xml = etree.parse(file, parser)
         xml.xinclude()
 
-        url = "http://liblvls.sourceforge.net/xsd_pub/2022-09-10/spcoll.xsd"
+        schema_file = os.path.join(os.path.dirname(__file__), "xsd_pub/spcoll.xsd")
+        xmlschema_doc = etree.parse(schema_file)
 
-        xml_validator = etree.XMLSchema(file=url)
+        xml_validator = etree.XMLSchema(xmlschema_doc)
         xml_validator.assert_(xml)
 
     def update_from_xml(self, file, xpath = ""):
