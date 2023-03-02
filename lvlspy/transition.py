@@ -1,8 +1,8 @@
 import numpy as np
 import lvlspy.properties as lp
-from astropy import units as u
-from astropy.constants import astropyconst20 as const
-
+#from astropy import units as u
+#from astropy.constants import astropyconst20 as const
+from gslconsts.consts import *
 
 class Transition(lp.Properties):
     """A class for storing and retrieving data about a transition.
@@ -137,25 +137,25 @@ class Transition(lp.Properties):
 
         deltaE = self.upper_level.get_energy() - self.lower_level.get_energy()
 
-        deltaE_erg = (deltaE * u.keV).to("erg")
+        #deltaE_erg = (deltaE * u.keV).to("erg")
+        deltaE_erg = (1e+3)*deltaE*GSL_CONST_CGS_ELECTRON_VOLT
 
-        return (deltaE_erg / const.h.cgs).value
+        return (deltaE_erg / GSL_CONST_CGS_PLANCKS_CONSTANT_H)
 
     def _fnu(self):
         return (
             2.0
-            * const.h.cgs
-            * np.power(self.get_frequency() * u.Hz, 3)
-            / np.power(const.c.cgs, 2)
-        ).value
+            * GSL_CONST_CGS_PLANCKS_CONSTANT_H
+            * np.power(self.get_frequency(), 3)
+            / np.power(GSL_CONST_CGS_SPEED_OF_LIGHT, 2)
+        )
 
     def _bb(self, T):
-        T_K = T * u.K
-        T_keV = T_K.to(u.keV, equivalencies=u.temperature_energy())
-
+        k_BT = (1e+3)*T*GSL_CONST_MKS_BOLTZMANN/GSL_CONST_MKS_ELECTRON_VOLT
+        
         deltaE = self.upper_level.get_energy() - self.lower_level.get_energy()
 
-        x = (deltaE * u.keV / T_keV).value
+        x = deltaE  / k_BT
 
         if x < 500:
             return self._fnu() / np.expm1(x)

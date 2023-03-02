@@ -1,6 +1,6 @@
 import lvlspy.properties as lp
 import numpy as np
-from astropy import units as u
+from gslconsts.consts import *
 
 units_dict = {"eV": 1000, "keV": 1, "MeV": 1.0e-3, "GeV": 1.0e-6}
 
@@ -98,8 +98,7 @@ class Level(lp.Properties):
             multiplicity * exp(-Energy/kT).
 
         """
+        #the factor of 1e+3 is to convert the energy to kev 
+        k_BT = (1e+3)*T*GSL_CONST_MKS_BOLTZMANN/GSL_CONST_MKS_ELECTRON_VOLT
 
-        T_K = T * u.K
-        T_keV = T_K.to(u.keV, equivalencies=u.temperature_energy())
-
-        return self.multiplicity * np.exp(-self.energy / T_keV.value)
+        return self.multiplicity * np.exp(-self.energy / k_BT)
