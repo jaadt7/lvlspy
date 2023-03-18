@@ -7,9 +7,9 @@ project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`_.
 Version 1.3.0
 -------------
 
-New:
+Internal:
 
-  * Astropy has been replaced with gslconsts for more accurate values of physical constants
+  * Astropy has been replaced with gslconsts for consistency with Webnucleo codes.
 
 Version 1.2.0
 -------------
