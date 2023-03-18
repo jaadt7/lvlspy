@@ -1,7 +1,5 @@
 import numpy as np
 import lvlspy.properties as lp
-#from astropy import units as u
-#from astropy.constants import astropyconst20 as const
 from gslconsts.consts import *
 
 class Transition(lp.Properties):
@@ -137,7 +135,6 @@ class Transition(lp.Properties):
 
         deltaE = self.upper_level.get_energy() - self.lower_level.get_energy()
 
-        #deltaE_erg = (deltaE * u.keV).to("erg")
         deltaE_erg = (1e+3)*deltaE*GSL_CONST_CGS_ELECTRON_VOLT
 
         return (deltaE_erg / GSL_CONST_CGS_PLANCKS_CONSTANT_H)
