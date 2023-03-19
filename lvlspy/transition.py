@@ -2,6 +2,7 @@ import numpy as np
 import lvlspy.properties as lp
 from gslconsts.consts import *
 
+
 class Transition(lp.Properties):
     """A class for storing and retrieving data about a transition.
 
@@ -135,9 +136,9 @@ class Transition(lp.Properties):
 
         deltaE = self.upper_level.get_energy() - self.lower_level.get_energy()
 
-        deltaE_erg = (1e+3)*deltaE*GSL_CONST_CGS_ELECTRON_VOLT
+        deltaE_erg = (1e3) * deltaE * GSL_CONST_CGS_ELECTRON_VOLT
 
-        return (deltaE_erg / GSL_CONST_CGS_PLANCKS_CONSTANT_H)
+        return deltaE_erg / GSL_CONST_CGS_PLANCKS_CONSTANT_H
 
     def _fnu(self):
         return (
@@ -148,14 +149,13 @@ class Transition(lp.Properties):
         )
 
     def _bb(self, T):
-        k_BT = (1e+3)*T*GSL_CONST_MKS_BOLTZMANN/GSL_CONST_MKS_ELECTRON_VOLT
-        
+        k_BT = GSL_CONST_CGSM_BOLTZMANN * T
+
         deltaE = self.upper_level.get_energy() - self.lower_level.get_energy()
 
-        x = deltaE  / k_BT
+        x = deltaE * 1.0e3 * GSL_CONST_CGSM_ELECTRON_VOLT / k_BT
 
         if x < 500:
             return self._fnu() / np.expm1(x)
         else:
             return self._fnu() * np.exp(-x)
-

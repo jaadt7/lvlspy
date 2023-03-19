@@ -220,7 +220,7 @@ class SpColl(lp.Properties):
         xml_validator = etree.XMLSchema(xmlschema_doc)
         xml_validator.assert_(xml)
 
-    def update_from_xml(self, file, xpath = ""):
+    def update_from_xml(self, file, xpath=""):
         """Method to update a species collection from an XML file.
 
         Args:

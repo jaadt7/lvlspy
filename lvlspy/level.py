@@ -98,7 +98,9 @@ class Level(lp.Properties):
             multiplicity * exp(-Energy/kT).
 
         """
-        #the factor of 1e+3 is to convert the energy to keV. 
-        k_BT = (1e+3)*T*GSL_CONST_MKS_BOLTZMANN/GSL_CONST_MKS_ELECTRON_VOLT
+        # the factor of 1e+3 is to convert the energy to keV.
+        k_BT = GSL_CONST_CGSM_BOLTZMANN * T
 
-        return self.multiplicity * np.exp(-self.energy / k_BT)
+        E = 1.0e3 * GSL_CONST_CGSM_ELECTRON_VOLT * self.energy
+
+        return self.multiplicity * np.exp(-E / k_BT)
