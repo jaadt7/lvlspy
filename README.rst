@@ -41,3 +41,8 @@ License
 
 The project is licensed under the GNU Public License v3 (or later).
 
+Documentation
+-------------
+
+The project documentation is available at `<https://lvlspy.readthedocs.io>`_.
+
