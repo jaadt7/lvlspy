@@ -30,6 +30,6 @@ Interaction with the external world allows a quantum level system to transition 
 
 ``lvlspy`` is a Python package for handling quantum level system data. The API was designed to provide an object-oriented data model that can be easily implemented with existing models or to act as a foundation for new models. The API handles multiple species, each of which has it own set of levels, characterized by their energy and multiplicity, and by rates of spontaneous transition between levels.  On top of handling level data, ``lvlspy`` has built-in functions that calculate induced transition rates from detailed balance, rate matrices, and equilibrium probabilites.  Optional properties may be added to any species, level, or spontaneous transition rate, and API routines allow the user to input the relevant data from XML with a well-defined schema.
 
-Apart from permitting detailed calculations of the time-evolution of quantum level system, educators can use ``lvlspy`` to build interactive tools and visual aids to supplement the course material. The source code for ``lvlspy`` has been archived to Zenodo at the linked DOI[@jaad_tannous_2023_8193379]
+Apart from permitting detailed calculations of the time-evolution of quantum level systems, educators can use ``lvlspy`` to build interactive tools and visual aids to supplement the course material. The source code for ``lvlspy`` has been archived to Zenodo at the linked DOI[@jaad_tannous_2023_8193379]
 
 # References
