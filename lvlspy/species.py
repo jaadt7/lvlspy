@@ -32,7 +32,7 @@ class Species(lp.Properties):
                 self.levels.append(level)
         if transitions:
             for transition in transitions:
-                self.transitions.append(transition)
+                self.transitions.add_transition(transition)
 
     def get_name(self):
         """Retrieve the name of the species.

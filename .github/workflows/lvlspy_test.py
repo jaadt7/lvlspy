@@ -56,6 +56,9 @@ def test_einstein():
             assert _trans.get_einstein_a() == 3.83356e-17
             assert _trans.get_einstein_b_upper_to_lower() == 1.5454261181603054e-29
             assert _trans.get_einstein_b_lower_to_upper() == 1.4049328346911867e-30
+
+            _trans.update_einstein_a(1)
+            assert _trans.get_einstein_a() == 1
             break
 
 

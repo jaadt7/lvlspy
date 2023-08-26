@@ -72,6 +72,23 @@ class Transition(lp.Properties):
 
         return self.einstein_a
 
+    def update_einstein_a(self, ein_a):
+        """Method that updates the Einstein A coefficient of a transition
+
+        Args:
+            ``transition`` (:obj:`lvlspy.transition.Transition`): The
+             transition to be modified
+
+            ``ein_A`` (:obj: `float`): The new value for the Einstein A
+              coefficient
+
+        Returns:
+            The transition Einsteain A coefficient will be updated upon
+            successful return
+        """
+
+        self.einstein_a = ein_a
+
     def get_einstein_b_upper_to_lower(self):
         """Method to get the Einstein B coefficient for the upper level
         to lower level transition (induced emission).
