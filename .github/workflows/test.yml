@@ -1,0 +1,23 @@
+name: Tests
+
+on:
+  push:
+      branches:
+        - brad
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.x"
+      - name: intsall dependencies
+        run: |
+          pip install lvlspy pytest requests
+      - name: run test
+        run: |
+          pytest -v .github/workflows/lvlspy_test.py
