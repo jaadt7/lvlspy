@@ -15,9 +15,12 @@ jobs:
         uses: actions/setup-python@v3
         with:
           python-version: "3.x"
-      - name: intsall dependencies
+      - name: install dependencies
         run: |
-          pip install lvlspy pytest requests
+          python -m pip install --upgrade pip
+          pip install pytest requests
+          pip install -r docs/requirements.txt
+          pip install -e .
       - name: run test
         run: |
           pytest -v .github/workflows/lvlspy_test.py
