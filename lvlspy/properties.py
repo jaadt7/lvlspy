@@ -1,3 +1,6 @@
+"""Base class for handling properties for all classes."""
+
+
 class Properties:
     """A class for storing and retrieving optional properties."""
 

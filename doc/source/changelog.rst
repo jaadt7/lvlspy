@@ -4,6 +4,18 @@ Changelog
 All notable changes to this project will be documented in this file.  This
 project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`_.
 
+Version 2.0.0
+-------------
+
+New:
+
+  * Tests and linting have been added to the package integration.
+
+Fix:
+
+  * A number of method names have been changed to align with pylint.  These are
+    backwards-incompatible changes.
+
 Version 1.4.0
 -------------
 
