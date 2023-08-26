@@ -77,7 +77,7 @@ class Transition(lp.Properties):
         to lower level transition (induced emission).
 
         Returns:
-            :obj:`float`: The Einstein coefficient in cm\ :sup:`2`
+            :obj:`float`: The Einstein coefficient in cm :sup:`2`
             steradian per erg per s.
 
         """
@@ -91,7 +91,7 @@ class Transition(lp.Properties):
         to upper level transition (induced absorption).
 
         Returns:
-            :obj:`float`: The Einstein coefficient in cm\ :sup:`2`
+            :obj:`float`: The Einstein coefficient in cm :sup:`2`
             steradian per erg per s.
 
         """
