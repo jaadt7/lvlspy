@@ -1,4 +1,4 @@
-name: black
+name: Lint
 
 on:
   push:
@@ -6,18 +6,12 @@ on:
         - brad
 
 jobs:
-  test:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: psf/black@stable
-     - name: Setup Python
-        uses: actions/setup-python@v3
         with:
-          python-version: "3.x"
-      - name: install dependencies
-        run: |
-          pip install black
-      - name: run black
-        run: |
-          black --line-length=79 lvlspy/*.py
+          options: "--check --verbose --line-length=79"
+          src: "./lvlspy"
+          version: "~= 22.0"
