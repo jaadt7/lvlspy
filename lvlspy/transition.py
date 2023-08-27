@@ -72,19 +72,19 @@ class Transition(lp.Properties):
 
         return self.einstein_a
 
-    def update_einstein_a(self, ein_a):
-        """Method that updates the Einstein A coefficient of a transition
+    def update_einstein_a(self, einstein_a):
+        """Method that updates the Einstein A coefficient of a transition.
 
         Args:
-            ``transition`` (:obj:`lvlspy.transition.Transition`): The
-             transition to be modified
+            ``transition`` (:obj:`lvlspy.transition.Transition`) The
+            transition to be modified.
 
-            ``ein_A`` (:obj: `float`): The new value for the Einstein A
-              coefficient
+            ``einstein_A`` (:obj:`float`) The new value for the Einstein A
+            coefficient.
 
         Returns:
-            The transition Einsteain A coefficient will be updated upon
-            successful return
+            On successful return, the transition Einstein A coefficient 
+            has been updated.
         """
 
         self.einstein_a = ein_a
@@ -123,7 +123,7 @@ class Transition(lp.Properties):
         level to upper level.
 
         Args:
-            ``temperature`` (:obj:`float`:) The temperature in K at which to
+            ``temperature`` (:obj:`float`) The temperature in K at which to
             compute the rate.
 
         Returns:
@@ -138,7 +138,7 @@ class Transition(lp.Properties):
         to lower level.
 
         Args:
-            ``temperature`` (:obj:`float`:) The temperature in K at which to
+            ``temperature`` (:obj:`float`) The temperature in K at which to
             compute the rate.
 
         Returns:
