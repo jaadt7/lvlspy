@@ -56,35 +56,29 @@ def test_einstein():
     coll = get_collection()
     s = coll.get()["al26"]
     levs = s.get_levels()
-    for _trans in s.get_transitions():
-        i_upper = levs.index(_trans.get_upper_level())
-        i_lower = levs.index(_trans.get_lower_level())
-        if i_upper == 1 and i_lower == 0:
-            upper = _trans.get_upper_level()
-            lower = _trans.get_lower_level()
-            ein_a = _trans.get_einstein_a()
-            s.remove_transition(_trans)
-            s.add_transition(lt.Transition(upper, lower, ein_a))
-            assert _trans.get_einstein_a() == 3.83356e-17
-            assert _trans.get_einstein_b_upper_to_lower() == 1.5454261181603054e-29
-            assert _trans.get_einstein_b_lower_to_upper() == 1.4049328346911867e-30
+    trans = s.get_level_to_level_transition(levs[1], levs[0])
+    upper = trans.get_upper_level()
+    lower = trans.get_lower_level()
+    ein_a = trans.get_einstein_a()
+    s.remove_transition(trans)
+    s.add_transition(lt.Transition(upper, lower, ein_a))
+    trans = s.get_level_to_level_transition(levs[1], levs[0])
+    assert trans.get_einstein_a() == 3.83356e-17
+    assert trans.get_einstein_b_upper_to_lower() == 1.5454261181603054e-29
+    assert trans.get_einstein_b_lower_to_upper() == 1.4049328346911867e-30
 
-            _trans.update_einstein_a(1)
-            assert _trans.get_einstein_a() == 1
-            break
+    trans.update_einstein_a(1)
+    assert trans.get_einstein_a() == 1
+
+    assert s.get_level_to_level_transition(levs[0], levs[1]) == None
 
 
 def test_frequency():
     coll = get_collection()
     s = coll.get()["al26"]
     levs = s.get_levels()
-    trans = s.get_transitions()
-    for _trans in trans:
-        i_upper = levs.index(_trans.get_upper_level())
-        i_lower = levs.index(_trans.get_lower_level())
-        if i_upper == 1 and i_lower == 0:
-            assert _trans.get_frequency() == 5.520390824072181e19
-            break
+    trans = s.get_level_to_level_transition(levs[1], levs[0])
+    assert trans.get_frequency() == 5.520390824072181e19
 
 def test_write_xml():
     coll = get_collection()

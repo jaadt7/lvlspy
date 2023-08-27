@@ -138,6 +138,32 @@ class Species(lp.Properties):
 
         return result
 
+    def get_level_to_level_transition(self, upper_level, lower_level):
+        """Method to retrieve the downward transition from a particular
+        upper level to a particular lower level.
+
+        Args:
+            ``upper_level`` (:obj:`lvlspy.level.Level`) The level from which
+            the transition originates.
+
+            ``lowerlevel`` (:obj:`lvlspy.level.Level`) The level to which
+            the transition goes.
+
+        Return:
+            :obj:`lvlspy.transition.Transition`: The transition, or None
+            if the transition is not found.
+
+        """
+
+        for transition in self.get_transitions():
+            if (
+                transition.get_upper_level() == upper_level
+                and transition.get_lower_level() == lower_level
+            ):
+                return transition
+
+        return None
+
     def get_levels(self):
         """Method to retrieve the levels for a species.
 
