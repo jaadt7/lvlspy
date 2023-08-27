@@ -87,7 +87,7 @@ class Transition(lp.Properties):
             has been updated.
         """
 
-        self.einstein_a = ein_a
+        self.einstein_a = einstein_a
 
     def get_einstein_b_upper_to_lower(self):
         """Method to get the Einstein B coefficient for the upper level
