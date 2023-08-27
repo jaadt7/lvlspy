@@ -98,6 +98,46 @@ class Species(lp.Properties):
 
         self.transitions.remove(transition)
 
+    def get_upward_transitions_from_level(self, level):
+        """Method to retrieve the upward transitions (those requiring
+        absorption of energy) from a level in a species.
+
+        Args:
+            ``level`` (:obj:`lvlspy.level.Level`) The level from which
+            the upward transitions originate.
+
+        Return:
+            :obj:`list`: A list of the upward transitions from the level.
+
+        """
+
+        result = []
+        for transition in self.get_transitions():
+            if transition.get_lower_level() == level:
+                result.append(level)
+
+        return result
+
+    def get_downward_transitions_from_level(self, level):
+        """Method to retrieve the downward transitions (those releasing
+        energy) from a level in a species.
+
+        Args:
+            ``level`` (:obj:`lvlspy.level.Level`) The level from which
+            the downward transitions originate.
+
+        Return:
+            :obj:`list`: A list of the downward transitions from the level.
+
+        """
+
+        result = []
+        for transition in self.get_transitions():
+            if transition.get_upper_level() == level:
+                result.append(level)
+
+        return result
+
     def get_levels(self):
         """Method to retrieve the levels for a species.
 

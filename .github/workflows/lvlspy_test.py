@@ -43,6 +43,14 @@ def test_probability():
     p = s.compute_equilibrium_probabilities(T)
     assert p[0] == 1.0
 
+def test_transitions():
+    coll = get_collection()
+    s = coll.get()["al26"]
+    levels = s.get_levels()
+    upwards = s.get_upward_transitions_from_level(levels[0])
+    assert len(upwards) > 0
+    downwards = s.get_downward_transitions_from_level(levels[len(levels)-1])
+    assert len(downwards) > 0
 
 def test_einstein():
     coll = get_collection()
