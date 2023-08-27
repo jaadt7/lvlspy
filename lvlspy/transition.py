@@ -83,7 +83,7 @@ class Transition(lp.Properties):
             coefficient.
 
         Returns:
-            On successful return, the transition Einstein A coefficient 
+            On successful return, the transition Einstein A coefficient
             has been updated.
         """
 
