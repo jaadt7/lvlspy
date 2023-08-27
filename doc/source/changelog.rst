@@ -10,6 +10,9 @@ Version 2.0.0
 New:
 
   * Tests and linting have been added to the package integration.
+  * New methods to update a transition's Einstein A coefficient, retrieve
+    upward and downward transitions from a level, and to retrieve a transition
+    between particular levels have been added to the API.
 
 Fix:
 
