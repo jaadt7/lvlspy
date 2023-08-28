@@ -103,17 +103,11 @@ class SpColl(lp.Properties):
         self._add_optional_properties(result, level)
         result_props = etree.SubElement(result, "properties")
         if units != "keV":
-            my_energy = etree.SubElement(
-                result_props, "energy", units=units
-            )
+            my_energy = etree.SubElement(result_props, "energy", units=units)
         else:
             my_energy = etree.SubElement(result_props, "energy")
-        my_energy.text = self._get_energy_text(
-            level.get_energy(), units
-        )
-        my_multiplicity = etree.SubElement(
-            result_props, "multiplicity"
-        )
+        my_energy.text = self._get_energy_text(level.get_energy(), units)
+        my_multiplicity = etree.SubElement(result_props, "multiplicity")
         my_multiplicity.text = str(level.get_multiplicity())
 
         self._add_transitions_to_xml(result, species, level, units)
@@ -138,18 +132,14 @@ class SpColl(lp.Properties):
                     xml_trans, "to_energy", units=units
                 )
             else:
-                xml_to_energy = etree.SubElement(
-                    xml_trans, "to_energy"
-                )
+                xml_to_energy = etree.SubElement(xml_trans, "to_energy")
             xml_to_energy.text = self._get_energy_text(
                 lower_level.get_energy(), units
             )
             xml_to_multiplicity = etree.SubElement(
                 xml_trans, "to_multiplicity"
             )
-            xml_to_multiplicity.text = str(
-                lower_level.get_multiplicity()
-            )
+            xml_to_multiplicity.text = str(lower_level.get_multiplicity())
             xml_a = etree.SubElement(xml_trans, "a")
             xml_a.text = str(transition.get_einstein_a())
 
