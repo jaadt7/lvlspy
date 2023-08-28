@@ -114,7 +114,7 @@ class Species(lp.Properties):
         result = []
         for transition in self.get_transitions():
             if transition.get_lower_level() == level:
-                result.append(level)
+                result.append(transition)
 
         return result
 
@@ -134,7 +134,7 @@ class Species(lp.Properties):
         result = []
         for transition in self.get_transitions():
             if transition.get_upper_level() == level:
-                result.append(level)
+                result.append(transition)
 
         return result
 

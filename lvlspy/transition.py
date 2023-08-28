@@ -118,7 +118,7 @@ class Transition(lp.Properties):
             / self.lower_level.get_multiplicity()
         )
 
-    def compute_lower_to_upper_rate(self, temperature):
+    def compute_lower_to_upper_rate(self, temperature, user_func=None):
         """Method to compute the total rate for transition from the lower
         level to upper level.
 
@@ -126,25 +126,49 @@ class Transition(lp.Properties):
             ``temperature`` (:obj:`float`) The temperature in K at which to
             compute the rate.
 
+            ``user_func`` (optional): A `function
+            <https://docs.python.org/3/library/stdtypes.html#functions>`_
+            that computes the lower level to upper level transition rate.
+            If supplied, the routine will use this function in place of the
+            default one, which computes the rate from the appropriate
+            Einstein coefficient and the blackbody spectrum.
+            The function must take one :obj:`float` argument giving the
+            temperature. Other data can be bound to the function.
+
         Returns:
             :obj:`float`: The rate (per second).
 
         """
 
+        if user_func:
+            return user_func(temperature)
+
         return self.get_einstein_b_lower_to_upper() * self._bb(temperature)
 
-    def compute_upper_to_lower_rate(self, temperature):
-        """Method to compute the total rate for transition from the upper level to
-        to lower level.
+    def compute_upper_to_lower_rate(self, temperature, user_func=None):
+        """Method to compute the total rate for transition from the upper
+        level to to lower level.
 
         Args:
             ``temperature`` (:obj:`float`) The temperature in K at which to
             compute the rate.
 
+            ``user_func`` (optional): A `function
+            <https://docs.python.org/3/library/stdtypes.html#functions>`_
+            that computes the upper level to lower level transition rate.
+            If supplied, the routine will use this function in place of the
+            default one, which computes the rate from the appropriate
+            Einstein coefficients and the blackbody spectrum.
+            The function must take one :obj:`float` argument giving the
+            temperature. Other data can be bound to the function.
+
         Returns:
             :obj:`float`: The rate (per second).
 
         """
+
+        if user_func:
+            return user_func(temperature)
 
         return (
             self.get_einstein_a()

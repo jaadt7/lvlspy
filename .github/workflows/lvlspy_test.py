@@ -43,14 +43,16 @@ def test_probability():
     p = s.compute_equilibrium_probabilities(T)
     assert p[0] == 1.0
 
+
 def test_transitions():
     coll = get_collection()
     s = coll.get()["al26"]
     levels = s.get_levels()
     upwards = s.get_upward_transitions_from_level(levels[0])
     assert len(upwards) > 0
-    downwards = s.get_downward_transitions_from_level(levels[len(levels)-1])
+    downwards = s.get_downward_transitions_from_level(levels[len(levels) - 1])
     assert len(downwards) > 0
+
 
 def test_einstein():
     coll = get_collection()
@@ -73,6 +75,23 @@ def test_einstein():
     assert s.get_level_to_level_transition(levs[0], levs[1]) == None
 
 
+def test_rates():
+    def user_rate(temperature):
+        return 2. * temperature
+
+    coll = get_collection()
+    s = coll.get()["al26"]
+    levs = s.get_levels()
+    trans = s.get_level_to_level_transition(levs[1], levs[0])
+    assert trans.compute_lower_to_upper_rate(
+        1.0e9
+    ) < trans.compute_upper_to_lower_rate(1.0e9)
+
+    assert trans.compute_lower_to_upper_rate(
+        1.0e9, user_func=user_rate
+    ) == trans.compute_upper_to_lower_rate(1.0e9, user_func=user_rate)
+
+
 def test_frequency():
     coll = get_collection()
     s = coll.get()["al26"]
@@ -80,6 +99,7 @@ def test_frequency():
     trans = s.get_level_to_level_transition(levs[1], levs[0])
     assert trans.get_frequency() == 5.520390824072181e19
 
+
 def test_write_xml():
     coll = get_collection()
-    assert coll.write_to_xml('out.xml') == None
+    assert coll.write_to_xml("out.xml") == None
