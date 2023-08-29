@@ -3,7 +3,7 @@ Overview
 
 lvlspy is a python package for working with quantum level-system data.
 
-|pypi| |doc_stat| |license| |test| |lint| |lint-test| |black|
+|pypi| |doc_stat| |license| |pytest| |pylint| |black|
 
 Installation
 ------------
@@ -76,11 +76,9 @@ The project documentation is available at `<https://lvlspy.readthedocs.io>`_.
 .. |doc_stat| image:: https://readthedocs.org/projects/lvlspy/badge/?version=latest
     :target: https://lvlspy.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
-.. |test| image:: https://github.com/jaadt7/lvlspy/actions/workflows/test.yml/badge.svg?branch=feature&event=push
+.. |pytest| image:: https://github.com/jaadt7/lvlspy/actions/workflows/test.yml/badge.svg?branch=main&event=push
 	:target: https://github.com/jaadt7/lvlspy/actions/workflows/test.yml
-.. |lint| image:: https://img.shields.io/badge/linting-pylint-yellowgreen
-    :target: https://github.com/pylint-dev/pylint
-.. |lint-test| image:: https://github.com/jaadt7/lvlspy/actions/workflows/lint.yml/badge.svg?branch=feature&event=push
+.. |pylint| image:: https://github.com/jaadt7/lvlspy/actions/workflows/lint.yml/badge.svg?branch=main&event=push
 	:target: https://github.com/jaadt7/lvlspy/actions/workflows/lint.yml 
 .. |black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/psf/black
