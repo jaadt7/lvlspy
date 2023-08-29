@@ -1,7 +1,7 @@
+"""Module to handle species."""
+
 import numpy as np
 import lvlspy.properties as lp
-import lvlspy.level as lv
-import lvlspy.transition as lt
 
 
 class Species(lp.Properties):
@@ -22,6 +22,7 @@ class Species(lp.Properties):
     """
 
     def __init__(self, name, levels=None, transitions=None):
+        super().__init__()
         self.name = name
         self.levels = []
         self.transitions = []
@@ -31,7 +32,7 @@ class Species(lp.Properties):
                 self.levels.append(level)
         if transitions:
             for transition in transitions:
-                self.transitions.append(transition)
+                self.add_transition(transition)
 
     def get_name(self):
         """Retrieve the name of the species.
@@ -97,6 +98,72 @@ class Species(lp.Properties):
 
         self.transitions.remove(transition)
 
+    def get_upward_transitions_from_level(self, level):
+        """Method to retrieve the upward transitions (those requiring
+        absorption of energy) from a level in a species.
+
+        Args:
+            ``level`` (:obj:`lvlspy.level.Level`) The level from which
+            the upward transitions originate.
+
+        Return:
+            :obj:`list`: A list of the upward transitions from the level.
+
+        """
+
+        result = []
+        for transition in self.get_transitions():
+            if transition.get_lower_level() == level:
+                result.append(transition)
+
+        return result
+
+    def get_downward_transitions_from_level(self, level):
+        """Method to retrieve the downward transitions (those releasing
+        energy) from a level in a species.
+
+        Args:
+            ``level`` (:obj:`lvlspy.level.Level`) The level from which
+            the downward transitions originate.
+
+        Return:
+            :obj:`list`: A list of the downward transitions from the level.
+
+        """
+
+        result = []
+        for transition in self.get_transitions():
+            if transition.get_upper_level() == level:
+                result.append(transition)
+
+        return result
+
+    def get_level_to_level_transition(self, upper_level, lower_level):
+        """Method to retrieve the downward transition from a particular
+        upper level to a particular lower level.
+
+        Args:
+            ``upper_level`` (:obj:`lvlspy.level.Level`) The level from which
+            the transition originates.
+
+            ``lowerlevel`` (:obj:`lvlspy.level.Level`) The level to which
+            the transition goes.
+
+        Return:
+            :obj:`lvlspy.transition.Transition`: The transition, or None
+            if the transition is not found.
+
+        """
+
+        for transition in self.get_transitions():
+            if (
+                transition.get_upper_level() == upper_level
+                and transition.get_lower_level() == lower_level
+            ):
+                return transition
+
+        return None
+
     def get_levels(self):
         """Method to retrieve the levels for a species.
 
@@ -118,36 +185,37 @@ class Species(lp.Properties):
 
         return self.transitions
 
-    def compute_equilibrium_probabilities(self, T):
-        """Method to compute the equilibrium probabilities for levels in a species.
+    def compute_equilibrium_probabilities(self, temperature):
+        """Method to compute the equilibrium probabilities for levels in a
+        species.
 
         Args:
-            ``T`` (:obj:`float`): The temperature in K at which to compute the
-            equilibrium probabilities.
+            ``temperature`` (:obj:`float`): The temperature in K at which to
+            compute the equilibrium probabilities.
 
             Returns:
-                :obj:`numpy.array`: A numpy array of the probabilities of the levels.
-                The levels are sorted in ascending energy.
+                :obj:`numpy.array`: A numpy array of the probabilities of the
+                levels.  The levels are sorted in ascending energy.
 
         """
 
         levs = self.get_levels()
 
-        p = np.empty(len(levs))
+        prob = np.empty(len(levs))
 
-        for i in range(len(levs)):
-            p[i] = levs[i].compute_Boltzmann_factor(T)
+        for i, lev in enumerate(levs):
+            prob[i] = lev.compute_boltzmann_factor(temperature)
 
-        p /= np.sum(p)
+        prob /= np.sum(prob)
 
-        return p
+        return prob
 
-    def compute_rate_matrix(self, T):
+    def compute_rate_matrix(self, temperature):
         """Method to compute the rate matrix for a species.
 
         Args:
-            ``T`` (:obj:`float`): The temperature in K at which to compute the
-            rate matrix.
+            ``temperature`` (:obj:`float`): The temperature in K at which to
+            compute the rate matrix.
 
             Returns:
                 :obj:`numpy.array`: A 2d numpy array giving the rate matrix.
@@ -164,8 +232,12 @@ class Species(lp.Properties):
             i_upper = levels.index(transition.get_upper_level())
             i_lower = levels.index(transition.get_lower_level())
 
-            r_upper_to_lower = transition.compute_upper_to_lower_rate(T)
-            r_lower_to_upper = transition.compute_lower_to_upper_rate(T)
+            r_upper_to_lower = transition.compute_upper_to_lower_rate(
+                temperature
+            )
+            r_lower_to_upper = transition.compute_lower_to_upper_rate(
+                temperature
+            )
 
             rate_matrix[i_lower, i_upper] += r_upper_to_lower
             rate_matrix[i_upper, i_upper] -= r_upper_to_lower

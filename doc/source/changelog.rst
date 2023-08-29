@@ -4,6 +4,21 @@ Changelog
 All notable changes to this project will be documented in this file.  This
 project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`_.
 
+Version 2.0.0
+-------------
+
+New:
+
+  * Tests and linting have been added to the package integration.
+  * New methods to update a transition's Einstein A coefficient, retrieve
+    upward and downward transitions from a level, and to retrieve a transition
+    between particular levels have been added to the API.
+
+Fix:
+
+  * A number of method names have been changed to align with pylint.  These are
+    backwards-incompatible changes.
+
 Version 1.4.0
 -------------
 

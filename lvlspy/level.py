@@ -1,6 +1,11 @@
-import lvlspy.properties as lp
+"""Module to handle levels in species."""
+
 import numpy as np
-from gslconsts.consts import *
+from gslconsts.consts import (
+    GSL_CONST_CGSM_ELECTRON_VOLT,
+    GSL_CONST_CGSM_BOLTZMANN,
+)
+import lvlspy.properties as lp
 
 units_dict = {"eV": 1000, "keV": 1, "MeV": 1.0e-3, "GeV": 1.0e-6}
 
@@ -21,6 +26,7 @@ class Level(lp.Properties):
     """
 
     def __init__(self, energy, multiplicity, units="keV"):
+        super().__init__()
         self.energy = energy / units_dict[units]
         self.multiplicity = multiplicity
         self.properties = {}
@@ -30,7 +36,10 @@ class Level(lp.Properties):
         if not isinstance(other, Level):
             return NotImplemented
 
-        return self.energy == other.energy and self.multiplicity == other.multiplicity
+        return (
+            self.energy == other.energy
+            and self.multiplicity == other.multiplicity
+        )
 
     def get_energy(self, units="keV"):
         """Method to retrieve the energy for a level.
@@ -86,12 +95,12 @@ class Level(lp.Properties):
 
         self.multiplicity = multiplicity
 
-    def compute_Boltzmann_factor(self, T):
+    def compute_boltzmann_factor(self, temperature):
         """Method to compute the Boltzmann factor for a level.
 
         Args:
-            ``T`` (:obj:`float`):  The temperature in K at which to compute
-            the factor.
+            ``temperature`` (:obj:`float`):  The temperature in K at which to
+            compute the factor.
 
         Returns:
             :obj:`float`: The computed Boltzmann factor
@@ -99,8 +108,8 @@ class Level(lp.Properties):
 
         """
         # the factor of 1e+3 is to convert the energy to keV.
-        k_BT = GSL_CONST_CGSM_BOLTZMANN * T
+        k_bt = GSL_CONST_CGSM_BOLTZMANN * temperature
 
-        E = 1.0e3 * GSL_CONST_CGSM_ELECTRON_VOLT * self.energy
+        energy = 1.0e3 * GSL_CONST_CGSM_ELECTRON_VOLT * self.energy
 
-        return self.multiplicity * np.exp(-E / k_BT)
+        return self.multiplicity * np.exp(-energy / k_bt)
