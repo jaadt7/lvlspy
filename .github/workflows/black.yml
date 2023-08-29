@@ -3,7 +3,9 @@ name: black
 on:
   push:
       branches:
-        - brad
+        - develop
+        - main
+  
 
 jobs:
   lint:
