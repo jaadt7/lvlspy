@@ -25,6 +25,11 @@ Usage
 To get familiar with lvlspy, please see our tutorial `Jupyter
 notebooks <https://github.com/jaadt7/lvlspy_tutorial>`_.
 
+Documentation
+-------------
+
+The project documentation is available at `<https://lvlspy.readthedocs.io>`_.
+
 Attribution
 -----------
 If you make use of this code, please cite Zenodo |zenodo| 
@@ -61,11 +66,6 @@ License
 -------
 
 The project is licensed under the GNU Public License v3 (or later).
-
-Documentation
--------------
-
-The project documentation is available at `<https://lvlspy.readthedocs.io>`_.
 
 .. |zenodo| image:: https://zenodo.org/badge/532987706.svg
    :target: https://zenodo.org/badge/latestdoi/532987706
