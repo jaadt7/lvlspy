@@ -34,7 +34,7 @@ Attribution
 -----------
 If you make use of this code, please cite Zenodo |zenodo| 
 
-Here's a Bibtex sample::
+Here's a BibTex sample::
 
 	@software{jaad_tannous_2023_8193379,
   	  author       = {Jaad Tannous and
@@ -48,7 +48,9 @@ Here's a Bibtex sample::
   	  url          = {https://doi.org/10.5281/zenodo.8193379}
 	}
 
-Please make sure you replace the version number with the release used.
+From the above Zenodo link (click on the DOI badge),
+you can export the appropriate reference in
+BibTex or other formats.
 
 Authors
 -------
