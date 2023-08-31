@@ -9,6 +9,8 @@ Version 2.0.1
 
 Fix:
 
+  * If a level or transition already exists in the respective collection,
+    the API now updates the level or transition instead of adding a new version.
   * The extraneous search has been removed from the index.
   * The instructions for exporting the appropriate software reference from
     Zenodo are now clearer.

@@ -39,7 +39,6 @@ class Transition(lp.Properties):
         return (
             self.upper_level == other.upper_level
             and self.lower_level == other.lower_level
-            and self.einstein_a == other.einstein_a
         )
 
     def get_upper_level(self):

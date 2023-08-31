@@ -34,7 +34,9 @@ class SpColl(lp.Properties):
             added.
 
         Return:
-            On successful return, the species has been added.
+            On successful return, the species has been added.  If the species
+            previously existed in the collection, it has been replaced with
+            the new species.
 
         """
 

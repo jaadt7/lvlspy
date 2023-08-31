@@ -51,9 +51,14 @@ class Species(lp.Properties):
             ``level`` (:obj:`lvlspy.level.Level`) The level to be added.
 
         Return:
-            On successful return, the level has been added.
+            On successful return, the level has been added.  If the level
+            previously existed in the species, it has been replaced with
+            the new level.
 
         """
+
+        if level in self.get_levels():
+            self.remove_level(level)
 
         self.levels.append(level)
 
@@ -78,9 +83,14 @@ class Species(lp.Properties):
             to be added.
 
         Return:
-            On successful return, the transition has been added.
+            On successful return, the transition has been added.  If the
+            transition previously existed in the species, it has been
+            replaced with the new transition.
 
         """
+
+        if transition in self.get_transitions():
+            self.remove_transition(transition)
 
         self.transitions.append(transition)
 
