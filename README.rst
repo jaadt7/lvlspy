@@ -32,7 +32,7 @@ The project documentation is available at `<https://lvlspy.readthedocs.io>`_.
 
 Attribution
 -----------
-To cite this code, see the Cite this repository link in the About section of the package's `GitHub page <https://github.com/jaadt7/lvlspy/>`_.  From Zenodo (click on this |zenodo| badge),
+To cite this code, see the Cite this repository link in the About section of the package's `GitHub page <https://github.com/jaadt7/lvlspy/>`_.  From Zenodo (click on this badge: |zenodo|),
 you can also export the appropriate reference in BibTex or other formats.
 
 Authors
