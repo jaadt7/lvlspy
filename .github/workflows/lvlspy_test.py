@@ -39,9 +39,16 @@ def test_energy_and_multiplicity():
 def test_probability():
     coll = get_collection()
     s = coll.get()["al26"]
+    T = 0
+    p = s.compute_equilibrium_probabilities(T)
+    assert p[0] == 1.0
+    assert p[1] == 0.
     T = 1e7
     p = s.compute_equilibrium_probabilities(T)
     assert p[0] == 1.0
+    T = 1.e9
+    p = s.compute_equilibrium_probabilities(T)
+    assert p[0] < 1.0
 
 def test_levels():
     coll = get_collection()

@@ -112,4 +112,9 @@ class Level(lp.Properties):
 
         energy = 1.0e3 * GSL_CONST_CGSM_ELECTRON_VOLT * self.energy
 
+        if k_bt == 0:
+            if energy == 0:
+                return 1
+            return 0
+
         return self.multiplicity * np.exp(-energy / k_bt)
