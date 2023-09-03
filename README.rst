@@ -32,25 +32,9 @@ The project documentation is available at `<https://lvlspy.readthedocs.io>`_.
 
 Attribution
 -----------
-If you make use of this code, please cite Zenodo |zenodo| 
-
-Here's a BibTex sample::
-
-	@software{jaad_tannous_2023_8193379,
-  	  author       = {Jaad Tannous and
-                          Bradley Meyer},
- 	  title        = {jaadt7/lvlspy: v1.4.1},
-  	  month        = jul,
-  	  year         = 2023,
-  	  publisher    = {Zenodo},
-  	  version      = {v1.4.1},
-  	  doi          = {10.5281/zenodo.8193379},
-  	  url          = {https://doi.org/10.5281/zenodo.8193379}
-	}
-
-From the above Zenodo link (click on the DOI badge),
-you can export the appropriate reference in
-BibTex or other formats.
+To cite this code, see the Cite this repository link in the upper right
+of this page.  From Zenodo |zenodo\ (click on the DOI badge),
+you can also export the appropriate reference in BibTex or other formats.
 
 Authors
 -------
