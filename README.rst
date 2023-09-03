@@ -33,7 +33,7 @@ The project documentation is available at `<https://lvlspy.readthedocs.io>`_.
 Attribution
 -----------
 To cite this code, see the Cite this repository link in the upper right
-of this page.  From Zenodo |zenodo\ (click on the DOI badge),
+of this page.  From Zenodo |zenodo| (click on the DOI badge),
 you can also export the appropriate reference in BibTex or other formats.
 
 Authors
