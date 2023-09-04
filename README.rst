@@ -32,8 +32,8 @@ The project documentation is available at `<https://lvlspy.readthedocs.io>`_.
 
 Attribution
 -----------
-To cite this code, see the Cite this repository link in the About section of the package's `GitHub page <https://github.com/jaadt7/lvlspy/>`_.  From Zenodo (click on this badge: |zenodo|),
-you can also export the appropriate reference in BibTex or other formats.
+To cite this code, please visit the `Zenodo <https://zenodo.org/badge/latestdoi/532987706>`_ page
+for this project.  From that page, you can export the appropriate reference in BibTex or other formats.
 
 Authors
 -------
@@ -52,8 +52,6 @@ License
 
 The project is licensed under the GNU Public License v3 (or later).
 
-.. |zenodo| image:: https://zenodo.org/badge/532987706.svg
-   :target: https://zenodo.org/badge/latestdoi/532987706
 .. |pypi| image:: https://badge.fury.io/py/lvlspy.svg
     :target: https://badge.fury.io/py/lvlspy 
 .. |license| image:: https://img.shields.io/github/license/jaadt7/lvlspy
