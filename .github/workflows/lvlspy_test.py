@@ -63,10 +63,10 @@ def test_transitions():
     coll = get_collection()
     s = coll.get()["al26"]
     levels = s.get_levels()
-    upwards = s.get_upward_transitions_from_level(levels[0])
-    assert len(upwards) > 0
-    downwards = s.get_downward_transitions_from_level(levels[len(levels) - 1])
-    assert len(downwards) > 0
+    assert len(s.get_lower_linked_levels(levels[0])) == 0
+    assert len(s.get_upper_linked_levels(levels[0])) > 0
+    assert len(s.get_lower_linked_levels(levels[len(levels) - 1])) > 0
+    assert len(s.get_upper_linked_levels(levels[len(levels) - 1])) == 0
     transitions = s.get_transitions()
     number_transitions = len(transitions)
     transition = transitions[0]

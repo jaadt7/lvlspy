@@ -118,17 +118,19 @@ class SpColl(lp.Properties):
 
     def _add_transitions_to_xml(self, xml_level, species, level, units):
 
-        transitions = species.get_downward_transitions_from_level(level)
+        lower_levels = species.get_lower_linked_levels(level)
 
-        if len(transitions) == 0:
+        if len(lower_levels) == 0:
             return
 
         xml_transitions = etree.SubElement(xml_level, "transitions")
 
-        for transition in transitions:
+        for lower_level in lower_levels:
+            transition = species.get_level_to_level_transition(
+                level, lower_level
+            )
             xml_trans = etree.SubElement(xml_transitions, "transition")
             self._add_optional_properties(xml_trans, transition)
-            lower_level = transition.get_lower_level()
             if units != "keV":
                 xml_to_energy = etree.SubElement(
                     xml_trans, "to_energy", units=units

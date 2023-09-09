@@ -4,11 +4,14 @@ Changelog
 All notable changes to this project will be documented in this file.  This
 project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`_.
 
-Version 2.0.1
+Version 3.0.0
 -------------
 
 Fix:
 
+  * Misleading methods to retrieve upward and downward transitions have been
+    replaced with methods to retrieve levels linked by transitions to a
+    given level.  This is a backwards-incompatible change.
   * If a level or transition already exists in the respective collection,
     the API now updates the level or transition instead of adding a new version.
   * An overflow on the Boltzmann factor for zero temperature has been fixed.
