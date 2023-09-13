@@ -108,43 +108,45 @@ class Species(lp.Properties):
 
         self.transitions.remove(transition)
 
-    def get_upward_transitions_from_level(self, level):
-        """Method to retrieve the upward transitions (those requiring
-        absorption of energy) from a level in a species.
+    def get_lower_linked_levels(self, level):
+        """Method to retrieve the lower-energy levels linked to the input level
+        by transitions in the species.
 
         Args:
-            ``level`` (:obj:`lvlspy.level.Level`) The level from which
-            the upward transitions originate.
+            ``level`` (:obj:`lvlspy.level.Level`) The level for which
+            the linked levels are sought.
 
         Return:
-            :obj:`list`: A list of the upward transitions from the level.
-
-        """
-
-        result = []
-        for transition in self.get_transitions():
-            if transition.get_lower_level() == level:
-                result.append(transition)
-
-        return result
-
-    def get_downward_transitions_from_level(self, level):
-        """Method to retrieve the downward transitions (those releasing
-        energy) from a level in a species.
-
-        Args:
-            ``level`` (:obj:`lvlspy.level.Level`) The level from which
-            the downward transitions originate.
-
-        Return:
-            :obj:`list`: A list of the downward transitions from the level.
+            :obj:`list`: A list of the lower-energy levels linked to the
+            input level by transitions.
 
         """
 
         result = []
         for transition in self.get_transitions():
             if transition.get_upper_level() == level:
-                result.append(transition)
+                result.append(transition.get_lower_level())
+
+        return result
+
+    def get_upper_linked_levels(self, level):
+        """Method to retrieve the higher-energy levels linked to the input level
+        by transitions in the species.
+
+        Args:
+            ``level`` (:obj:`lvlspy.level.Level`) The level for which
+            the linked levels are sought.
+
+        Return:
+            :obj:`list`: A list of the higher-energy levels linked to the
+            input level by transitions.
+
+        """
+
+        result = []
+        for transition in self.get_transitions():
+            if transition.get_lower_level() == level:
+                result.append(transition.get_upper_level())
 
         return result
 
