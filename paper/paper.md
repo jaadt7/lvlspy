@@ -51,8 +51,8 @@ The code has four essential classes:
     
 The code also has a base **Properties** class that stores optional properties in a dictionary.  The class has methods to update and retrieve properties. Each of the four essential classes inherits the Properties class, so the user may add properties to and retrieve properties from each Level, Transition, Species, or SpColl instance, as desired.
 
-# Acknowledgments
+# Acknowledgements
 
-This work was partially supported by NASA Emerging Worlds grant 80NSSC20K0338.  The authors that G. Wendell Misch and Matt Mumpower for valuable discussions and advice.
+This work was partially supported by NASA Emerging Worlds grant 80NSSC20K0338.  The authors thank G. Wendell Misch and Matt Mumpower for valuable discussions and advice.
 
 # References
