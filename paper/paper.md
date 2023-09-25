@@ -49,7 +49,7 @@ The code has four essential classes:
     
 - **SpColl**: This class stores a collection of species and has methods to add and remove species, get the collection as a dictionary, and to update data from and write data to XML.
     
-The code also has a base **Properties** class that stores optional properties in a dictionary.  The class has methods to update and retrieve properties. Each of the four essential classes inherits the Properties class, so the user may add properties to and retrieve properties from each of Level, Transition, Species, or SpColl instance, as desired.
+The code also has a base **Properties** class that stores optional properties in a dictionary.  The class has methods to update and retrieve properties. Each of the four essential classes inherits the Properties class, so the user may add properties to and retrieve properties from each Level, Transition, Species, or SpColl instance, as desired.
 
 # Acknowledgments
 
