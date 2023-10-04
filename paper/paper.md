@@ -18,7 +18,7 @@ affiliations:
     - name: Department of Physics and Astronomy, Clemson University, Clemson, SC, 29634
       index: 1
 
-date: July 15 2023
+date: October 2023
 bibliography: paper.bib
 ---
 
