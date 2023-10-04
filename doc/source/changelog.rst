@@ -4,6 +4,14 @@ Changelog
 All notable changes to this project will be documented in this file.  This
 project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`_.
 
+Version 3.0.1
+-------------
+
+Fix:
+
+  * sphinx-rtd-theme has been added to the documentation requirements to properly 
+    compile on Read the Docs
+
 Version 3.0.0
 -------------
 
@@ -18,6 +26,7 @@ Fix:
   * The extraneous search has been removed from the index.
   * The instructions for exporting the appropriate software reference from
     Zenodo are now clearer.
+ 
 
 Version 2.0.0
 -------------
