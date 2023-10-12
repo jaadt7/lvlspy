@@ -4,6 +4,14 @@ Changelog
 All notable changes to this project will be documented in this file.  This
 project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`_.
 
+Version 3.0.3
+-------------
+
+Fix:
+
+  * Removing a level now removes all transitions to and from the level before removing 
+    the level itself. This alleviates any issues that arise after removing the level.
+
 Version 3.0.2
 -------------
 

@@ -69,9 +69,23 @@ class Species(lp.Properties):
             ``level`` (:obj:`lvlspy.level.Level`) The level to be removed.
 
         Return:
-            On successful return, the level has been removed.
+            On successful return, the level and all connected transitions have been removed.
 
         """
+        upper_conn = self.get_upper_linked_levels(level)
+        lower_conn = self.get_lower_linked_levels(level)
+
+        for l in upper_conn:
+            t = self.get_level_to_level_transition(l,level)
+            if t is None:
+                continue
+            self.remove_transition(t)
+        
+        for l in lower_conn:
+            t = self.get_level_to_level_transition(level,l)
+            if t is None:
+                continue
+            self.remove_transition(t)
 
         self.levels.remove(level)
 
