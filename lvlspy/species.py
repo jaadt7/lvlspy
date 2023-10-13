@@ -253,8 +253,12 @@ class Species(lp.Properties):
             i_upper = levels.index(transition.get_upper_level())
             i_lower = levels.index(transition.get_lower_level())
 
-            r_upper_to_lower = transition.compute_upper_to_lower_rate(temperature)
-            r_lower_to_upper = transition.compute_lower_to_upper_rate(temperature)
+            r_upper_to_lower = transition.compute_upper_to_lower_rate(
+                temperature
+            )
+            r_lower_to_upper = transition.compute_lower_to_upper_rate(
+                temperature
+            )
 
             rate_matrix[i_lower, i_upper] += r_upper_to_lower
             rate_matrix[i_upper, i_upper] -= r_upper_to_lower

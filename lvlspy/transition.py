@@ -113,7 +113,8 @@ class Transition(lp.Properties):
         """
 
         return self.get_einstein_b_upper_to_lower() * (
-            self.upper_level.get_multiplicity() / self.lower_level.get_multiplicity()
+            self.upper_level.get_multiplicity()
+            / self.lower_level.get_multiplicity()
         )
 
     def compute_lower_to_upper_rate(self, temperature, user_func=None):
@@ -168,8 +169,9 @@ class Transition(lp.Properties):
         if user_func:
             return user_func(temperature)
 
-        return self.get_einstein_a() + self.get_einstein_b_upper_to_lower() * self._bb(
-            temperature
+        return (
+            self.get_einstein_a()
+            + self.get_einstein_b_upper_to_lower() * self._bb(temperature)
         )
 
     def get_frequency(self):
