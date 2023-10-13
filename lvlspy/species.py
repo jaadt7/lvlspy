@@ -75,12 +75,12 @@ class Species(lp.Properties):
         for _l in self.get_upper_linked_levels(level):
             _t = self.get_level_to_level_transition(_l, level)
             if _t:
-                self.remove_transition(t)
+                self.remove_transition(_t)
 
         for _l in self.get_lower_linked_levels(level):
             _t = self.get_level_to_level_transition(level, _l)
             if _t:
-                self.remove_transition(t)
+                self.remove_transition(_t)
 
         self.levels.remove(level)
 
