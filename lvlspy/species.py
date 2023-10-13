@@ -73,12 +73,12 @@ class Species(lp.Properties):
 
         """
         for _l in self.get_upper_linked_levels(level):
-            _t = self.get_level_to_level_transition(_l,level)
+            _t = self.get_level_to_level_transition(_l, level)
             if _t:
                 self.remove_transition(t)
-        
+
         for _l in self.get_lower_linked_levels(level):
-            _t = self.get_level_to_level_transition(level,_l)
+            _t = self.get_level_to_level_transition(level, _l)
             if _t:
                 self.remove_transition(t)
 
@@ -253,12 +253,8 @@ class Species(lp.Properties):
             i_upper = levels.index(transition.get_upper_level())
             i_lower = levels.index(transition.get_lower_level())
 
-            r_upper_to_lower = transition.compute_upper_to_lower_rate(
-                temperature
-            )
-            r_lower_to_upper = transition.compute_lower_to_upper_rate(
-                temperature
-            )
+            r_upper_to_lower = transition.compute_upper_to_lower_rate(temperature)
+            r_lower_to_upper = transition.compute_lower_to_upper_rate(temperature)
 
             rate_matrix[i_lower, i_upper] += r_upper_to_lower
             rate_matrix[i_upper, i_upper] -= r_upper_to_lower
