@@ -117,7 +117,6 @@ class SpColl(lp.Properties):
         return result
 
     def _add_transitions_to_xml(self, xml_level, species, level, units):
-
         lower_levels = species.get_lower_linked_levels(level)
 
         if len(lower_levels) == 0:
@@ -126,23 +125,15 @@ class SpColl(lp.Properties):
         xml_transitions = etree.SubElement(xml_level, "transitions")
 
         for lower_level in lower_levels:
-            transition = species.get_level_to_level_transition(
-                level, lower_level
-            )
+            transition = species.get_level_to_level_transition(level, lower_level)
             xml_trans = etree.SubElement(xml_transitions, "transition")
             self._add_optional_properties(xml_trans, transition)
             if units != "keV":
-                xml_to_energy = etree.SubElement(
-                    xml_trans, "to_energy", units=units
-                )
+                xml_to_energy = etree.SubElement(xml_trans, "to_energy", units=units)
             else:
                 xml_to_energy = etree.SubElement(xml_trans, "to_energy")
-            xml_to_energy.text = self._get_energy_text(
-                lower_level.get_energy(), units
-            )
-            xml_to_multiplicity = etree.SubElement(
-                xml_trans, "to_multiplicity"
-            )
+            xml_to_energy.text = self._get_energy_text(lower_level.get_energy(), units)
+            xml_to_multiplicity = etree.SubElement(xml_trans, "to_multiplicity")
             xml_to_multiplicity.text = str(lower_level.get_multiplicity())
             xml_a = etree.SubElement(xml_trans, "a")
             xml_a.text = str(transition.get_einstein_a())
@@ -222,9 +213,7 @@ class SpColl(lp.Properties):
         xml = etree.parse(file, parser)
         xml.xinclude()
 
-        schema_file = os.path.join(
-            os.path.dirname(__file__), "xsd_pub/spcoll.xsd"
-        )
+        schema_file = os.path.join(os.path.dirname(__file__), "xsd_pub/spcoll.xsd")
         xmlschema_doc = etree.parse(schema_file)
 
         xml_validator = etree.XMLSchema(xmlschema_doc)
@@ -265,9 +254,7 @@ class SpColl(lp.Properties):
             level_dict[new_level.get_energy()] = new_level
 
             for xml_trans in xml_level.xpath(".//transition"):
-                trans = self._get_transition_from_xml(
-                    xml_trans, new_level, level_dict
-                )
+                trans = self._get_transition_from_xml(xml_trans, new_level, level_dict)
                 if trans:
                     result.add_transition(trans)
 

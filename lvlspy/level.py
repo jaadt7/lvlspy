@@ -36,10 +36,7 @@ class Level(lp.Properties):
         if not isinstance(other, Level):
             return NotImplemented
 
-        return (
-            self.energy == other.energy
-            and self.multiplicity == other.multiplicity
-        )
+        return self.energy == other.energy and self.multiplicity == other.multiplicity
 
     def get_energy(self, units="keV"):
         """Method to retrieve the energy for a level.
