@@ -4,6 +4,15 @@ Changelog
 All notable changes to this project will be documented in this file.  This
 project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`_.
 
+Version 3.1.0
+-------------
+
+New:
+
+  * Modularized the IO for various fomats have been setup. Currently ENSDF and XML are
+    supported.
+  
+
 Version 3.0.3
 -------------
 

@@ -46,3 +46,10 @@ lvlspy.spcoll module
    :undoc-members:
    :show-inheritance:
 
+lvlspy.IO module
+----------------
+
+.. automodule:: lvlspy.IO
+   :members:
+   :undoc-members:
+   :show-inheritance:

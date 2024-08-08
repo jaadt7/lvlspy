@@ -1,7 +1,7 @@
 # Script to automate build for PyPI.
 
 rm -fr dist
-cd lvlspy
+cd lvlspy/IO
 rm -fr xsd_pub
 git clone https://bitbucket.org/mbradle/liblvls_xsd.git xsd_pub
 cd ..
