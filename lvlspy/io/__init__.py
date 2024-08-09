@@ -3,8 +3,8 @@ A subdirectoy of lvlspy to handle input and output
 """
 
 import os
-from lvlspy.IO.xml import *
-from lvlspy.IO.ENSDF import *
+from lvlspy.io.xml import *
+from lvlspy.io.ensdf import *
 
 xml_catalog = os.path.join(os.path.dirname(__file__), "xsd_pub/catalog")
 

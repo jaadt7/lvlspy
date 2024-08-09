@@ -1,9 +1,8 @@
 """Module to handle a collection of species."""
 
-import sys
-import lvlspy.IO as lio
-import lvlspy.level as lv
+import lvlspy.io as lio
 import lvlspy.properties as lp
+
 
 class SpColl(lp.Properties):
     """A class for storing and retrieving data about a species collection.
@@ -79,40 +78,7 @@ class SpColl(lp.Properties):
 
         """
 
-        lio.XML.write_to_xml(self, file, pretty_print, units)
-
-    def _get_energy_text(self, energy, units):
-        return str(energy * lv.units_dict[units])
-    
-    def _update_optional_properties(self, my_element, my_object):
-        opt_props = my_element.xpath("optional_properties")
-
-        if len(opt_props) > 0:
-            props = opt_props[0].xpath("property")
-
-            my_props = {}
-            for prop in props:
-                attributes = prop.attrib
-                my_keys = attributes.keys()
-                if len(my_keys) == 1:
-                    my_props[attributes[my_keys[0]]] = prop.text
-                elif len(my_keys) == 2:
-                    my_props[
-                        (attributes[my_keys[0]], attributes[my_keys[1]])
-                    ] = prop.text
-                elif len(my_keys) == 3:
-                    my_props[
-                        (
-                            attributes[my_keys[0]],
-                            attributes[my_keys[1]],
-                            attributes[my_keys[2]],
-                        )
-                    ] = prop.text
-                else:
-                    print("Improper keys for property")
-                    sys.exit()
-
-            my_object.update_properties(my_props)
+        lio.XML().write_to_xml(self, file, pretty_print, units)
 
     def validate(self, file):
         """Link to IO to validate a species collection XML file.
@@ -124,9 +90,9 @@ class SpColl(lp.Properties):
             An error message if invalid and nothing if valid.
 
         """
-        lio.XML.validate(file)
+        lio.XML().validate(file)
 
-    def update_from_xml(self,file, xpath=""):
+    def update_from_xml(self, file, xpath=""):
         """Link to update a species collection from an XML file.
 
         Args:
@@ -139,5 +105,4 @@ class SpColl(lp.Properties):
             On successful return, the species collection has been updated.
 
         """
-        
-        lio.XML.update_from_xml(self,file,xpath)
+        lio.XML().update_from_xml(self, file, xpath)

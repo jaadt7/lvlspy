@@ -7,11 +7,17 @@ import lvlspy.level as lv
 import lvlspy.species as ls
 import lvlspy.transition as lt
 
+
 class XML:
-    def write_to_xml(self, file, pretty_print, units="keV"):
+    """
+    A class for handling reading and writing to XML
+    """
+
+    def write_to_xml(self, coll, file, pretty_print, units="keV"):
         """Method to write the collection to XML.
 
         Args:
+            ``coll`` (:obj: `obj') The collection to be written to the XML file
             ``file`` (:obj:`str`) The output file name.
 
             ``pretty_print`` (:obj:`bool`, optional): If set to True,
@@ -28,23 +34,23 @@ class XML:
         root = etree.Element("species_collection")
         xml = etree.ElementTree(root)
 
-        XML._add_optional_properties(self,root, self)
+        self._add_optional_properties(root, coll)
 
-        for species_name, species in self.get().items():
+        for species_name, species in coll.get().items():
             my_species = etree.SubElement(root, "species", name=species_name)
 
-            XML._add_optional_properties(self,my_species, species)
+            self._add_optional_properties(my_species, species)
 
             xml_levels = etree.SubElement(my_species, "levels")
 
             for level in species.get_levels():
-                XML._add_level_to_xml(self,xml_levels, species, level, units)
+                self._add_level_to_xml(xml_levels, species, level, units)
 
         xml.write(file, pretty_print=pretty_print)
 
     def _add_level_to_xml(self, xml_levels, species, level, units):
         result = etree.SubElement(xml_levels, "level")
-        XML._add_optional_properties(self,result, level)
+        self._add_optional_properties(result, level)
         result_props = etree.SubElement(result, "properties")
         if units != "keV":
             my_energy = etree.SubElement(result_props, "energy", units=units)
@@ -54,10 +60,10 @@ class XML:
         my_multiplicity = etree.SubElement(result_props, "multiplicity")
         my_multiplicity.text = str(level.get_multiplicity())
 
-        XML._add_transitions_to_xml(self,result, species, level, units)
+        self._add_transitions_to_xml(result, species, level, units)
 
         return result
-    
+
     def _add_transitions_to_xml(self, xml_level, species, level, units):
         lower_levels = species.get_lower_linked_levels(level)
 
@@ -71,7 +77,7 @@ class XML:
                 level, lower_level
             )
             xml_trans = etree.SubElement(xml_transitions, "transition")
-            XML._add_optional_properties(self,xml_trans, transition)
+            self._add_optional_properties(xml_trans, transition)
             if units != "keV":
                 xml_to_energy = etree.SubElement(
                     xml_trans, "to_energy", units=units
@@ -115,7 +121,7 @@ class XML:
 
                 my_prop.text = str(my_props[prop])
 
-    def validate(file):
+    def validate(self, file):
         """Method to validate a species collection XML file.
 
         Args:
@@ -138,10 +144,12 @@ class XML:
         xml_validator = etree.XMLSchema(xmlschema_doc)
         xml_validator.validate(xml)
 
-    def update_from_xml(self,file, xpath):
+    def update_from_xml(self, coll, file, xpath):
         """Method to update a species collection from an XML file.
 
         Args:
+            ``coll`` (:obj: `obj') The collection to be read from the XML file
+
             ``file`` (:obj:`str`) The name of the XML file from which to update.
 
             ``xpath`` (:obj:`str`, optional): XPath expression to select
@@ -151,29 +159,29 @@ class XML:
             On successful return, the species collection has been updated.
 
         """
-        
+
         parser = etree.XMLParser(remove_blank_text=True)
         xml = etree.parse(file, parser)
         xml.xinclude()
 
         spcoll = xml.getroot()
 
-        self._update_optional_properties(spcoll, self)
+        self._update_optional_properties(spcoll, coll)
 
         for xml_species in spcoll.xpath("//species" + xpath):
-            self.add_species(XML._get_species_from_xml(self,xml_species))
+            coll.add_species(self._get_species_from_xml(xml_species))
 
     def _get_species_from_xml(self, xml_species):
         level_dict = {}
         result = ls.Species(xml_species.attrib["name"])
         self._update_optional_properties(xml_species, result)
         for xml_level in xml_species.xpath(".//level"):
-            new_level = XML._get_level_from_xml(self,xml_level)
+            new_level = self._get_level_from_xml(xml_level)
             result.add_level(new_level)
             level_dict[new_level.get_energy()] = new_level
 
             for xml_trans in xml_level.xpath(".//transition"):
-                trans = XML._get_transition_from_xml(self,
+                trans = self._get_transition_from_xml(
                     xml_trans, new_level, level_dict
                 )
                 if trans:
@@ -202,7 +210,7 @@ class XML:
         to_energy = xml_trans.xpath(".//to_energy")
         to_a = xml_trans.xpath(".//a")
 
-        f_to_energy = XML._convert_to_kev(self,to_energy)
+        f_to_energy = self._convert_to_kev(to_energy)
         if f_to_energy in level_dict:
             result = lt.Transition(
                 upper_level,
@@ -212,10 +220,43 @@ class XML:
             self._update_optional_properties(xml_trans, result)
             return result
         return None
-    
+
     def _convert_to_kev(self, energy):
         attributes = energy[0].attrib
         result = float(energy[0].text)
         if "units" in attributes:
             result /= lv.units_dict[attributes["units"]]
         return result
+
+    def _get_energy_text(self, energy, units):
+        return str(energy * lv.units_dict[units])
+
+    def _update_optional_properties(self, my_element, my_object):
+        opt_props = my_element.xpath("optional_properties")
+
+        if len(opt_props) > 0:
+            props = opt_props[0].xpath("property")
+
+            my_props = {}
+            for prop in props:
+                attributes = prop.attrib
+                my_keys = attributes.keys()
+                if len(my_keys) == 1:
+                    my_props[attributes[my_keys[0]]] = prop.text
+                elif len(my_keys) == 2:
+                    my_props[
+                        (attributes[my_keys[0]], attributes[my_keys[1]])
+                    ] = prop.text
+                elif len(my_keys) == 3:
+                    my_props[
+                        (
+                            attributes[my_keys[0]],
+                            attributes[my_keys[1]],
+                            attributes[my_keys[2]],
+                        )
+                    ] = prop.text
+                else:
+                    print("Improper keys for property")
+                    sys.exit()
+
+            my_object.update_properties(my_props)
