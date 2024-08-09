@@ -106,3 +106,18 @@ class SpColl(lp.Properties):
 
         """
         lio.XML().update_from_xml(self, file, xpath)
+
+    def update_from_ensdf(self,file,sp_list = []):
+        """Link to update a species collection from ENSDF file
+        
+        Args:
+            ``file`` (:obj: `str`) The name of ENSDF file from which to update
+            
+            ``sp_list (:obj: `list`, optional) List of strings to select species. Must be in
+            libnucnet format. i.e. al26 instead of 26AL. Defaults to all species
+            
+        Returns:
+            On successful return, the species collection has been updated.
+            
+        """
+        lio.ENSDF().update_from_ensdf(self,file,sp_list)
