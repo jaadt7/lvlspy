@@ -2,6 +2,15 @@
 Module to handle ENSDF input and output
 """
 
+import re
+import math
+
+import lvlspy.level as lv
+import lvlspy.spcoll as lc
+import scipy.special as spc
+import lvlspy.species as ls 
+import lvlspy.transition as lt
+
 class ENSDF:
     """
     A class for handling the reading from and writing to ENSDF
@@ -30,4 +39,179 @@ class ENSDF:
             for sp in sp_list:
                 self._get_species_from_ensdf(coll, file, sp)
     
+    def _get_species_from_ensdf(self,coll,file,sp):
+        
+        match = re.search(r"\d+",sp)
+        A = int(match.group()) #mass number
+
+        file_sp,identifiers = self._get_file_sp_and_identifiers(match, sp, A)
+
+        levels,transitions = self._get_level_and_transition_data(file,identifiers)
+
+        #setting the levels and transitions in lvlspy format
+        levs = []
+        properties = ['parity','energy uncertainty', 'j^pi', 'isomer state','half life',
+                      'half life uncertainty', 'angular momentum transfer','spectroscopic strength',
+                      'spectroscopic strength uncertainty','Comment flag','questionable letter','useability' ]
+        for i in range(len(levels)): #setting the level with properties
+            levs.append(lv.Level(levels[i][0],levels[i][1]))
+            additional_properties = [{key,value} for key,value in zip(properties,levels[i][2:-1])]
+            for j in additional_properties:
+                levs[j].update_properties(j)
+
+        s = ls.Species(sp,levels = levs)
+
+        
+
+
+    def _get_level_and_transition_data(self,file,identifiers):
+        
+        lvls  = [] #lvls format is (energy, multiplicity, parity, rest of properties)
+        trans = [] #trans format is (top level, bottom level, reduced matrix)
+
+        A = ['X','Y','Z','U','V','W','A','B']
+
+        zero_counter = 0 #zero counter required as to only read in the adopted values
+        with open(file,'r') as f:
+
+            for line in f:
+                #reading in level
+                if line.startswith(identifiers[0]):
+                    energy = line[9:19].strip()
+                    if energy[0] in A:
+                        str_dummy = energy[0]+'+'
+                        energy = energy.replace(str_dummy,'')
+                    if energy[-1] in A:
+                        str_dummy = '+'+energy[-1]
+                        energy = energy.replace(str_dummy,'')
+
+                    energy = float(energy) #strip the spaces and cast to float
+                    if energy == 0.0: zero_counter += 1
+                    if zero_counter == 2: break # do not continue reading forward
+                
+                    delta_E      = line[19:21].strip() #energy uncertainty
+                    jpi          = line[21:39].strip() #strip the spaces
+                    iso          = line[77:79].strip() #isomer indicator
+                    t_half       = line[39:49].strip() #level half life
+                    delta_t_half = line[49:55].strip() #half life uncertainty
+                    L            = line[55:64].strip() #Angular momentum transfer
+                    S            = line[64:74].strip() #spectroscopic strength
+                    delta_S      = line[74:76].strip() #uncertainty in S
+                    comment      = line[76]            # comment flag
+                    Q            = line[79]            # questionable level
+
+                    multi,parity,useable = self._extract_multi_parity(jpi)
+
+                
+                    lvls.append([energy,multi,parity,delta_E,jpi,iso,t_half,delta_t_half,L,S,delta_S,comment,Q,useable])
+                
+                #reading in gamma info
+
+                if line.startswith(identifiers[1]):
+
+                    E_g = line[9:19].strip() #gamma ray energy
+               
+                    if E_g[0] in A:
+                        str_dummy = E_g[0]+'+'
+                        E_g = E_g.replace(str_dummy,'')
+                    if E_g[-1] in A:
+                        str_dummy = '+'+E_g[0] 
+                        E_g = E_g.replace(str_dummy,'')
+
+                    if E_g.isalpha() or E_g == '':
+                        E_g = str(0)
+                
+                    E_g = float(E_g)
+                    
+                    for i in range(len(lvls)):
+                        if math.isclose(abs(E_g - (lvls[-1][0]-lvls[i][0])),0.0,abs_tol = 1.0): 
+                            index = i
+                            break
+
+                    delta_energy = line[19:21].strip() #gamma energy uncertainty
+                    RI           = line[21:29].strip() #relative photon intensity
+                    DRI          = line[29:31].strip() #uncertainty in RI
+                    M            = line[31:41].strip() #multipolarity of transition
+                    MR           = line[41:49].strip() #mixing ratio
+                    DMR          = line[49:55].strip() #uncertainty in MR
+                    CC           = line[55:62].strip() #Total conversion coefficient
+                    DCC          = line[62:64].strip() #uncertainty in CC
+                    TI           = line[64:74].strip() #relative total intensity
+                    DTI          = line[74:76].strip() #uncertainty in TI
+                    C            = line[76]            #comment flag
+                    COIN         = line[77]            #coincidence flag
+                    Q            = line[79]            #questions transition existance
+
+                    trans.append([len(lvls) - 1,index,E_g,delta_energy,RI,DRI,M,MR,DMR,CC,DCC,TI,DTI,C,COIN,Q,''])
+
+                if line.startswith(identifiers[2]):
+                    trans[-1][-1] = line
+
+        return lvls,trans
+
+    def _extract_multi_parity(self,jpi):
+        '''
+        Takes jpi as the input and extracts the j and the parity and calculates the multiplicity
+
+        Args:
     
+        - jpi (str): specifies the j and parity of the level
+
+        Returns:
+        - multi (int) : the multiplicity of the level. If multiplicity not clearly defined in ENSDF, will default
+                        to 10000
+        - parity (str): the parity of the level
+        - useable (bool): boolean if the level is useable or not depending on if jpi clearly defined
+    
+        '''
+        #first strip any available parentheses
+        jpi = jpi.replace('(','')
+        jpi = jpi.replace(')','')
+        
+        if jpi == '' or 'TO' in jpi or ',' in jpi or ':' in jpi or 'OR' in jpi:
+            multi = 10000
+            parity = '+'
+            useable = False
+
+        else:    
+            if '+' not in jpi and '-' not in jpi: 
+                parity = '+'
+                multi = int(2*eval(jpi) + 1)
+                useable = True
+            else:
+                parity = jpi[-1]       
+                multi = int(2*eval(jpi[0:-1]) + 1)
+                useable = True
+
+        return multi,parity,useable
+
+    def _get_file_sp_and_identifiers(self,match,sp, A):
+
+        file_sp = str(A) + sp.replace(match.group(),'').upper() #species string found in ENSDF file
+
+        #retrieving species identifier to loop over in ENSDF file
+        if len(match.group()) == 1:
+            identifier = '  ' + file_sp
+            
+        elif len(match.group()) == 2:
+            identifier = ' ' + file_sp
+        
+        else:
+            identifier = file_sp
+
+        sym_len = len(sp.replace(match.group(),''))
+
+        if sym_len == 1:
+        
+            l_identifier = identifier + '   L' #level identifier
+            g_identifier = identifier + '   G' #gamma transition identifier
+    
+
+        else:
+        
+            l_identifier = identifier + '  L' #level identifier
+            g_identifier = identifier + '  G' #gamma transition identifier
+
+            b_identifier = identifier + 'B '  #reduces transition probability identifier
+
+        return file_sp, [l_identifier,g_identifier,b_identifier]
