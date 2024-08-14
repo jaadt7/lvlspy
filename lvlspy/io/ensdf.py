@@ -33,25 +33,10 @@ class ENSDF:
 
         """
 
-        if sp_list == []:
-            self._read_whole_file(coll, file)
-
-        else:
-            for sp in sp_list:
-                self._get_species_from_ensdf(coll, file, sp)
-
-    def _get_species_from_ensdf(self, coll, file, sp):
-        match = re.search(r"\d+", sp)
-        a = int(match.group())  # mass number
-
-        identifiers = self._get_file_sp_and_identifiers(match, sp, a)
-
-        levels, transitions = self._get_level_and_transition_data(
-            file, identifiers
-        )
-
-        # setting the levels and transitions in lvlspy format
-        levs = []
+        for sp in sp_list:
+            self._get_species_from_ensdf(coll, file, sp)
+    
+    def _set_level_properties(self,levels):
         properties = [
             "parity",
             "energy uncertainty",
@@ -66,41 +51,91 @@ class ENSDF:
             "questionable character",
             "useability",
         ]
-
-        for i in range(len(levels)):  # setting the level with properties
-            levs.append(lv.Level(levels[i][0], levels[i][1]))
+        levs = []
+        for l in enumerate(levels):  # setting the level with properties
+            levs.append(lv.Level(l[1][0], l[1][1]))
             additional_properties = [
-                {key, value} for key, value in zip(properties, levels[i][2:-1])
+                {key, value} for key, value in zip(properties, l[1][2:-1])
             ]
             for j in additional_properties:
                 levs[j].update_properties(j)
+        
+        return levs
 
+    def _get_species_from_ensdf(self, coll, file, sp):
+        match = re.search(r"\d+", sp)
+        a = int(match.group())  # mass number
+
+        identifiers = self._get_file_sp_and_identifiers(match, sp, a)
+
+        levels, transitions = self._get_level_and_transition_data(
+            file, identifiers
+        )
+
+        # setting the levels and transitions in lvlspy format
+        levs = self._set_level_properties(levels)
         s = ls.Species(sp, levels=levs)
 
         lvs = s.get_levels()
 
-        for i, tran in enumerate(transitions):
+        for tran in enumerate(transitions):
 
-            e_i = lvs[tran[0]].get_energy()  # upper energy level
-            e_f = lvs[tran[1]].get_energy()  # lower energy level
+            ein_a = calc.Weisskopf().estimate(lvs, tran)
 
-            j_i = (lvs[tran[0]].get_multiplicity() - 1) / 2  # J of upper level
-            j_f = (lvs[tran[1]].get_multiplicity() - 1) / 2  # J of lower level
+    def _get_additional_level_properties(self, line):
+        delta_e = line[19:21].strip()  # energy uncertainty
+        jpi = line[21:39].strip()  # strip the spaces
+        iso = line[77:79].strip()  # isomer indicator
+        t_half = line[39:49].strip()  # level half life
+        delta_t_half = line[49:55].strip()  # half life uncertainty
+        l = line[55:64].strip()  # Angular momentum transfer
+        s = line[64:74].strip()  # spectroscopic strength
+        delta_s = line[74:76].strip()  # uncertainty in S
+        comment = line[76]  # comment flag
+        q = line[79]  # questionable level
+        return [
+            delta_e,
+            jpi,
+            iso,
+            t_half,
+            delta_t_half,
+            l,
+            s,
+            delta_s,
+            comment,
+            q,
+        ]
 
-            p_i = lvs[tran[0]].get_properties()["parity"]  # upper level parity
-            p_f = lvs[tran[1]].get_properties()["parity"]  # lower level parity
+    def _get_additional_gamma_properties(self, line):
+        delta_energy = line[19:21].strip()  # gamma energy uncertainty
+        ri = line[21:29].strip()  # relative photon intensity
+        dri = line[29:31].strip()  # uncertainty in RI
+        m = line[31:41].strip()  # multipolarity of transition
+        mr = line[41:49].strip()  # mixing ratio
+        dmr = line[49:55].strip()  # uncertainty in MR
+        cc = line[55:62].strip()  # Total conversion coefficient
+        dcc = line[62:64].strip()  # uncertainty in CC
+        ti = line[64:74].strip()  # relative total intensity
+        dti = line[74:76].strip()  # uncertainty in TI
+        c = line[76]  # comment flag
+        coin = line[77]  # coincidence flag
+        q = line[79]  # questions transition existance
 
-            if p_i == "+":
-                p_i = 1
-            else:
-                p_i = -1
-
-            if p_f == "+":
-                p_f = 1
-            else:
-                p_f = -1
-
-            ein_a = calc.Weisskopf().estimate(tran)
+        return [
+            delta_energy,
+            ri,
+            dri,
+            m,
+            mr,
+            dmr,
+            cc,
+            dcc,
+            ti,
+            dti,
+            c,
+            coin,
+            q,
+        ]
 
     def _get_level_and_transition_data(self, file, identifiers):
 
@@ -135,37 +170,21 @@ class ENSDF:
                     if zero_counter == 2:
                         break  # do not continue reading forward
 
-                    delta_E = line[19:21].strip()  # energy uncertainty
-                    jpi = line[21:39].strip()  # strip the spaces
-                    iso = line[77:79].strip()  # isomer indicator
-                    t_half = line[39:49].strip()  # level half life
-                    delta_t_half = line[49:55].strip()  # half life uncertainty
-                    l = line[55:64].strip()  # Angular momentum transfer
-                    s = line[64:74].strip()  # spectroscopic strength
-                    delta_s = line[74:76].strip()  # uncertainty in S
-                    comment = line[76]  # comment flag
-                    q = line[79]  # questionable level
-
-                    multi, parity, useable = self._extract_multi_parity(jpi)
-
-                    lvls.append(
-                        [
-                            energy,
-                            multi,
-                            parity,
-                            delta_E,
-                            jpi,
-                            iso,
-                            t_half,
-                            delta_t_half,
-                            l,
-                            s,
-                            delta_s,
-                            comment,
-                            q,
-                            useable,
-                        ]
+                    properties = self._get_additional_level_properties(line)
+                    multi, parity, useable = self._extract_multi_parity(
+                        properties[1]
                     )
+
+                    temp = [
+                        energy,
+                        multi,
+                        parity,
+                    ]  # temporary dummy array for re-use
+                    for i in range(len(properties)):
+                        temp.append(properties[i])
+                    temp.append(useable)
+
+                    lvls.append(temp)
 
                 # reading in gamma info
 
@@ -194,43 +213,12 @@ class ENSDF:
                             index = i
                             break
 
-                    delta_energy = line[
-                        19:21
-                    ].strip()  # gamma energy uncertainty
-                    ri = line[21:29].strip()  # relative photon intensity
-                    dri = line[29:31].strip()  # uncertainty in RI
-                    m = line[31:41].strip()  # multipolarity of transition
-                    mr = line[41:49].strip()  # mixing ratio
-                    dmr = line[49:55].strip()  # uncertainty in MR
-                    cc = line[55:62].strip()  # Total conversion coefficient
-                    dcc = line[62:64].strip()  # uncertainty in CC
-                    ti = line[64:74].strip()  # relative total intensity
-                    dti = line[74:76].strip()  # uncertainty in TI
-                    c = line[76]  # comment flag
-                    coin = line[77]  # coincidence flag
-                    q = line[79]  # questions transition existance
-
-                    trans.append(
-                        [
-                            len(lvls) - 1,
-                            index,
-                            e_g,
-                            delta_energy,
-                            ri,
-                            dri,
-                            m,
-                            mr,
-                            dmr,
-                            cc,
-                            dcc,
-                            ti,
-                            dti,
-                            c,
-                            coin,
-                            q,
-                            "",
-                        ]
-                    )
+                    temp = [len(lvls) - 1, index, e_g]
+                    properties = self._get_additional_gamma_properties(line)
+                    for i in range(len(properties)):
+                        temp.append(properties[i])
+                    temp.append("")
+                    trans.append(temp)
 
                 if line.startswith(identifiers[2]):
                     trans[-1][-1] = line
@@ -246,8 +234,8 @@ class ENSDF:
         - jpi (str): specifies the j and parity of the level
 
         Returns:
-        - multi (int) : the multiplicity of the level. If multiplicity not clearly defined in ENSDF, will default
-                        to 10000
+        - multi (int) : the multiplicity of the level. If multiplicity not clearly defined in ENSDF,
+                        will default to 10000
         - parity (str): the parity of the level
         - useable (bool): boolean if the level is useable or not depending on if jpi clearly defined
 
@@ -306,3 +294,6 @@ class ENSDF:
         )  # reduces transition probability identifier
 
         return [l_identifier, g_identifier, b_identifier]
+
+    def write_to_ensdf():
+        return

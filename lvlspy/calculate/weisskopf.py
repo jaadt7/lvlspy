@@ -70,6 +70,25 @@ class Weisskopf:
             * np.power(1.4 * np.power(a, 1.0 / 3.0), 2 * j)
             * GSL_CONST_NUM_ZETTA
         )
-    
-    def estimate(self):
+
+    def estimate_from_ensdf(self, lvs, tran):
+        e_i = lvs[tran[0]].get_energy()  # upper energy level
+        e_f = lvs[tran[1]].get_energy()  # lower energy level
+
+        j_i = (lvs[tran[0]].get_multiplicity() - 1) / 2  # J of upper level
+        j_f = (lvs[tran[1]].get_multiplicity() - 1) / 2  # J of lower level
+
+        p_i = lvs[tran[0]].get_properties()["parity"]  # upper level parity
+        p_f = lvs[tran[1]].get_properties()["parity"]  # lower level parity
+
+        if p_i == "+":
+            p_i = 1
+        else:
+            p_i = -1
+
+        if p_f == "+":
+            p_f = 1
+        else:
+            p_f = -1
+
         return
