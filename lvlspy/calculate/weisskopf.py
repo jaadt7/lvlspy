@@ -14,13 +14,14 @@ class Weisskopf:
 
     def rate_mag(self, e_i, e_f, j, a):
         """
-        Calculates the transition rate between two levels where the transition is a magnetic multipole
+        Calculates the transition rate between two levels where the transition
+          is a magnetic multipole
 
         Args:
-        - e_i: energy of the initial state (in keV)
-        - e_f: energy of the final state (in keV)
-        - j  : the angular momentum of the state
-        - a  : mass number
+            ``e_i'' (:obj: `float') Energy of the initial state (in keV)
+            ``e_f'' (:obj: `float') Energy of the final state (in keV)
+            ``j''   (:obj: `int')   Angular momentum of the gamma ray
+            ``a''   (:obj: `int')   Mass number
 
 
         Returns:
@@ -44,13 +45,14 @@ class Weisskopf:
 
     def rate_elec(self, e_i, e_f, j, a):
         """
-        Calculates the transition rate between two levels where the transition is an electric multipole
+        Calculates the transition rate between two levels where 
+        the transition is an electric multipole
 
         Args:
-        - e_i: energy of the initial state (in keV)
-        - e_f: energy of the final state (in keV)
-        - j  : the angular momentum of the state
-        - a  : mass number
+            ``e_i'' (:obj: `float') Energy of the initial state (in keV)
+            ``e_f'' (:obj: `float') Energy of the final state (in keV)
+            ``j''   (:obj: `int')   Angular momentum of the gamma ray
+            ``a''   (:obj: `int')   Mass number
 
 
         Returns:
@@ -71,7 +73,19 @@ class Weisskopf:
             * GSL_CONST_NUM_ZETTA
         )
 
-    def estimate_from_ensdf(self, lvs, tran):
+    def estimate_from_ensdf(self, lvs, tran, a):
+        """
+        Calculates the Weisskopf estimate for a transition between two states.
+
+        Args:
+            ``lvs'' (:obj:`lvlspy.level.Level`) The levels of the species
+            ``tran'' (:obj: `list') An array containing all the data from ENSDF 
+            regarding a single transition
+        Returns:
+            ``ein_a'' (:obj:`float') The total estimate for the transition rate 
+            (in per second) using Weisskopf single partice estimate
+        """
+
         e_i = lvs[tran[0]].get_energy()  # upper energy level
         e_f = lvs[tran[1]].get_energy()  # lower energy level
 
@@ -80,6 +94,8 @@ class Weisskopf:
 
         p_i = lvs[tran[0]].get_properties()["parity"]  # upper level parity
         p_f = lvs[tran[1]].get_properties()["parity"]  # lower level parity
+
+        ein_a = 0
 
         if p_i == "+":
             p_i = 1
@@ -91,4 +107,51 @@ class Weisskopf:
         else:
             p_f = -1
 
-        return
+        j = range(max(1, abs(int(j_i - j_f))), j_i + j_f) #range of gamma angular momenta
+        
+        if tran[6] != '':
+            m_r = float(tran[6]) #mixing ratio
+
+        b = self._get_reduced_trans_prob(tran[15])
+        for b_i in b:
+            for jj in j:
+                if np.power(-1, jj) * p_i == p_f:
+                    if b_i
+                    ein_a += (
+                        self.rate_elec(e_i, e_f, jj, a) / 10
+                    )  # Weisskopf estimates in generally over-estimate by a factor of 10
+                else:
+                    ein_a += self.rate_mag(e_i, e_f, jj, a) / 10
+
+        return ein_a
+    
+    def _get_reduced_trans_prob(self,mod_b):
+        reduced_prob = []
+        mods = mod_b.split('$')
+        if mod_b == '':
+            reduced_prob.append(mod_b)
+            return reduced_prob
+
+        if len(mods) == 1:
+            sp_mods = mods[0].split()
+        
+            if len(sp_mods[2]) > 4:
+                reduced_prob.append(sp_mods[2])
+            else:
+                reduced_prob.append(sp_mods[2]+'='+sp_mods[4])
+        else:
+            for i in range(len(mods)):
+                sp_mods = mods[i].split()
+                if i == 0:
+                    if len(sp_mods[2]) > 4:
+                        reduced_prob.append(sp_mods[2])
+                    else:
+                        reduced_prob.append(sp_mods[2]+'='+sp_mods[4])
+                else:
+                    if len(sp_mods[0]) > 4:
+                        reduced_prob.append(sp_mods[0])
+                    else:
+                        reduced_prob.append(sp_mods[0]+'='+sp_mods[2])
+
+        return reduced_prob
+

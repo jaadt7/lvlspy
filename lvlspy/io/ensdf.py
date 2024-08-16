@@ -6,7 +6,6 @@ import re
 import math
 
 import lvlspy.level as lv
-import lvlspy.spcoll as lc
 import lvlspy.species as ls
 import lvlspy.transition as lt
 import lvlspy.calculate as calc
@@ -23,9 +22,9 @@ class ENSDF:
         Args:
             ``coll`` (:obj: `obj') The collection to be read from the ENSDF file
 
-            ``file`` (:obj:`str`) The name of the XML file from which to update.
+            ``file`` (:obj: `str`) The name of the XML file from which to update.
 
-            ``sp_list`` (:obj:`list`, optional): List of species to be read from file.
+            ``sp_list`` (:obj: `list`, optional): List of species to be read from file.
               Defaults to all species.
 
         Returns:
@@ -35,8 +34,8 @@ class ENSDF:
 
         for sp in sp_list:
             self._get_species_from_ensdf(coll, file, sp)
-    
-    def _set_level_properties(self,levels):
+
+    def _set_level_properties(self, levels):
         properties = [
             "parity",
             "energy uncertainty",
@@ -59,7 +58,7 @@ class ENSDF:
             ]
             for j in additional_properties:
                 levs[j].update_properties(j)
-        
+
         return levs
 
     def _get_species_from_ensdf(self, coll, file, sp):
@@ -80,7 +79,11 @@ class ENSDF:
 
         for tran in enumerate(transitions):
 
-            ein_a = calc.Weisskopf().estimate(lvs, tran)
+            ein_a = calc.Weisskopf().estimate_from_ensdf(lvs, tran[1], a)
+            t = lt.Transition(lvs[tran[1][0]], lvs[tran[1][1]], ein_a)
+            s.add_transition(t)
+
+        coll.add_species(s)
 
     def _get_additional_level_properties(self, line):
         delta_e = line[19:21].strip()  # energy uncertainty
@@ -149,7 +152,7 @@ class ENSDF:
         zero_counter = (
             0  # zero counter required as to only read in the adopted values
         )
-        with open(file, "r") as f:
+        with open(file, "r", encoding="utf-8") as f:
 
             for line in f:
                 # reading in level
@@ -231,13 +234,13 @@ class ENSDF:
 
         Args:
 
-        - jpi (str): specifies the j and parity of the level
+             ``jpi'' (:obj: `str'): specifies the j and parity of the level
 
         Returns:
-        - multi (int) : the multiplicity of the level. If multiplicity not clearly defined in ENSDF,
+            ``multi'' (:obj: `int') : the multiplicity of the level. If multiplicity not clearly defined in ENSDF,
                         will default to 10000
-        - parity (str): the parity of the level
-        - useable (bool): boolean if the level is useable or not depending on if jpi clearly defined
+            ``parity'' (:obj: `str'): the parity of the level
+            `` useable'' (:obj: `bool'): boolean if the level is useable or not depending on if jpi clearly defined
 
         """
         # first strip any available parentheses
@@ -295,5 +298,5 @@ class ENSDF:
 
         return [l_identifier, g_identifier, b_identifier]
 
-    def write_to_ensdf():
+    def write_to_ensdf(self):
         return
