@@ -140,6 +140,67 @@ class ENSDF:
             q,
         ]
 
+    def _read_levels(self, line, a, zero_counter):
+        energy = line[9:19].strip()
+        temp = []
+        if energy[0] in a:
+            str_dummy = energy[0] + "+"
+            energy = energy.replace(str_dummy, "")
+        if energy[-1] in a:
+            str_dummy = "+" + energy[-1]
+            energy = energy.replace(str_dummy, "")
+
+        energy = float(energy)  # strip the spaces and cast to float
+        if energy == 0.0:
+            zero_counter += 1
+        if zero_counter == 2:
+            return temp, zero_counter  # do not continue reading forward
+
+        properties = self._get_additional_level_properties(line)
+        multi, parity, useable = self._extract_multi_parity(properties[1])
+
+        temp = [
+            energy,
+            multi,
+            parity,
+        ]  # temporary dummy array for re-use
+        for prop in enumerate(properties):
+            temp.append(prop[1])
+        temp.append(useable)
+
+        return temp, zero_counter
+
+    def _read_transition(self, line, a, lvls):
+        e_g = line[9:19].strip()  # gamma ray energy
+
+        if e_g[0] in a:
+            str_dummy = e_g[0] + "+"
+            e_g = e_g.replace(str_dummy, "")
+        if e_g[-1] in a:
+            str_dummy = "+" + e_g[0]
+            e_g = e_g.replace(str_dummy, "")
+
+        if e_g.isalpha() or e_g == "":
+            e_g = str(0)
+
+        e_g = float(e_g)
+
+        for i, lev in enumerate(lvls):
+            if math.isclose(
+                abs(e_g - (lvls[-1][0] - lev[0])),
+                0.0,
+                abs_tol=1.0,
+            ):
+                index = i
+                break
+
+        temp = [len(lvls) - 1, index, e_g]
+        properties = self._get_additional_gamma_properties(line)
+        for prop in enumerate(properties):
+            temp.append(prop[1])
+        temp.append("")
+        return temp
+
     def _get_level_and_transition_data(self, file, identifiers):
 
         lvls = (
@@ -156,71 +217,18 @@ class ENSDF:
 
             for line in f:
                 # reading in level
+
                 if line.startswith(identifiers[0]):
-                    energy = line[9:19].strip()
-                    if energy[0] in a:
-                        str_dummy = energy[0] + "+"
-                        energy = energy.replace(str_dummy, "")
-                    if energy[-1] in a:
-                        str_dummy = "+" + energy[-1]
-                        energy = energy.replace(str_dummy, "")
-
-                    energy = float(
-                        energy
-                    )  # strip the spaces and cast to float
-                    if energy == 0.0:
-                        zero_counter += 1
-                    if zero_counter == 2:
-                        break  # do not continue reading forward
-
-                    properties = self._get_additional_level_properties(line)
-                    multi, parity, useable = self._extract_multi_parity(
-                        properties[1]
+                    temp, zero_counter = self._read_levels(
+                        line, a, zero_counter
                     )
-
-                    temp = [
-                        energy,
-                        multi,
-                        parity,
-                    ]  # temporary dummy array for re-use
-                    for i in range(len(properties)):
-                        temp.append(properties[i])
-                    temp.append(useable)
-
                     lvls.append(temp)
-
+                if zero_counter == 2:
+                    break
                 # reading in gamma info
 
                 if line.startswith(identifiers[1]):
-
-                    e_g = line[9:19].strip()  # gamma ray energy
-
-                    if e_g[0] in a:
-                        str_dummy = e_g[0] + "+"
-                        e_g = e_g.replace(str_dummy, "")
-                    if e_g[-1] in a:
-                        str_dummy = "+" + e_g[0]
-                        e_g = e_g.replace(str_dummy, "")
-
-                    if e_g.isalpha() or e_g == "":
-                        e_g = str(0)
-
-                    e_g = float(e_g)
-
-                    for i in range(len(lvls)):
-                        if math.isclose(
-                            abs(e_g - (lvls[-1][0] - lvls[i][0])),
-                            0.0,
-                            abs_tol=1.0,
-                        ):
-                            index = i
-                            break
-
-                    temp = [len(lvls) - 1, index, e_g]
-                    properties = self._get_additional_gamma_properties(line)
-                    for i in range(len(properties)):
-                        temp.append(properties[i])
-                    temp.append("")
+                    temp = self._read_transition(line, a, lvls)
                     trans.append(temp)
 
                 if line.startswith(identifiers[2]):
@@ -237,10 +245,10 @@ class ENSDF:
              ``jpi'' (:obj: `str'): specifies the j and parity of the level
 
         Returns:
-            ``multi'' (:obj: `int') : the multiplicity of the level. If multiplicity not clearly 
+            ``multi'' (:obj: `int') : the multiplicity of the level. If multiplicity not clearly
             defined in ENSDF, will default to 10000
             ``parity'' (:obj: `str'): the parity of the level
-            `` useable'' (:obj: `bool'): boolean if the level is useable or not depending 
+            `` useable'' (:obj: `bool'): boolean if the level is useable or not depending
             on if jpi clearly defined
 
         """
@@ -256,11 +264,11 @@ class ENSDF:
         else:
             if "+" not in jpi and "-" not in jpi:
                 parity = "+"
-                multi = int(2 * eval(jpi) + 1)
+                multi = int(2 * self._evaluate_expression(jpi) + 1)
                 useable = True
             else:
                 parity = jpi[-1]
-                multi = int(2 * eval(jpi[0:-1]) + 1)
+                multi = int(2 * self._evaluate_expression(jpi[0:-1]) + 1)
                 useable = True
 
         return multi, parity, useable
@@ -304,3 +312,25 @@ class ENSDF:
         Method that writes a collection of species to ENSDF format
         """
         return
+
+    def _evaluate_expression(self, expression):
+        # Extract numbers and operators from the expression string
+        elements = re.findall(r"(\d+|\+|\-|\*|\/)", expression)
+
+        # Initialize the result to the first number
+        result = int(elements[0])
+
+        # Apply each operator to the previous result and the current number
+        for i in range(1, len(elements), 2):
+            operator = elements[i]
+            num = int(elements[i + 1])
+            if operator == "+":
+                result += num
+            elif operator == "-":
+                result -= num
+            elif operator == "*":
+                result *= num
+            elif operator == "/":
+                result /= num
+
+        return result

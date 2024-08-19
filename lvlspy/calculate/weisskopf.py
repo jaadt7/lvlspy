@@ -132,7 +132,11 @@ class Weisskopf:
                     if b[i_e][1] == "E" and int(b[i_e][2]) == jj:
                         b_1 = float(b[i_e][5 : len(b[i_e])])
                         if b[i_e][1:3] == "E2" and tran[6] != "":
-                            b_1 = b_1 * np.power(m_r, 2) / (1.0 + np.power(m_r, 2))
+                            b_1 = (
+                                b_1
+                                * np.power(m_r, 2)
+                                / (1.0 + np.power(m_r, 2))
+                            )
                     ein_a += (
                         self.rate_elec(e_i, e_f, jj, a) * b_1
                     )  # Weisskopf estimates in generally over-estimate by a factor of 10
