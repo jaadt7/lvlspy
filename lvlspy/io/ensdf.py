@@ -237,10 +237,11 @@ class ENSDF:
              ``jpi'' (:obj: `str'): specifies the j and parity of the level
 
         Returns:
-            ``multi'' (:obj: `int') : the multiplicity of the level. If multiplicity not clearly defined in ENSDF,
-                        will default to 10000
+            ``multi'' (:obj: `int') : the multiplicity of the level. If multiplicity not clearly 
+            defined in ENSDF, will default to 10000
             ``parity'' (:obj: `str'): the parity of the level
-            `` useable'' (:obj: `bool'): boolean if the level is useable or not depending on if jpi clearly defined
+            `` useable'' (:obj: `bool'): boolean if the level is useable or not depending 
+            on if jpi clearly defined
 
         """
         # first strip any available parentheses
@@ -299,4 +300,7 @@ class ENSDF:
         return [l_identifier, g_identifier, b_identifier]
 
     def write_to_ensdf(self):
+        """
+        Method that writes a collection of species to ENSDF format
+        """
         return

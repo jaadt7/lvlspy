@@ -9,9 +9,9 @@ Version 3.1.0
 
 New:
 
-  * Modularized the IO for various fomats have been setup. Currently ENSDF and XML are
+  * Modularized the IO for various formats have been setup. Currently ENSDF and XML are
     supported.
-  
+  * Added calculations module to evolve a system and calculate Weisskopf estimates
 
 Version 3.0.3
 -------------

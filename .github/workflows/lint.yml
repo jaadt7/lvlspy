@@ -20,4 +20,4 @@ jobs:
           pip install pylint numpy gslconsts lxml
       - name: run linter
         run: |
-          pylint --extension-pkg-whitelist=lxml.etree --fail-under=9.9 lvlspy/*.py lvlspy/io/*.py
+          pylint --extension-pkg-whitelist=lxml.etree --fail-under=9.9 lvlspy/*.py lvlspy/io/*.py lvlspy/calculate/*.py
