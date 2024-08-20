@@ -252,6 +252,14 @@ class Species(lp.Properties):
         for transition in transitions:
             i_upper = levels.index(transition.get_upper_level())
             i_lower = levels.index(transition.get_lower_level())
+            if (
+                "useable" in levels[i_upper].get_properties()
+                and levels[i_upper].get_properties()["useable"] is False
+            ) or (
+                "useable" in levels[i_lower].get_properties()
+                and levels[i_lower].get_properties()["useable"] is False
+            ):
+                continue
 
             r_upper_to_lower = transition.compute_upper_to_lower_rate(
                 temperature

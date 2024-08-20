@@ -86,69 +86,86 @@ class Weisskopf:
             (in per second) using Weisskopf single partice estimate
         """
 
-        #e_i = lvs[tran[0]].get_energy()  # upper energy level
-        #e_f = lvs[tran[1]].get_energy()  # lower energy level
-        e = [lvs[tran[0]].get_energy(),lvs[tran[1]].get_energy()]
-        #j_i = (lvs[tran[0]].get_multiplicity() - 1) / 2  # J of upper level
-        #j_f = (lvs[tran[1]].get_multiplicity() - 1) / 2  # J of lower level
-        j = [(lvs[tran[0]].get_multiplicity() - 1) / 2,
-             (lvs[tran[1]].get_multiplicity() - 1) / 2]
-        #p_i = lvs[tran[0]].get_properties()["parity"]  # upper level parity
-        #p_f = lvs[tran[1]].get_properties()["parity"]  # lower level parity
-        p = [lvs[tran[0]].get_properties()["parity"],lvs[tran[1]].get_properties()["parity"]]
+        e = [lvs[tran[0]].get_energy(), lvs[tran[1]].get_energy()]
+        j = [
+            (lvs[tran[0]].get_multiplicity() - 1) / 2,
+            (lvs[tran[1]].get_multiplicity() - 1) / 2,
+        ]
+        p = [
+            lvs[tran[0]].get_properties()["parity"],
+            lvs[tran[1]].get_properties()["parity"],
+        ]
         ein_a = 0
 
-        if p_i == "+":
-            p_i = 1
+        if p[0] == "+":
+            p[0] = 1
         else:
-            p_i = -1
+            p[0] = -1
 
-        if p_f == "+":
-            p_f = 1
+        if p[1] == "+":
+            p[1] = 1
         else:
-            p_f = -1
+            p[1] = -1
 
         j = range(
-            max(1, abs(int(j_i - j_f))), j_i + j_f
+            max(1, abs(int(j[0] - j[1]))), j[0] + j[1]
         )  # range of gamma angular momenta
         m_r = 0
         if tran[6] != "":
             m_r = float(tran[6])  # mixing ratio
 
         b = self._get_reduced_trans_prob(tran[15])
-        i_e = np.where(np.strings.find(b, "E") == 1)[0][0]
-        i_b = np.where(np.strings.find(b, "M") == 1)[0][0]
+        i_tran = [
+            np.where(np.strings.find(b, "E") == 1)[0][0],
+            np.where(np.strings.find(b, "M") == 1)[0][0],
+        ]  # first is electric,
+        # second is magnetic
         if tran[15] == "":
             for jj in j:
-                if np.power(-1, jj) * p_i == p_f:
-                    ein_a += (
-                        self.rate_elec(e_i, e_f, jj, a) / 10
-                    )  # Weisskopf estimates in generally over-estimate by a factor of 10
-                else:
-                    ein_a += self.rate_mag(e_i, e_f, jj, a) / 10
+                ein_a += self._get_rate(jj, p, e, a)
+
         else:
             for jj in j:
-                b_1 = 1
-                if np.power(-1, jj) * p_i == p_f:
-                    if b[i_e][1] == "E" and int(b[i_e][2]) == jj:
-                        b_1 = float(b[i_e][5 : len(b[i_e])])
-                        if b[i_e][1:3] == "E2" and tran[6] != "":
-                            b_1 = (
-                                b_1
-                                * np.power(m_r, 2)
-                                / (1.0 + np.power(m_r, 2))
-                            )
-                    ein_a += (
-                        self.rate_elec(e_i, e_f, jj, a) * b_1
-                    )  # Weisskopf estimates in generally over-estimate by a factor of 10
-                else:
-                    if b[i_b][1] == "M" and int(b[i_b][2]) == jj:
-                        b_1 = float(b[i_b][5 : len(b[i_b])])
-                        if b[i_b][1:3] == "M1" and tran[6] != "":
-                            b_1 = b_1 / (1.0 + np.power(m_r, 2))
-                    ein_a += self.rate_mag(e_i, e_f, jj, a) * b_1
+                ein_a += self._get_adjusted_rate(
+                    jj, p, e, [a, b, i_tran, m_r, tran]
+                )
 
         return ein_a
+
+    def _get_adjusted_rate(self, jj, p, e, arr):
+        a = arr[0]
+        b = arr[1]
+        i_tran = arr[2]
+        m_r = arr[3]
+        tran = arr[4]
+        b_1 = 1
+        dummy = 0
+        if np.power(-1, jj) * p[0] == p[1]:
+            if b[i_tran[0]][1] == "E" and int(b[i_tran[0]][2]) == jj:
+                b_1 = float(b[i_tran[0]][5 : len(b[i_tran[0]])])
+                if b[i_tran[0]][1:3] == "E2" and tran[6] != "":
+                    b_1 = b_1 * np.power(m_r, 2) / (1.0 + np.power(m_r, 2))
+            dummy += self.rate_elec(e[0], e[1], jj, a) * b_1
+        else:
+            if b[i_tran[1]][1] == "M" and int(b[i_tran[1]][2]) == jj:
+                b_1 = float(b[i_tran[1]][5 : len(b[i_tran[1]])])
+                if b[i_tran[1]][1:3] == "M1" and tran[6] != "":
+                    b_1 = b_1 / (1.0 + np.power(m_r, 2))
+                dummy += self.rate_mag(e[0], e[1], jj, a) * b_1
+
+        return dummy
+
+    def _get_rate(self, jj, p, e, a):
+        dummy = 0.0
+        if np.power(-1, jj) * p[0] == p[1]:
+            dummy += (
+                self.rate_elec(e[0], e[1], jj, a) / 10
+            )  # Weisskopf estimates in generally over-estimate by a factor of 10
+        else:
+            dummy += (
+                self.rate_mag(e[0], e[1], jj, a) / 10
+            )  # Weisskopf estimates in generally over-estimate by a factor of 10
+        return dummy
 
     def _get_reduced_trans_prob(self, mod_b):
         reduced_prob = []
@@ -165,7 +182,7 @@ class Weisskopf:
             else:
                 reduced_prob.append(sp_mods[2] + "=" + sp_mods[4])
         else:
-            for i,m in enumerate(mods):
+            for i, m in enumerate(mods):
                 sp_mods = m.split()
                 if i == 0:
                     if len(sp_mods[2]) > 4:
