@@ -22,10 +22,10 @@ class ENSDF:
         Args:
             ``coll`` (:obj: `obj') The collection to be read from the ENSDF file
 
-            ``file`` (:obj: `str`) The name of the XML file from which to update.
+            ``file`` (:obj: `str`) The name of the ENSDF file from which to update from.
 
-            ``sp_list`` (:obj: `list`, optional): List of species to be read from file.
-              Defaults to all species.
+            ``sp_list`` (:obj: `list`): List of species to be read from file.
+              
 
         Returns:
             On successful return, the species collection has been updated.
@@ -81,6 +81,7 @@ class ENSDF:
 
             ein_a = calc.Weisskopf().estimate_from_ensdf(lvs, tran[1], a)
             t = lt.Transition(lvs[tran[1][0]], lvs[tran[1][1]], ein_a)
+            t.update_properties(self._set_transition_properites(tran))
             s.add_transition(t)
 
         coll.add_species(s)
@@ -303,15 +304,9 @@ class ENSDF:
 
         b_identifier = (
             identifier + "B "
-        )  # reduces transition probability identifier
+        )  # reduced transition probability identifier
 
         return [l_identifier, g_identifier, b_identifier]
-
-    def write_to_ensdf(self):
-        """
-        Method that writes a collection of species to ENSDF format
-        """
-        return
 
     def _evaluate_expression(self, expression):
         # Extract numbers and operators from the expression string
@@ -334,3 +329,33 @@ class ENSDF:
                 result /= num
 
         return result
+
+    def write_to_ensdf(self,coll,file):
+        """
+        Method that writes a collection of species to ENSDF format
+
+        Args:
+            ``coll`` (:obj: `lvlspy.spcoll.SpColl`) The collection to be written to file. 
+            Each species in the collection must have the species' name, level and gamma 
+             properties must be within ENSDF spec
+
+        Returns:
+            On successful return, the species collection has been written
+        """
+
+        with open(file,'x',encoding="utf-8") as file:
+            for sp in coll.get():
+                match = re.search(r"\d+", sp)
+                a = int(match.group())  # mass number
+                identifiers = self._get_file_sp_and_identifiers(match, sp, a)
+                levels = sp.get_levels()
+                transitions = sp.get_transitions()
+                for lev in levels:
+                    line = self._construct_level_line(lev,identifiers)
+                    file.write(line + '\n')
+                    linked_levels = sp.get_lower_linked_levels(lev)
+                    if linked_levels != []:
+                        for l_lev in linked_levels:
+                            line = self._construct_gamma_line(lev,l_lev,transitions,identifiers)
+                            file.write(line + '\n')
+                
