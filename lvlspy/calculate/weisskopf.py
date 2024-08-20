@@ -86,15 +86,16 @@ class Weisskopf:
             (in per second) using Weisskopf single partice estimate
         """
 
-        e_i = lvs[tran[0]].get_energy()  # upper energy level
-        e_f = lvs[tran[1]].get_energy()  # lower energy level
-
-        j_i = (lvs[tran[0]].get_multiplicity() - 1) / 2  # J of upper level
-        j_f = (lvs[tran[1]].get_multiplicity() - 1) / 2  # J of lower level
-
-        p_i = lvs[tran[0]].get_properties()["parity"]  # upper level parity
-        p_f = lvs[tran[1]].get_properties()["parity"]  # lower level parity
-
+        #e_i = lvs[tran[0]].get_energy()  # upper energy level
+        #e_f = lvs[tran[1]].get_energy()  # lower energy level
+        e = [lvs[tran[0]].get_energy(),lvs[tran[1]].get_energy()]
+        #j_i = (lvs[tran[0]].get_multiplicity() - 1) / 2  # J of upper level
+        #j_f = (lvs[tran[1]].get_multiplicity() - 1) / 2  # J of lower level
+        j = [(lvs[tran[0]].get_multiplicity() - 1) / 2,
+             (lvs[tran[1]].get_multiplicity() - 1) / 2]
+        #p_i = lvs[tran[0]].get_properties()["parity"]  # upper level parity
+        #p_f = lvs[tran[1]].get_properties()["parity"]  # lower level parity
+        p = [lvs[tran[0]].get_properties()["parity"],lvs[tran[1]].get_properties()["parity"]]
         ein_a = 0
 
         if p_i == "+":
@@ -164,8 +165,8 @@ class Weisskopf:
             else:
                 reduced_prob.append(sp_mods[2] + "=" + sp_mods[4])
         else:
-            for i in range(len(mods)):
-                sp_mods = mods[i].split()
+            for i,m in enumerate(mods):
+                sp_mods = m.split()
                 if i == 0:
                     if len(sp_mods[2]) > 4:
                         reduced_prob.append(sp_mods[2])
