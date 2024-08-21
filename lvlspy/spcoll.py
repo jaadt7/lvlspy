@@ -113,8 +113,7 @@ class SpColl(lp.Properties):
         Args:
             ``file`` (:obj: `str`) The name of ENSDF file from which to update
 
-            ``sp_list (:obj: `list`) List of strings to select species. Must be in
-            libnucnet format. i.e. al26 instead of 26AL.
+            ``sp_list (:obj: `list`) List of strings to select species.
 
         Returns:
             On successful return, the species collection has been updated.
@@ -123,14 +122,14 @@ class SpColl(lp.Properties):
 
         lio.ENSDF().update_from_ensdf(self, file, sp_list)
 
-    def write_to_ensdf(self,file_name):
+    def write_to_ensdf(self, file_name):
         """Link to write a species collection to an ENSDF file
 
         Args:
             ``file_name`` (:obj:'str') The name of ENSDF file to be written to.
-        
+
         Returns:
             On successful return, the species collection has been written
-        
+
         """
-        lio.ENSDF().write_to_ensdf(self,file_name)
+        lio.ENSDF().write_to_ensdf(self, file_name)

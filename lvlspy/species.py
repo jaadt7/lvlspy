@@ -44,6 +44,18 @@ class Species(lp.Properties):
 
         return self.name
 
+    def update_name(self, name):
+        """Change the name of the species.
+
+        Args:
+            ``name`` (:obj:`string`) The new name of the species
+
+        Return:
+            On successful return, the species' name has been updated
+        """
+
+        self.name = name
+
     def add_level(self, level):
         """Method to add a level to a species.
 

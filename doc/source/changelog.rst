@@ -9,9 +9,12 @@ Version 3.1.0
 
 New:
 
-  * Modularized the IO for various formats have been setup. Currently ENSDF and XML are
+  * Added and modularized the IO for various formats have been setup. Currently ENSDF and XML are
     supported.
   * Added calculations module to evolve a system and calculate Weisskopf estimates
+  * Added feature in species to change the name of a species. Particularly helpful when going
+    between formats.
+  * Added check for useable level when calculating rate matrix. 
 
 Version 3.0.3
 -------------

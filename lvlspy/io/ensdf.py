@@ -25,7 +25,7 @@ class ENSDF:
             ``file`` (:obj: `str`) The name of the ENSDF file from which to update from.
 
             ``sp_list`` (:obj: `list`): List of species to be read from file.
-              
+
 
         Returns:
             On successful return, the species collection has been updated.
@@ -51,13 +51,14 @@ class ENSDF:
             "useability",
         ]
         levs = []
-        for l in enumerate(levels):  # setting the level with properties
-            levs.append(lv.Level(l[1][0], l[1][1]))
+        for i, l in enumerate(levels):  # setting the level with properties
+
+            levs.append(lv.Level(l[0], l[1]))
             additional_properties = [
-                {key, value} for key, value in zip(properties, l[1][2:-1])
+                {key: value} for key, value in zip(properties, l[2:-1])
             ]
             for j in additional_properties:
-                levs[j].update_properties(j)
+                levs[i].update_properties(j)
 
         return levs
 
@@ -78,13 +79,40 @@ class ENSDF:
         lvs = s.get_levels()
 
         for tran in enumerate(transitions):
-
+            if tran[1][1] == -1:
+                continue
+            
             ein_a = calc.Weisskopf().estimate_from_ensdf(lvs, tran[1], a)
             t = lt.Transition(lvs[tran[1][0]], lvs[tran[1][1]], ein_a)
-            t.update_properties(self._set_transition_properites(tran))
+            t = self._set_transition_properties(t, tran[1])
             s.add_transition(t)
 
         coll.add_species(s)
+
+    def _set_transition_properties(self, t, tran):
+        properties = [
+            "E_gamma",               
+            "Delta_E",
+            "Relative_Total_Intensity",
+            "Relative_Total_Intensity_Uncertainty",
+            "Transition_Multipolarity",
+            "Mixing_Ratio",
+            "Mixing_Ratio_Uncertainty",
+            "Total_Conversion_Coefficient",
+            "Total_Conversion_Coefficient_Uncertainty",
+            "Relative_Total_Transition_Intensity",
+            "Relative_Total_Transition_Intensity_Uncertainty",
+            "Comment",
+            "Coincidence",
+            "Question",
+            "Reduced_Matrix_Coefficient",
+        ]
+        add_properties = [
+            {key: value} for key, value in zip(properties, tran[2:-1])
+        ]
+        for j in add_properties:
+            t.update_properties(j)
+        return t
 
     def _get_additional_level_properties(self, line):
         delta_e = line[19:21].strip()  # energy uncertainty
@@ -155,7 +183,7 @@ class ENSDF:
         if energy == 0.0:
             zero_counter += 1
         if zero_counter == 2:
-            return temp, zero_counter  # do not continue reading forward
+            return temp,zero_counter
 
         properties = self._get_additional_level_properties(line)
         multi, parity, useable = self._extract_multi_parity(properties[1])
@@ -185,8 +213,9 @@ class ENSDF:
             e_g = str(0)
 
         e_g = float(e_g)
-
+        index = -1
         for i, lev in enumerate(lvls):
+          
             if math.isclose(
                 abs(e_g - (lvls[-1][0] - lev[0])),
                 0.0,
@@ -215,17 +244,21 @@ class ENSDF:
             0  # zero counter required as to only read in the adopted values
         )
         with open(file, "r", encoding="utf-8") as f:
-
+            
             for line in f:
                 # reading in level
-
+                
                 if line.startswith(identifiers[0]):
                     temp, zero_counter = self._read_levels(
                         line, a, zero_counter
                     )
                     lvls.append(temp)
+
                 if zero_counter == 2:
+                    lvls.pop(-1)
                     break
+                
+
                 # reading in gamma info
 
                 if line.startswith(identifiers[1]):
@@ -330,32 +363,86 @@ class ENSDF:
 
         return result
 
-    def write_to_ensdf(self,coll,file):
+    def write_to_ensdf(self, coll, file):
         """
         Method that writes a collection of species to ENSDF format
 
         Args:
-            ``coll`` (:obj: `lvlspy.spcoll.SpColl`) The collection to be written to file. 
-            Each species in the collection must have the species' name, level and gamma 
+            ``coll`` (:obj: `lvlspy.spcoll.SpColl`) The collection to be written to file.
+            Each species in the collection must have the species' name, level and gamma
              properties must be within ENSDF spec
 
         Returns:
             On successful return, the species collection has been written
         """
 
-        with open(file,'x',encoding="utf-8") as file:
+        with open(file, "a", encoding="utf-8") as f:
             for sp in coll.get():
                 match = re.search(r"\d+", sp)
                 a = int(match.group())  # mass number
                 identifiers = self._get_file_sp_and_identifiers(match, sp, a)
-                levels = sp.get_levels()
-                transitions = sp.get_transitions()
+                levels = coll.get()[sp].get_levels()
                 for lev in levels:
-                    line = self._construct_level_line(lev,identifiers)
-                    file.write(line + '\n')
-                    linked_levels = sp.get_lower_linked_levels(lev)
+                    line = self._construct_level_line(lev, identifiers)
+                    f.write(line + "\n")
+                    linked_levels = coll.get()[sp].get_lower_linked_levels(lev)
                     if linked_levels != []:
                         for l_lev in linked_levels:
-                            line = self._construct_gamma_line(lev,l_lev,transitions,identifiers)
-                            file.write(line + '\n')
-                
+                            transition = coll.get()[sp].get_level_to_level_transition(
+                                lev, l_lev
+                            )
+                            line = self._construct_gamma_line(
+                                transition, identifiers
+                            )
+                            f.write(line + "\n")
+
+    def _construct_level_line(self, lev, identifiers):
+        energy = lev.get_energy()
+        properties = lev.get_properties()
+
+        s = " " * 80
+        s_list = list(s)
+
+        s_list[0:8] = identifiers[0]
+        s_list[9:19] = str(energy)
+        s_list[19:21] = str(properties["energy uncertainty"])
+        s_list[21:39] = str(properties["j^pi"])
+        s_list[39:49] = str(properties["half life"])
+        s_list[49:55] = str(properties["half life uncertainty"])
+        s_list[55:64] = str(properties["angular momentum transfer"])
+        s_list[64:74] = str(properties["spectroscopic strength"])
+        s_list[74:76] = str(properties["spectroscopic strength uncertainty"])
+        #s_list[76] = str(properties["Comment flag"])
+        s_list[77:79] = str(properties["isomer state"])
+        #s_list[79] = str(properties["questionable character"])
+
+        s = "".join(s_list)
+        return s
+
+    def _construct_gamma_line(self, transition, identifiers):
+
+        s = " " * 80
+        s_list = list(s)
+
+        prop = transition.get_properties()
+        s_list[0:8] = identifiers[1]
+        s_list[9:19] = str(prop["E_gamma"])
+        s_list[19:21] = str(prop["Delta_E"])
+        s_list[21:29] = str(prop["Relative_Total_Intensity"])
+        s_list[29:31] = str(prop["Relative_Total_Intensity_Uncertainty"])
+        s_list[31:41] = str(prop["Transition_Multipolarity"])
+        s_list[41:49] = str(prop["Mixing_Ratio"])
+        s_list[49:55] = str(prop["Mixing_Ratio_Uncertainty"])
+        s_list[55:62] = str(prop["Total_Conversion_Coefficient"])
+        s_list[62:64] = str(prop["Total_Conversion_Coefficient_Uncertainty"])
+        s_list[64:74] = str(prop["Relative_Total_Transition_Intensity"])
+        s_list[74:76] = str(
+            prop["Relative_Total_Transition_Intensity_Uncertainty"]
+        )
+       # s_list[76] = str(prop["Comment"])
+        #s_list[77] = str(prop["Coincidence"])
+        #s_list[79] = str(prop["Question"])
+
+        s = "".join(s_list)
+
+        return s

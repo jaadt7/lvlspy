@@ -88,8 +88,8 @@ class Weisskopf:
 
         e = [lvs[tran[0]].get_energy(), lvs[tran[1]].get_energy()]
         j = [
-            (lvs[tran[0]].get_multiplicity() - 1) / 2,
-            (lvs[tran[1]].get_multiplicity() - 1) / 2,
+            int((lvs[tran[0]].get_multiplicity() - 1) / 2),
+            int((lvs[tran[1]].get_multiplicity() - 1) / 2),
         ]
         p = [
             lvs[tran[0]].get_properties()["parity"],
@@ -107,25 +107,31 @@ class Weisskopf:
         else:
             p[1] = -1
 
-        j = range(
+        j_range = range(
             max(1, abs(int(j[0] - j[1]))), j[0] + j[1]
         )  # range of gamma angular momenta
         m_r = 0
-        if tran[6] != "":
-            m_r = float(tran[6])  # mixing ratio
+        
+        if tran[7] != "":
+            m_r = float(tran[7])  # mixing ratio
 
-        b = self._get_reduced_trans_prob(tran[15])
+        b = self._get_reduced_trans_prob(tran[16])
         i_tran = [
-            np.where(np.strings.find(b, "E") == 1)[0][0],
-            np.where(np.strings.find(b, "M") == 1)[0][0],
+            np.where(np.strings.find(b, "E") == 1)[0],
+            np.where(np.strings.find(b, "M") == 1)[0],
         ]  # first is electric,
         # second is magnetic
-        if tran[15] == "":
-            for jj in j:
+        for c,i in enumerate(i_tran):
+            if len(i) == 0:
+                i = np.array([-1])
+                i_tran[c] = i   
+        
+        if tran[16] == "":
+            for jj in j_range:
                 ein_a += self._get_rate(jj, p, e, a)
 
         else:
-            for jj in j:
+            for jj in j_range:
                 ein_a += self._get_adjusted_rate(
                     jj, p, e, [a, b, i_tran, m_r, tran]
                 )
@@ -140,16 +146,18 @@ class Weisskopf:
         tran = arr[4]
         b_1 = 1
         dummy = 0
+        print(i_tran)
+        
         if np.power(-1, jj) * p[0] == p[1]:
-            if b[i_tran[0]][1] == "E" and int(b[i_tran[0]][2]) == jj:
-                b_1 = float(b[i_tran[0]][5 : len(b[i_tran[0]])])
-                if b[i_tran[0]][1:3] == "E2" and tran[6] != "":
+            if b[int(i_tran[0])][1] == "E" and int(b[int(i_tran[0])][2]) == jj:
+                b_1 = float(b[int(i_tran[0])][5 : len(b[int(i_tran[0])])])
+                if b[int(i_tran[0])][1:3] == "E2" and tran[7] != "":
                     b_1 = b_1 * np.power(m_r, 2) / (1.0 + np.power(m_r, 2))
             dummy += self.rate_elec(e[0], e[1], jj, a) * b_1
         else:
-            if b[i_tran[1]][1] == "M" and int(b[i_tran[1]][2]) == jj:
-                b_1 = float(b[i_tran[1]][5 : len(b[i_tran[1]])])
-                if b[i_tran[1]][1:3] == "M1" and tran[6] != "":
+            if b[int(i_tran[1])][1] == "M" and int(b[int(i_tran[1])][2]) == jj:
+                b_1 = float(b[int(i_tran[1])][5 : len(b[int(i_tran[1])])])
+                if b[int(i_tran[1])][1:3] == "M1" and tran[7] != "":
                     b_1 = b_1 / (1.0 + np.power(m_r, 2))
                 dummy += self.rate_mag(e[0], e[1], jj, a) * b_1
 
