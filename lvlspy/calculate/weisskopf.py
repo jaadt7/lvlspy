@@ -111,7 +111,7 @@ class Weisskopf:
             max(1, abs(int(j[0] - j[1]))), j[0] + j[1]
         )  # range of gamma angular momenta
         m_r = 0
-        
+
         if tran[7] != "":
             m_r = float(tran[7])  # mixing ratio
 
@@ -121,11 +121,11 @@ class Weisskopf:
             np.where(np.strings.find(b, "M") == 1)[0],
         ]  # first is electric,
         # second is magnetic
-        for c,i in enumerate(i_tran):
+        for c, i in enumerate(i_tran):
             if len(i) == 0:
                 i = np.array([-1])
-                i_tran[c] = i   
-        
+                i_tran[c] = i
+
         if tran[16] == "":
             for jj in j_range:
                 ein_a += self._get_rate(jj, p, e, a)
@@ -146,8 +146,7 @@ class Weisskopf:
         tran = arr[4]
         b_1 = 1
         dummy = 0
-        print(i_tran)
-        
+
         if np.power(-1, jj) * p[0] == p[1]:
             if b[int(i_tran[0])][1] == "E" and int(b[int(i_tran[0])][2]) == jj:
                 b_1 = float(b[int(i_tran[0])][5 : len(b[int(i_tran[0])])])

@@ -81,7 +81,7 @@ class ENSDF:
         for tran in enumerate(transitions):
             if tran[1][1] == -1:
                 continue
-            
+
             ein_a = calc.Weisskopf().estimate_from_ensdf(lvs, tran[1], a)
             t = lt.Transition(lvs[tran[1][0]], lvs[tran[1][1]], ein_a)
             t = self._set_transition_properties(t, tran[1])
@@ -91,7 +91,7 @@ class ENSDF:
 
     def _set_transition_properties(self, t, tran):
         properties = [
-            "E_gamma",               
+            "E_gamma",
             "Delta_E",
             "Relative_Total_Intensity",
             "Relative_Total_Intensity_Uncertainty",
@@ -183,7 +183,7 @@ class ENSDF:
         if energy == 0.0:
             zero_counter += 1
         if zero_counter == 2:
-            return temp,zero_counter
+            return temp, zero_counter
 
         properties = self._get_additional_level_properties(line)
         multi, parity, useable = self._extract_multi_parity(properties[1])
@@ -215,7 +215,7 @@ class ENSDF:
         e_g = float(e_g)
         index = -1
         for i, lev in enumerate(lvls):
-          
+
             if math.isclose(
                 abs(e_g - (lvls[-1][0] - lev[0])),
                 0.0,
@@ -244,10 +244,10 @@ class ENSDF:
             0  # zero counter required as to only read in the adopted values
         )
         with open(file, "r", encoding="utf-8") as f:
-            
+
             for line in f:
                 # reading in level
-                
+
                 if line.startswith(identifiers[0]):
                     temp, zero_counter = self._read_levels(
                         line, a, zero_counter
@@ -257,7 +257,6 @@ class ENSDF:
                 if zero_counter == 2:
                     lvls.pop(-1)
                     break
-                
 
                 # reading in gamma info
 
@@ -376,7 +375,7 @@ class ENSDF:
             On successful return, the species collection has been written
         """
 
-        with open(file, "a", encoding="utf-8") as f:
+        with open(file, "w", encoding="utf-8") as f:
             for sp in coll.get():
                 match = re.search(r"\d+", sp)
                 a = int(match.group())  # mass number
@@ -388,9 +387,9 @@ class ENSDF:
                     linked_levels = coll.get()[sp].get_lower_linked_levels(lev)
                     if linked_levels != []:
                         for l_lev in linked_levels:
-                            transition = coll.get()[sp].get_level_to_level_transition(
-                                lev, l_lev
-                            )
+                            transition = coll.get()[
+                                sp
+                            ].get_level_to_level_transition(lev, l_lev)
                             line = self._construct_gamma_line(
                                 transition, identifiers
                             )
@@ -400,49 +399,74 @@ class ENSDF:
         energy = lev.get_energy()
         properties = lev.get_properties()
 
+        props = {
+            "energy_uncertainty": [19, 21],
+            "j^pi": [21, 39],
+            "half life": [39, 49],
+            "half life uncertainty": [49, 55],
+            "angular momentum transfer": [55, 64],
+            "spectroscopic strength": [64, 74],
+            "spectroscopic strength uncertainty": [74, 76],
+            "Comment flag": [76],
+            "isomer state": [77, 79],
+            "questionable character": [79],
+        }
+
         s = " " * 80
-        s_list = list(s)
+        s = identifiers[0] + s[8:]
+        s = s[:9] + str(energy).center(19 - 9) + s[19:]
+        for key, indices in props.items():
+            if key in properties and len(indices) == 2:
+                s = (
+                    s[: indices[0]]
+                    + str(properties[key]).center(indices[1] - indices[0])
+                    + s[indices[1] :]
+                )
+            if key in properties and len(indices) == 1:
+                s = (
+                    s[: indices[0]]
+                    + str(properties[key])
+                    + s[indices[0] + 1 :]
+                )
 
-        s_list[0:8] = identifiers[0]
-        s_list[9:19] = str(energy)
-        s_list[19:21] = str(properties["energy uncertainty"])
-        s_list[21:39] = str(properties["j^pi"])
-        s_list[39:49] = str(properties["half life"])
-        s_list[49:55] = str(properties["half life uncertainty"])
-        s_list[55:64] = str(properties["angular momentum transfer"])
-        s_list[64:74] = str(properties["spectroscopic strength"])
-        s_list[74:76] = str(properties["spectroscopic strength uncertainty"])
-        #s_list[76] = str(properties["Comment flag"])
-        s_list[77:79] = str(properties["isomer state"])
-        #s_list[79] = str(properties["questionable character"])
-
-        s = "".join(s_list)
         return s
 
     def _construct_gamma_line(self, transition, identifiers):
 
+        props = {
+            "E_gamma": [9, 19],
+            "Delta_E": [19, 21],
+            "Relative_Total_Intensity": [21, 29],
+            "Relative_Total_Intensity_Uncertainty": [29, 31],
+            "Transition_Multipolarity": [31, 41],
+            "Mixing_Ratio": [41, 49],
+            "Mixing_Ratio_Uncertainty": [49, 55],
+            "Total_Conversion_Coefficient": [55, 62],
+            "Total_Conversion_Coefficient_Uncertainty": [62, 64],
+            "Relative_Total_Transition_Intensity": [64, 74],
+            "Relative_Total_Transition_Intensity_Uncertainty": [74, 76],
+            "Comment": [76],
+            "Coincidence": [77],
+            "Question": [79],
+        }
+        properties = transition.get_properties()
+
         s = " " * 80
-        s_list = list(s)
 
-        prop = transition.get_properties()
-        s_list[0:8] = identifiers[1]
-        s_list[9:19] = str(prop["E_gamma"])
-        s_list[19:21] = str(prop["Delta_E"])
-        s_list[21:29] = str(prop["Relative_Total_Intensity"])
-        s_list[29:31] = str(prop["Relative_Total_Intensity_Uncertainty"])
-        s_list[31:41] = str(prop["Transition_Multipolarity"])
-        s_list[41:49] = str(prop["Mixing_Ratio"])
-        s_list[49:55] = str(prop["Mixing_Ratio_Uncertainty"])
-        s_list[55:62] = str(prop["Total_Conversion_Coefficient"])
-        s_list[62:64] = str(prop["Total_Conversion_Coefficient_Uncertainty"])
-        s_list[64:74] = str(prop["Relative_Total_Transition_Intensity"])
-        s_list[74:76] = str(
-            prop["Relative_Total_Transition_Intensity_Uncertainty"]
-        )
-       # s_list[76] = str(prop["Comment"])
-        #s_list[77] = str(prop["Coincidence"])
-        #s_list[79] = str(prop["Question"])
+        s = identifiers[1] + s[8:]
 
-        s = "".join(s_list)
+        for key, indices in props.items():
+            if key in properties and len(indices) == 2:
+                s = (
+                    s[: indices[0]]
+                    + str(properties[key]).center(indices[1] - indices[0])
+                    + s[indices[1] :]
+                )
+            if key in properties and len(indices) == 1:
+                s = (
+                    s[: indices[0]]
+                    + str(properties[key])
+                    + s[indices[0] + 1 :]
+                )
 
         return s
