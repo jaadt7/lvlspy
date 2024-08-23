@@ -16,15 +16,15 @@ class ENSDF:
     A class for handling the reading from and writing to ENSDF
     """
 
-    def update_from_ensdf(self, coll, file, sp_list):
+    def update_from_ensdf(self, coll, file, sp):
         """Method to update a species collection from an ENSDF file.
 
         Args:
             ``coll`` (:obj: `obj') The collection to be read from the ENSDF file
 
-            ``file`` (:obj: `str`) The name of the ENSDF file from which to update from.
+            ``file`` (:obj: `str`) The file name to update from.
 
-            ``sp_list`` (:obj: `list`): List of species to be read from file.
+            ``sp`` (:obj: `str`): The species to be read from file.
 
 
         Returns:
@@ -32,8 +32,7 @@ class ENSDF:
 
         """
 
-        for sp in sp_list:
-            self._get_species_from_ensdf(coll, file, sp)
+        self._get_species_from_ensdf(coll, file, sp)
 
     def _set_level_properties(self, levels):
         properties = [
@@ -374,9 +373,9 @@ class ENSDF:
         Returns:
             On successful return, the species collection has been written
         """
-
-        with open(file, "w", encoding="utf-8") as f:
-            for sp in coll.get():
+        for sp in coll.get():
+            with open(file, "a", encoding="utf-8") as f:
+            
                 match = re.search(r"\d+", sp)
                 a = int(match.group())  # mass number
                 identifiers = self._get_file_sp_and_identifiers(match, sp, a)
