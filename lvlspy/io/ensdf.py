@@ -375,7 +375,7 @@ class ENSDF:
         """
         for sp in coll.get():
             with open(file, "a", encoding="utf-8") as f:
-            
+
                 match = re.search(r"\d+", sp)
                 a = int(match.group())  # mass number
                 identifiers = self._get_file_sp_and_identifiers(match, sp, a)

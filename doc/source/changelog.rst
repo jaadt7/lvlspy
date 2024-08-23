@@ -15,6 +15,7 @@ New:
   * Added feature in species to change the name of a species. Particularly helpful when going
     between formats.
   * Added check for useable level when calculating rate matrix. 
+  * Added feature that fills in undefined or missing transitions in a species
 
 Version 3.0.3
 -------------

@@ -73,9 +73,34 @@ class Weisskopf:
             * GSL_CONST_NUM_ZETTA
         )
 
+    def estimate(self, e, j, p, a):
+        """Calculates the Weisskopf estimate for a transition between two states.
+        Args:
+            ``e'' (:obj: `list') An array containing the energies of the two levels
+            ``j'' (:obj: `list') An array containing the angular momenta of the two levels
+            ``p'' (:obj: `list') An array containing the parity of both levels
+            ``a'' (:obj: `int') The mass number of the species
+
+        Returns:
+            ``ein_a'' (:obj: 'float') The Einstein A coefficiet of the downwards transition
+        """
+        ein_a = 0
+        if int(j[0]) == 0 and int(j[1]) == 0:
+            return ein_a
+
+        j_range = range(
+            max(1, abs(int(j[0] - j[1]))), j[0] + j[1]
+        )  # range of gamma angular momenta
+
+        for jj in j_range:
+            ein_a += self._get_rate(jj, p, e, a)
+
+        return ein_a
+
     def estimate_from_ensdf(self, lvs, tran, a):
         """
-        Calculates the Weisskopf estimate for a transition between two states.
+        Calculates the Weisskopf estimate for a transition between two states based on the
+        properties available from the ENSDF file.
 
         Args:
             ``lvs'' (:obj:`lvlspy.level.Level`) The levels of the species
@@ -96,16 +121,8 @@ class Weisskopf:
             lvs[tran[1]].get_properties()["parity"],
         ]
         ein_a = 0
-
-        if p[0] == "+":
-            p[0] = 1
-        else:
-            p[0] = -1
-
-        if p[1] == "+":
-            p[1] = 1
-        else:
-            p[1] = -1
+        if int(j[0]) == 0 and int(j[1]) == 0:
+            return ein_a
 
         j_range = range(
             max(1, abs(int(j[0] - j[1]))), j[0] + j[1]

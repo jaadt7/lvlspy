@@ -2,6 +2,8 @@
 
 import numpy as np
 import lvlspy.properties as lp
+import lvlspy.calculate as calc
+import lvlspy.transition as lt
 
 
 class Species(lp.Properties):
@@ -287,3 +289,89 @@ class Species(lp.Properties):
             rate_matrix[i_lower, i_lower] -= r_lower_to_upper
 
         return rate_matrix
+
+    def fill_missing_transitions(self, a):
+        """Method to fill in transitions between levels using a Weisskopf estimate.
+        Parity must be set as a property, otherwise method would return wrong estimates
+
+        Args:
+            'a' (:obj: 'int') Mass number of the species
+        Returns:
+            Upon successful return, the species will have an updated list of transitions
+            based on Weisskopf estimate
+        """
+
+        levels = self.get_levels()
+        for i in range(1, len(levels)):
+            for j in range(i):
+                t_dummy = self.get_level_to_level_transition(
+                    levels[i], levels[j]
+                )
+                if t_dummy is None:
+                    e = [levels[i].get_energy(), levels[j].get_energy()]
+                    jj = [
+                        int((levels[i].get_multiplicity() - 1) / 2),
+                        int((levels[j].get_multiplicity() - 1) / 2),
+                    ]
+                    p = [
+                        levels[i].get_properties()["parity"],
+                        levels[j].get_properties()["parity"],
+                    ]
+
+                    if p[0] == "+":
+                        p[0] = 1
+                    else:
+                        p[0] = -1
+                    if p[1] == "+":
+                        p[1] = 1
+                    else:
+                        p[1] = -1
+
+                    ein_a = calc.Weisskopf().estimate(e, jj, p, a)
+                    self.add_transition(
+                        lt.Transition(levels[i], levels[j], ein_a)
+                    )
+
+    def fill_missing_ENSDF(self,a):
+        ''' Method to fill in missing transitions from either not listed in ENSDF
+        or level with useable property flagged as false due to unclear J^pi
+
+        Args:
+            ``a'' (:obj: 'int') Mass number of species
+        
+        Returns:
+            Upon successful return, the species would be updated with all transitions         
+        '''
+
+        levels = self.get_levels()
+
+        for i in range(1, len(levels)):
+            for j in range(i):
+                t_dummy = self.get_level_to_level_transition(
+                    levels[i], levels[j]
+                )
+                if t_dummy is None:
+                    e = [levels[i].get_energy(), levels[j].get_energy()]
+                    jj = [
+                        int((levels[i].get_multiplicity() - 1) / 2),
+                        int((levels[j].get_multiplicity() - 1) / 2),
+                    ]
+                    p = [
+                        levels[i].get_properties()["parity"],
+                        levels[j].get_properties()["parity"],
+                    ]
+
+                    if p[0] == "+":
+                        p[0] = 1
+                    else:
+                        p[0] = -1
+                    if p[1] == "+":
+                        p[1] = 1
+                    else:
+                        p[1] = -1
+
+                    ein_a = calc.Weisskopf().estimate(e, jj, p, a)
+                    self.add_transition(
+                        lt.Transition(levels[i], levels[j], ein_a)
+                    )
+
