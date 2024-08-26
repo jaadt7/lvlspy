@@ -346,33 +346,106 @@ class Species(lp.Properties):
         """
 
         levels = self.get_levels()
-
         for i in range(1, len(levels)):
-            for j in range(i):
-                t_dummy = self.get_level_to_level_transition(
-                    levels[i], levels[j]
-                )
-                if t_dummy is None:
+            if levels[i].get_properties()["useability"] is False:
+                jpi = levels[i].get_properties()["j^pi"]
+                jpi_range = self._get_jpi_range(jpi)
+                for j in range(i):
+                    ein_a = 0.0
                     e = [levels[i].get_energy(), levels[j].get_energy()]
-                    jj = [
-                        int((levels[i].get_multiplicity() - 1) / 2),
-                        int((levels[j].get_multiplicity() - 1) / 2),
-                    ]
-                    p = [
-                        levels[i].get_properties()["parity"],
-                        levels[j].get_properties()["parity"],
-                    ]
+                    for k in jpi_range:
+                        if levels[j].get_properties()["useability"]:
+                            jj = [
+                                int(k[0]),
+                                int((levels[j].get_multiplicity() - 1) / 2),
+                            ]
+                            p = [
+                                k[1],
+                                levels[j].get_properties()["parity"],
+                            ]
+                            p = self._set_parity(p)
 
-                    if p[0] == "+":
-                        p[0] = 1
-                    else:
-                        p[0] = -1
-                    if p[1] == "+":
-                        p[1] = 1
-                    else:
-                        p[1] = -1
+                            ein_a += calc.Weisskopf().estimate(e, jj, p, a)
+                        else:
+                            jpi_range_1 = self._get_jpi_range(
+                                levels[j].get_properties()["j^pi"]
+                            )
+                            ein_a += self._update_mixed_level_to_mixed_level(
+                                k, jpi_range_1, e, a
+                            )
+                        ein_a = ein_a / len(jpi_range)
 
-                    ein_a = calc.Weisskopf().estimate(e, jj, p, a)
+                    
                     self.add_transition(
                         lt.Transition(levels[i], levels[j], ein_a)
                     )
+
+    def _update_mixed_level_to_mixed_level(self, k, jpi_range_1, e, a):
+        ein_a = 0.0
+        for k1 in jpi_range_1:
+            jj = [
+                int(k[0]),
+                int(k1[0]),
+            ]
+            p = [
+                k[1],
+                k1[1],
+            ]
+            p = self._set_parity(p)
+
+            ein_a += calc.Weisskopf().estimate(e, jj, p, a)/ len(jpi_range_1)
+        
+        return ein_a
+
+    def _set_parity(self, p):
+        if p[0] == "+":
+            p[0] = 1
+        else:
+            p[0] = -1
+        if p[1] == "+":
+            p[1] = 1
+        else:
+            p[1] = -1
+        return p
+
+    def _get_jpi_range(self, jpi):
+        """method for setting the range of undetermined j^pi in ENSDF record"""
+
+        # first strip any available parentheses
+        jpi = jpi.replace("(", "")
+        jpi = jpi.replace(")", "")
+        j_range = []
+        if jpi == "":
+            return j_range
+        if "TO" in jpi or ":" in jpi:
+            p = jpi[-1]
+            if "TO" in jpi:
+                jpi = jpi.split("TO")
+            if ":" in jpi:
+                jpi = jpi.split(":")
+
+            if "+" not in jpi and "-" not in jpi:
+                p = "+"
+            m1 = int(lp.Properties().evaluate_expression(jpi[0].strip(p)))
+            m2 = int(lp.Properties().evaluate_expression(jpi[1].strip(p)))
+            for i in range(m1, m2 + 1):
+                j_range.append([i, p])
+
+        else:
+            if "OR" in jpi:
+                jpi = jpi.split("OR")
+            if "," in jpi:
+                jpi = jpi.split(",")
+            for j in jpi:
+                if "+" not in j and "-" not in j:
+                    m = int(2 * lp.Properties().evaluate_expression(j) + 1)
+                    p = "+"
+                    j_range.append([m, p])
+                else:
+                    p = j[-1]
+                    m = int(
+                        2 * lp.Properties().evaluate_expression(j[0:-1]) + 1
+                    )
+                    j_range.append([m, p])
+
+        return j_range

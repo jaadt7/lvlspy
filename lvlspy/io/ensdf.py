@@ -7,6 +7,7 @@ import math
 
 import lvlspy.level as lv
 import lvlspy.species as ls
+import lvlspy.properties as lp
 import lvlspy.transition as lt
 import lvlspy.calculate as calc
 
@@ -120,6 +121,7 @@ class ENSDF:
         add_properties = [
             {key: value} for key, value in zip(properties, tran[2:-1])
         ]
+        add_properties.append({properties[-1]: tran[-1]})
         for j in add_properties:
             t.update_properties(j)
         return t
@@ -307,11 +309,13 @@ class ENSDF:
         else:
             if "+" not in jpi and "-" not in jpi:
                 parity = "+"
-                multi = int(2 * self._evaluate_expression(jpi) + 1)
+                multi = int(2 * lp.Properties().evaluate_expression(jpi) + 1)
                 useable = True
             else:
                 parity = jpi[-1]
-                multi = int(2 * self._evaluate_expression(jpi[0:-1]) + 1)
+                multi = int(
+                    2 * lp.Properties().evaluate_expression(jpi[0:-1]) + 1
+                )
                 useable = True
 
         return multi, parity, useable
@@ -350,28 +354,6 @@ class ENSDF:
 
         return [l_identifier, g_identifier, b_identifier]
 
-    def _evaluate_expression(self, expression):
-        # Extract numbers and operators from the expression string
-        elements = re.findall(r"(\d+|\+|\-|\*|\/)", expression)
-
-        # Initialize the result to the first number
-        result = int(elements[0])
-
-        # Apply each operator to the previous result and the current number
-        for i in range(1, len(elements), 2):
-            operator = elements[i]
-            num = int(elements[i + 1])
-            if operator == "+":
-                result += num
-            elif operator == "-":
-                result -= num
-            elif operator == "*":
-                result *= num
-            elif operator == "/":
-                result /= num
-
-        return result
-
     def write_to_ensdf(self, coll, file):
         """
         Method that writes a collection of species to ENSDF format
@@ -384,8 +366,8 @@ class ENSDF:
         Returns:
             On successful return, the species collection has been written
         """
-        for sp in coll.get():
-            with open(file, "a", encoding="utf-8") as f:
+        with open(file, "w+", encoding="utf-8") as f:
+            for sp in coll.get():
 
                 match = re.search(r"\d+", sp)
                 a = int(match.group())  # mass number
@@ -404,6 +386,17 @@ class ENSDF:
                                 transition, identifiers
                             )
                             f.write(line + "\n")
+                            if (
+                                transition.get_properties()[
+                                    "Reduced_Matrix_Coefficient"
+                                ]
+                                != ""
+                            ):
+                                f.write(
+                                    transition.get_properties()[
+                                        "Reduced_Matrix_Coefficient"
+                                    ]
+                                )
 
     def _construct_level_line(self, lev, identifiers):
         energy = lev.get_energy()
