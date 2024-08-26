@@ -84,12 +84,10 @@ class Weisskopf:
         Returns:
             ``ein_a'' (:obj: 'float') The Einstein A coefficiet of the downwards transition
         """
-        ein_a = 0
-        if int(j[0]) == 0 and int(j[1]) == 0:
-            return ein_a
+        ein_a = 0.0
 
         j_range = range(
-            max(1, abs(int(j[0] - j[1]))), j[0] + j[1]
+            max(1, abs(int(j[0] - j[1]))), j[0] + j[1] + 1
         )  # range of gamma angular momenta
 
         for jj in j_range:
@@ -120,12 +118,10 @@ class Weisskopf:
             lvs[tran[0]].get_properties()["parity"],
             lvs[tran[1]].get_properties()["parity"],
         ]
-        ein_a = 0
-        if int(j[0]) == 0 and int(j[1]) == 0:
-            return ein_a
+        ein_a = 0.0
 
         j_range = range(
-            max(1, abs(int(j[0] - j[1]))), j[0] + j[1]
+            max(1, abs(int(j[0] - j[1]))), j[0] + j[1] + 1
         )  # range of gamma angular momenta
         m_r = 0
 
@@ -162,7 +158,7 @@ class Weisskopf:
         m_r = arr[3]
         tran = arr[4]
         b_1 = 1
-        dummy = 0
+        dummy = 0.0
 
         if np.power(-1, jj) * p[0] == p[1]:
             if b[int(i_tran[0])][1] == "E" and int(b[int(i_tran[0])][2]) == jj:
@@ -180,16 +176,15 @@ class Weisskopf:
         return dummy
 
     def _get_rate(self, jj, p, e, a):
-        dummy = 0.0
+
         if np.power(-1, jj) * p[0] == p[1]:
-            dummy += (
+            return (
                 self.rate_elec(e[0], e[1], jj, a) / 10
             )  # Weisskopf estimates in generally over-estimate by a factor of 10
-        else:
-            dummy += (
-                self.rate_mag(e[0], e[1], jj, a) / 10
-            )  # Weisskopf estimates in generally over-estimate by a factor of 10
-        return dummy
+
+        return (
+            self.rate_mag(e[0], e[1], jj, a) / 10
+        )  # Weisskopf estimates in generally over-estimate by a factor of 10
 
     def _get_reduced_trans_prob(self, mod_b):
         reduced_prob = []

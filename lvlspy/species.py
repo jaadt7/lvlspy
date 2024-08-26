@@ -308,6 +308,7 @@ class Species(lp.Properties):
                     levels[i], levels[j]
                 )
                 if t_dummy is None:
+
                     e = [levels[i].get_energy(), levels[j].get_energy()]
                     jj = [
                         int((levels[i].get_multiplicity() - 1) / 2),
@@ -328,20 +329,21 @@ class Species(lp.Properties):
                         p[1] = -1
 
                     ein_a = calc.Weisskopf().estimate(e, jj, p, a)
+
                     self.add_transition(
                         lt.Transition(levels[i], levels[j], ein_a)
                     )
 
-    def fill_missing_ENSDF(self,a):
-        ''' Method to fill in missing transitions from either not listed in ENSDF
+    def fill_missing_ensdf(self, a):
+        """Method to fill in missing transitions from either not listed in ENSDF
         or level with useable property flagged as false due to unclear J^pi
 
         Args:
             ``a'' (:obj: 'int') Mass number of species
-        
+
         Returns:
-            Upon successful return, the species would be updated with all transitions         
-        '''
+            Upon successful return, the species would be updated with all transitions
+        """
 
         levels = self.get_levels()
 
@@ -374,4 +376,3 @@ class Species(lp.Properties):
                     self.add_transition(
                         lt.Transition(levels[i], levels[j], ein_a)
                     )
-
