@@ -88,15 +88,12 @@ class ENSDF:
                 lvs[tran[1][1]].get_properties()["useability"] is False
                 or lvs[tran[1][0]].get_properties()["useability"] is False
             ):
-                ein_a = 0
-                t = lt.Transition(lvs[tran[1][0]], lvs[tran[1][1]], ein_a)
-                t = self._set_transition_properties(t, tran[1])
-                s.add_transition(t)
-            else:
-                ein_a = calc.Weisskopf().estimate_from_ensdf(lvs, tran[1], a)
-                t = lt.Transition(lvs[tran[1][0]], lvs[tran[1][1]], ein_a)
-                t = self._set_transition_properties(t, tran[1])
-                s.add_transition(t)
+                continue
+
+            ein_a = calc.Weisskopf().estimate_from_ensdf(lvs, tran[1], a)
+            t = lt.Transition(lvs[tran[1][0]], lvs[tran[1][1]], ein_a)
+            t = self._set_transition_properties(t, tran[1])
+            s.add_transition(t)
 
         coll.add_species(s)
 
