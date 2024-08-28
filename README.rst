@@ -3,7 +3,7 @@ Overview
 
 lvlspy is a python package for working with quantum level-system data.
 
-|pypi| |doc_stat| |license| |pytest| |pylint| |black|
+|pypi| |doc_stat| |license| |pytest| |pylint| |black| |zenodo|
 
 Installation
 ------------
@@ -65,3 +65,5 @@ The project is licensed under the GNU Public License v3 (or later).
 	:target: https://github.com/jaadt7/lvlspy/actions/workflows/lint.yml 
 .. |black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/psf/black
+.. |zenodo| image:: https://zenodo.org/badge/DOI/10.5281/zenodo.8193378.svg
+    :target: https://doi.org/10.5281/zenodo.8193378

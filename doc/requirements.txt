@@ -1,5 +1,6 @@
 lxml
 numpy
+scipy
 gslconsts
 sphinx-rtd-theme
 #readthedocs-sphinx-search==0.1.1

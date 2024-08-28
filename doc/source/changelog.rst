@@ -4,6 +4,19 @@ Changelog
 All notable changes to this project will be documented in this file.  This
 project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`_.
 
+Version 3.1.0
+-------------
+
+New:
+
+  * Added and modularized the IO for various formats have been setup. Currently ENSDF and XML are
+    supported.
+  * Added calculations module to evolve a system and calculate Weisskopf estimates
+  * Added feature in species to change the name of a species. Particularly helpful when going
+    between formats.
+  * Added check for useable level when calculating rate matrix. 
+  * Added feature that fills in undefined or missing transitions in a species
+
 Version 3.0.3
 -------------
 

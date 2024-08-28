@@ -17,7 +17,7 @@ jobs:
           python-version: "3.x"
       - name: install dependencies
         run: |
-          pip install pylint numpy gslconsts lxml
+          pip install pylint numpy gslconsts lxml scipy
       - name: run linter
         run: |
-          pylint --extension-pkg-whitelist=lxml.etree --fail-under=9.9 lvlspy/*.py
+          pylint --extension-pkg-whitelist=lxml.etree --fail-under=9.9 lvlspy/*.py lvlspy/io/*.py lvlspy/calculate/*.py

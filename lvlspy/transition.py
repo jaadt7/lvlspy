@@ -1,4 +1,5 @@
 """Module for handling transitions."""
+
 import numpy as np
 from gslconsts.consts import (
     GSL_CONST_CGSM_ELECTRON_VOLT,
