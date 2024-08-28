@@ -347,38 +347,73 @@ class Species(lp.Properties):
 
         levels = self.get_levels()
         for i in range(1, len(levels)):
-            if levels[i].get_properties()["useability"] is False:
-                jpi = levels[i].get_properties()["j^pi"]
-                jpi_range = self._get_jpi_range(jpi)
-                for j in range(i):
+            for j in range(i):
+
+                if (
+                    self.get_level_to_level_transition(levels[i], levels[j])
+                    is None
+                ):
+                    jpi_i = levels[i].get_properties()["j^pi"]
+                    jpi_j = levels[j].get_properties()["j^pi"]
                     ein_a = 0.0
+
                     e = [levels[i].get_energy(), levels[j].get_energy()]
-                    for k in jpi_range:
-                        if levels[j].get_properties()["useability"]:
-                            jj = [
-                                int(k[0]),
-                                int((levels[j].get_multiplicity() - 1) / 2),
-                            ]
-                            p = [
-                                k[1],
-                                levels[j].get_properties()["parity"],
-                            ]
-                            p = self._set_parity(p)
+                    if jpi_i == "" or jpi_j == "":
+                        self.add_transition(
+                            lt.Transition(levels[i], levels[j], ein_a)
+                        )
+                        continue
 
-                            ein_a += calc.Weisskopf().estimate(e, jj, p, a)
-                        else:
-                            jpi_range_1 = self._get_jpi_range(
-                                levels[j].get_properties()["j^pi"]
-                            )
-                            ein_a += self._update_mixed_level_to_mixed_level(
-                                k, jpi_range_1, e, a
-                            )
-                        ein_a = ein_a / len(jpi_range)
+                    if levels[i].get_properties()["useability"] is False and levels[j].get_properties()["useability"]:
+                        jpi_range = self._get_jpi_range(jpi_i)
+                        for k in jpi_range:
+                            
+                                jj = [
+                                    int(k[0]),
+                                    int(
+                                        (levels[j].get_multiplicity() - 1) / 2
+                                    ),
+                                ]
+                                p = [
+                                    k[1],
+                                    levels[j].get_properties()["parity"],
+                                ]
+                                p = self._set_parity(p)
 
-                    
-                    self.add_transition(
-                        lt.Transition(levels[i], levels[j], ein_a)
-                    )
+                                ein_a += calc.Weisskopf().estimate(e, jj, p, a)/len(jpi_range)
+                        continue
+                    if levels[i].get_properties()["useability"] is False and levels[j].get_properties()['useability'] is False:
+                                jpi_range_1 = self._get_jpi_range(
+                                    levels[j].get_properties()["j^pi"]
+                                )
+                                ein_a += (
+                                    self._update_mixed_level_to_mixed_level(
+                                        k, jpi_range_1, e, a
+                                    )
+                                )
+                            ein_a = ein_a / len(jpi_range)
+
+                        self.add_transition(
+                            lt.Transition(levels[i], levels[j], ein_a)
+                        )
+                        continue
+
+                    if levels[j].get_properties()["useability"] is False:
+
+                        k = [
+                            int((levels[i].get_multiplicity() - 1) / 2),
+                            levels[i].get_properties()["parity"],
+                        ]
+
+                        jpi_range = self._get_jpi_range(
+                            levels[j].get_properties()["j^pi"]
+                        )
+                        ein_a += self._update_mixed_level_to_mixed_level(
+                            k, jpi_range, e, a
+                        )
+                        self.add_transition(
+                            lt.Transition(levels[i], levels[j], ein_a)
+                        )
 
     def _update_mixed_level_to_mixed_level(self, k, jpi_range_1, e, a):
         ein_a = 0.0
@@ -393,8 +428,8 @@ class Species(lp.Properties):
             ]
             p = self._set_parity(p)
 
-            ein_a += calc.Weisskopf().estimate(e, jj, p, a)/ len(jpi_range_1)
-        
+            ein_a += calc.Weisskopf().estimate(e, jj, p, a) / len(jpi_range_1)
+
         return ein_a
 
     def _set_parity(self, p):
