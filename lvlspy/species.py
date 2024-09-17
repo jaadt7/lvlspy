@@ -484,7 +484,6 @@ class Species(lp.Properties):
         return p
 
     def _get_jpi_range(self, jpi):
-        """method for setting the range of undetermined j^pi in ENSDF record"""
 
         # first strip any available parentheses
         jpi = jpi.replace("(", "")
@@ -554,6 +553,17 @@ class Species(lp.Properties):
     def evolve_csc(self, temp, y0, time):
         """
         Evolves the system using sparse solver
+
+        Args:
+            ``temp`` (:obj:`float`): The temperature in K
+
+            ``y0`` (:obj:`numpy.array`): An array containing the initial conditions
+
+            ``time`` (:obj:`numpy.array`): An array containing the time steps to evolve
+            the system over
+
+        Returns:
+            Upon successful return, a 2D numpy array is returned containing the evolved system
         """
 
         rm = self.compute_rate_matrix(temp)
