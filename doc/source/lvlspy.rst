@@ -46,10 +46,27 @@ lvlspy.spcoll module
    :undoc-members:
    :show-inheritance:
 
-lvlspy.IO module
+lvlspy.io module
 ----------------
 
-.. automodule:: lvlspy.IO
+.. automodule:: lvlspy.io.xml
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. automodule:: lvlspy.io.ensdf
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+lvlspy.calculate module
+-----------------------
+.. automodule:: lvlspy.calculate.evolve
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. automodule:: lvlspy.calculate.weisskopf
    :members:
    :undoc-members:
    :show-inheritance:

@@ -14,18 +14,21 @@ class Weisskopf:
 
     def rate_mag(self, e_i, e_f, j, a):
         """
-        Calculates the transition rate between two levels where the transition
-          is a magnetic multipole
+        Calculates the transition rate between two levels where
+        the transition is a magnetic multipole
 
         Args:
-            ``e_i'' (:obj: `float') Energy of the initial state (in keV)
-            ``e_f'' (:obj: `float') Energy of the final state (in keV)
-            ``j''   (:obj: `int')   Angular momentum of the gamma ray
-            ``a''   (:obj: `int')   Mass number
+            ``e_i`` (:obj:`float`) Energy of the initial state (in keV)
+
+            ``e_f`` (:obj:`float`) Energy of the final state (in keV)
+
+            ``j``   (:obj:`int`)   Angular momentum of the gamma ray
+
+            ``a``   (:obj:`int`)   Mass number
 
 
         Returns:
-        - The magnetic contribution to the Weisskopf estimate between the two states
+            The magnetic contribution to the Weisskopf estimate between the two states
         """
 
         de = e_i - e_f
@@ -44,19 +47,21 @@ class Weisskopf:
         )
 
     def rate_elec(self, e_i, e_f, j, a):
-        """
-        Calculates the transition rate between two levels where
-        the transition is an electric multipole
+        """Calculates the transition rate between two levels where
+        the transition is an electric multipole.
 
         Args:
-            ``e_i'' (:obj: `float') Energy of the initial state (in keV)
-            ``e_f'' (:obj: `float') Energy of the final state (in keV)
-            ``j''   (:obj: `int')   Angular momentum of the gamma ray
-            ``a''   (:obj: `int')   Mass number
+            ``e_i`` (:obj:`float`) Energy of the initial state (in keV)
+
+            ``e_f`` (:obj:`float`) Energy of the final state (in keV)
+
+            ``j``   (:obj:`int`)   Angular momentum of the gamma ray
+
+            ``a``   (:obj:`int`)   Mass number
 
 
         Returns:
-        - The electric contribution to the Weisskopf estimate between the two states
+            The electric contribution to the Weisskopf estimate between the two states
         """
 
         de = e_i - e_f  # energy difference
@@ -75,14 +80,18 @@ class Weisskopf:
 
     def estimate(self, e, j, p, a):
         """Calculates the Weisskopf estimate for a transition between two states.
+
         Args:
-            ``e'' (:obj: `list') An array containing the energies of the two levels
-            ``j'' (:obj: `list') An array containing the angular momenta of the two levels
-            ``p'' (:obj: `list') An array containing the parity of both levels
-            ``a'' (:obj: `int') The mass number of the species
+            ``e`` (:obj:`list`) An array containing the energies of the two levels
+
+            ``j`` (:obj:`list`) An array containing the angular momenta of the two levels
+
+            ``p`` (:obj:`list`) An array containing the parity of both levels
+
+            ``a`` (:obj:`int`) The mass number of the species
 
         Returns:
-            ``ein_a'' (:obj: 'float') The Einstein A coefficiet of the downwards transition
+            ``ein_a`` (:obj:`float`) The Einstein A coefficiet of the downwards transition
         """
         ein_a = 0.0
 
@@ -101,11 +110,13 @@ class Weisskopf:
         properties available from the ENSDF file.
 
         Args:
-            ``lvs'' (:obj:`lvlspy.level.Level`) The levels of the species
-            ``tran'' (:obj: `list') An array containing all the data from ENSDF
-            regarding a single transition
+            ``lvs`` (:obj:`lvlspy.level.Level`) The levels of the species
+
+            ``tran`` (:obj:`list`) An array containing all the data from
+            ENSDF regarding a single transition
+
         Returns:
-            ``ein_a'' (:obj:`float') The total estimate for the transition rate
+            ``ein_a`` (:obj:`float`) The total estimate for the transition rate
             (in per second) using Weisskopf single partice estimate
         """
 

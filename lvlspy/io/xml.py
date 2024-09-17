@@ -148,7 +148,7 @@ class XML:
         """Method to update a species collection from an XML file.
 
         Args:
-            ``coll`` (:obj: `obj') The collection to be read from the XML file
+            ``coll`` (:obj:`obj`) The collection to be read from the XML file
 
             ``file`` (:obj:`str`) The name of the XML file from which to update.
 

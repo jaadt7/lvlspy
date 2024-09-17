@@ -21,11 +21,11 @@ class ENSDF:
         """Method to update a species collection from an ENSDF file.
 
         Args:
-            ``coll`` (:obj: `obj') The collection to be read from the ENSDF file
+            ``coll`` (:obj:`obj`) The collection to be read from the ENSDF file
 
-            ``file`` (:obj: `str`) The file name to update from.
+            ``file`` (:obj:`str`) The file name to update from.
 
-            ``sp`` (:obj: `str`): The species to be read from file.
+            ``sp`` (:obj:`str`): The species to be read from file.
 
 
         Returns:
@@ -356,9 +356,9 @@ class ENSDF:
         Method that writes a collection of species to ENSDF format
 
         Args:
-            ``coll`` (:obj: `lvlspy.spcoll.SpColl`) The collection to be written to file.
+            ``coll`` (:obj:`lvlspy.spcoll.SpColl`) The collection to be written to file.
             Each species in the collection must have the species' name, level and gamma
-             properties must be within ENSDF spec
+            properties must be within ENSDF spec
 
         Returns:
             On successful return, the species collection has been written

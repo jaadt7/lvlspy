@@ -111,9 +111,9 @@ class SpColl(lp.Properties):
         """Link to update a species collection from ENSDF file
 
         Args:
-            ``file`` (:obj: `str`) The file name from which to update.
+            ``file`` (:obj:`str`) The file name from which to update.
 
-            ``sp (:obj: `str`) The name of the species to be read in.
+            ``sp`` (:obj:`str`) The name of the species to be read in.
 
         Returns:
             On successful return, the species collection has been updated.
@@ -126,7 +126,7 @@ class SpColl(lp.Properties):
         """Link to write a species collection to an ENSDF file
 
         Args:
-            ``file_name`` (:obj:'str') The name of ENSDF file to be written to.
+            ``file_name`` (:obj:`str`) The name of ENSDF file to be written to.
 
         Returns:
             On successful return, the species collection has been written

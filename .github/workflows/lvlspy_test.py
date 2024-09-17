@@ -42,13 +42,14 @@ def test_probability():
     T = 0
     p = s.compute_equilibrium_probabilities(T)
     assert p[0] == 1.0
-    assert p[1] == 0.
+    assert p[1] == 0.0
     T = 1e7
     p = s.compute_equilibrium_probabilities(T)
     assert p[0] == 1.0
-    T = 1.e9
+    T = 1.0e9
     p = s.compute_equilibrium_probabilities(T)
     assert p[0] < 1.0
+
 
 def test_levels():
     coll = get_collection()
@@ -58,6 +59,7 @@ def test_levels():
     level = levels[0]
     s.add_level(level)
     assert len(s.get_levels()) == number_levels
+
 
 def test_transitions():
     coll = get_collection()
@@ -97,7 +99,7 @@ def test_einstein():
 
 def test_rates():
     def user_rate(temperature):
-        return 2. * temperature
+        return 2.0 * temperature
 
     coll = get_collection()
     s = coll.get()["al26"]

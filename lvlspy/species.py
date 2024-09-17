@@ -295,7 +295,7 @@ class Species(lp.Properties):
         Parity must be set as a property, otherwise method would return wrong estimates
 
         Args:
-            'a' (:obj: 'int') Mass number of the species
+            `a` (:obj:`int`) Mass number of the species
         Returns:
             Upon successful return, the species will have an updated list of transitions
             based on Weisskopf estimate
@@ -332,7 +332,7 @@ class Species(lp.Properties):
         or level with useable property flagged as false due to unclear J^pi
 
         Args:
-            ``a'' (:obj: 'int') Mass number of species
+            ``a`` (:obj:`int`) Mass number of species
 
         Returns:
             Upon successful return, the species would be updated with all transitions
@@ -525,18 +525,21 @@ class Species(lp.Properties):
         return j_range
 
     def evolve(self, temperature, y0, time=None, tol=1e-6):
-        """
-        Method to evolve levels at a given temperature
+        """Method to evolve levels at a given temperature
 
         Args:
-            ``temperature'' (:obj: `float') The temperature in K to evolve the system at.
-            ``y0'' (:obj: `numpy.array') The array containing the initial conditions of
-                                            the level system.
-            ``time'' (:obj: 'numpy.array'), optional. The time array to evolve the system.
-                                            Defaults to logspace between 1.e-30 and 100 at 200 steps
-            ``tol'' (:obj: `float'), optional. The tolerance for the solver. Defaults to 1e-6
+            ``temperature`` (:obj:`float`) The temperature in K to evolve the system at.
+
+            ``y0`` (:obj:`numpy.array`) The array containing the
+            initial conditions of the level system.
+
+            ``time`` (:obj:`numpy.array`, optional) The time array to evolve the system.
+            Defaults to logspace between 1.e-30 and 100 at 200 steps
+
+            ``tol`` (:obj:`float`, optional) The tolerance for the solver. Defaults to 1e-6
+
         Returns:
-            ``y (:obj: `numpy.array') A 2D numpy array of dimensions len(time)xlen(levels) of the
+            ``y`` (:obj:`numpy.array`) A 2D numpy array of dimensions len(time)xlen(levels) of the
             evolved system
         """
 
