@@ -18,7 +18,7 @@ jobs:
           python-version: "3.x"
       - name: install dependencies
         run: |
-          git clone https://bitbucket.org/mbradle/liblvls_xsd.git lvlspy/xsd_pub
+          git clone https://bitbucket.org/mbradle/liblvls_xsd.git lvlspy/io/xsd_pub
           python -m pip install --upgrade pip
           pip install pytest requests scipy
           pip install -e .
