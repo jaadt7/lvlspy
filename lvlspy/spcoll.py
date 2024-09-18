@@ -1,6 +1,5 @@
 """Module to handle a collection of species."""
 
-import lvlspy.io as lio
 import lvlspy.properties as lp
 
 
@@ -60,30 +59,3 @@ class SpColl(lp.Properties):
         """
 
         return self.spcoll
-
-    def update_from_ensdf(self, file, sp):
-        """Link to update a species collection from ENSDF file
-
-        Args:
-            ``file`` (:obj:`str`) The file name from which to update.
-
-            ``sp`` (:obj:`str`) The name of the species to be read in.
-
-        Returns:
-            On successful return, the species collection has been updated.
-
-        """
-
-        lio.ENSDF().update_from_ensdf(self, file, sp)
-
-    def write_to_ensdf(self, file_name):
-        """Link to write a species collection to an ENSDF file
-
-        Args:
-            ``file_name`` (:obj:`str`) The name of ENSDF file to be written to.
-
-        Returns:
-            On successful return, the species collection has been written
-
-        """
-        lio.ENSDF().write_to_ensdf(self, file_name)

@@ -8,7 +8,7 @@ import lvlspy.species as ls
 import lvlspy.transition as lt
 
 
-def write_to_xml( coll, file, pretty_print=True, units="keV"):
+def write_to_xml(coll, file, pretty_print=True, units="keV"):
     """Method to write the collection to XML.
 
     Args:
@@ -43,7 +43,8 @@ def write_to_xml( coll, file, pretty_print=True, units="keV"):
 
     xml.write(file, pretty_print=pretty_print)
 
-def _add_level_to_xml( xml_levels, species, level, units):
+
+def _add_level_to_xml(xml_levels, species, level, units):
     result = etree.SubElement(xml_levels, "level")
     _add_optional_properties(result, level)
     result_props = etree.SubElement(result, "properties")
@@ -59,6 +60,7 @@ def _add_level_to_xml( xml_levels, species, level, units):
 
     return result
 
+
 def _add_transitions_to_xml(xml_level, species, level, units):
     lower_levels = species.get_lower_linked_levels(level)
 
@@ -68,9 +70,7 @@ def _add_transitions_to_xml(xml_level, species, level, units):
     xml_transitions = etree.SubElement(xml_level, "transitions")
 
     for lower_level in lower_levels:
-        transition = species.get_level_to_level_transition(
-            level, lower_level
-        )
+        transition = species.get_level_to_level_transition(level, lower_level)
         xml_trans = etree.SubElement(xml_transitions, "transition")
         _add_optional_properties(xml_trans, transition)
         if units != "keV":
@@ -79,15 +79,12 @@ def _add_transitions_to_xml(xml_level, species, level, units):
             )
         else:
             xml_to_energy = etree.SubElement(xml_trans, "to_energy")
-        xml_to_energy.text = _get_energy_text(
-            lower_level.get_energy(), units
-        )
-        xml_to_multiplicity = etree.SubElement(
-            xml_trans, "to_multiplicity"
-        )
+        xml_to_energy.text = _get_energy_text(lower_level.get_energy(), units)
+        xml_to_multiplicity = etree.SubElement(xml_trans, "to_multiplicity")
         xml_to_multiplicity.text = str(lower_level.get_multiplicity())
         xml_a = etree.SubElement(xml_trans, "a")
         xml_a.text = str(transition.get_einstein_a())
+
 
 def _add_optional_properties(my_element, my_object):
     my_props = my_object.get_properties()
@@ -116,6 +113,7 @@ def _add_optional_properties(my_element, my_object):
 
             my_prop.text = str(my_props[prop])
 
+
 def validate(file):
     """Method to validate a species collection XML file.
 
@@ -131,15 +129,14 @@ def validate(file):
     xml = etree.parse(file, parser)
     xml.xinclude()
 
-    schema_file = os.path.join(
-        os.path.dirname(__file__), "xsd_pub/spcoll.xsd"
-    )
+    schema_file = os.path.join(os.path.dirname(__file__), "xsd_pub/spcoll.xsd")
     xmlschema_doc = etree.parse(schema_file)
 
     xml_validator = etree.XMLSchema(xmlschema_doc)
     xml_validator.validate(xml)
 
-def update_from_xml( coll, file, xpath=""):
+
+def update_from_xml(coll, file, xpath=""):
     """Method to update a species collection from an XML file.
 
     Args:
@@ -166,6 +163,7 @@ def update_from_xml( coll, file, xpath=""):
     for xml_species in spcoll.xpath("//species" + xpath):
         coll.add_species(_get_species_from_xml(xml_species))
 
+
 def _get_species_from_xml(xml_species):
     level_dict = {}
     result = ls.Species(xml_species.attrib["name"])
@@ -176,13 +174,12 @@ def _get_species_from_xml(xml_species):
         level_dict[new_level.get_energy()] = new_level
 
         for xml_trans in xml_level.xpath(".//transition"):
-            trans = _get_transition_from_xml(
-                xml_trans, new_level, level_dict
-            )
+            trans = _get_transition_from_xml(xml_trans, new_level, level_dict)
             if trans:
                 result.add_transition(trans)
 
     return result
+
 
 def _get_level_from_xml(xml_level):
     props = xml_level.xpath(".//properties")
@@ -201,6 +198,7 @@ def _get_level_from_xml(xml_level):
 
     return result
 
+
 def _get_transition_from_xml(xml_trans, upper_level, level_dict):
     to_energy = xml_trans.xpath(".//to_energy")
     to_a = xml_trans.xpath(".//a")
@@ -216,6 +214,7 @@ def _get_transition_from_xml(xml_trans, upper_level, level_dict):
         return result
     return None
 
+
 def _convert_to_kev(energy):
     attributes = energy[0].attrib
     result = float(energy[0].text)
@@ -223,8 +222,10 @@ def _convert_to_kev(energy):
         result /= lv.units_dict[attributes["units"]]
     return result
 
+
 def _get_energy_text(energy, units):
     return str(energy * lv.units_dict[units])
+
 
 def _update_optional_properties(my_element, my_object):
     opt_props = my_element.xpath("optional_properties")
@@ -239,9 +240,9 @@ def _update_optional_properties(my_element, my_object):
             if len(my_keys) == 1:
                 my_props[attributes[my_keys[0]]] = prop.text
             elif len(my_keys) == 2:
-                my_props[
-                    (attributes[my_keys[0]], attributes[my_keys[1]])
-                ] = prop.text
+                my_props[(attributes[my_keys[0]], attributes[my_keys[1]])] = (
+                    prop.text
+                )
             elif len(my_keys) == 3:
                 my_props[
                     (
