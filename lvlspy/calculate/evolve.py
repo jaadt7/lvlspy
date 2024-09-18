@@ -22,14 +22,18 @@ def newton_raphson(sp,temp,y0, time, tol = 1e-6):
 
     Returns:
         ``y`` (:obj:`numpy.array`): 2D array of size n_levels*n_time containing the evolved system.
+
+        ``fug`` (:obj:`numpy.array`) 2D array containing the evolution of the fugacities as a function of time
     """
 
     y = np.empty((len(y0),len(time)))
+    fug = np.empty((len(y0),len(time)))
     y[:,0] = y0
 
     rm = sp.compute_rate_matrix(temp) #calculate the rate matrix of the species
-
+    eq_prob = sp.compute_equilibrium_probabilities(temp)
     y_dt = y[:,0]
+    fug[:,0] = y_dt/eq_prob
     for i in range(1, len(time)):
         dt = time[i] - time[i - 1]
         matrix = np.identity(len(y_dt)) - dt * rm
@@ -40,8 +44,10 @@ def newton_raphson(sp,temp,y0, time, tol = 1e-6):
             )
             y_dt = y_dt + delta
         y[:,i] = y_dt
+        fug[:,i] = y[:,i]/eq_prob
+        
 
-    return y
+    return y,fug
 
 def _f_vector(y_dt, y_i, rm):
     return np.matmul(rm, y_dt) - y_i
@@ -60,13 +66,16 @@ def csc(sp,temp,y0, time):
 
     Returns:
         ``sol_expm_solver`` (:obj:`numpy.array`): A 2D array containing the evolved system
+        ``fug`` (:obj:`numpy.array`) 2D array containing the evolution of the fugacities as a function of time
     """
 
     rm = sp.compute_rate_matrix(temp)
+    eq_prob = sp.compute_equilibrium_probabilities(temp)
     rm_csc = csc_matrix(rm)
-    sol_expm_solver = np.empty([time.shape[0], rm.shape[0]])
-    sol_expm_solver[0, :] = y0
-
+    sol_expm_solver = np.empty([rm.shape[0],time.shape[0]])
+    sol_expm_solver[:,0] = y0
+    fug = np.empty((len(y0),len(time)))
+    fug[:,0] = y0/eq_prob
     for i in range(len(time) - 1):
         y = expm_multiply(
             rm_csc,
@@ -76,6 +85,7 @@ def csc(sp,temp,y0, time):
             num=2,
             endpoint=True,
         )[0, :]
-        sol_expm_solver[i + 1, :] = y
+        sol_expm_solver[:,i+1] = y
+        fug[:,i+1] = y/eq_prob
         
-    return sol_expm_solver
+    return sol_expm_solver, fug
