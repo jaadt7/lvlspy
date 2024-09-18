@@ -6,75 +6,76 @@ import numpy as np
 from scipy.sparse import csc_matrix
 from scipy.sparse.linalg import expm_multiply
 
-
-class Evolution:
+def newton_raphson(sp,temp,y0, time, tol = 1e-6):
     """
-    A class that handles level evolution
+    Evolves a system using the Newton-Raphson method
+
+    Args:
+        ``sp`` (:obj:`lvlspy.species.Species`): The species containing the levels to be evolved
+
+        ``temp`` (:obj:`float`): The temperature in K to evolve the system at.
+
+        ``y0`` (:obj:`numpy.array`): 1D array of length n_levels containing the initial distribution.
+
+        ``time`` (:obj:`numpy.array`,optional): An array containing the time steps.
+        ``tol`` (:obj:`float`): The convergence condition for the method. Defaults to 1e-6.
+
+    Returns:
+        ``y`` (:obj:`numpy.array`): 2D array of size n_levels*n_time containing the evolved system.
     """
 
-    def newton_raphson(self, y, time, tol, rm):
-        """
-        Evolves a system using the Newton-Raphson method
+    y = np.empty((len(y0),len(time)))
+    y[:,0] = y0
 
-        Args:
-            ``y`` (:obj:`numpy.array`): 2D array of dimensions n_levels X n_time_steps.
-            The first column contains the initial setup
+    rm = sp.compute_rate_matrix(temp) #calculate the rate matrix of the species
 
-            ``time`` (:obj:`numpy.array`): An array containing the time steps
+    y_dt = y[:,0]
+    for i in range(1, len(time)):
+        dt = time[i] - time[i - 1]
+        matrix = np.identity(len(y_dt)) - dt * rm
+        delta = np.ones(len(y_dt))
+        while max(delta) > tol:
+            delta = np.linalg.solve(
+                matrix, -_f_vector(y_dt, y[:,i-1], matrix)
+            )
+            y_dt = y_dt + delta
+        y[:,i] = y_dt
 
-            ``tol`` (:obj:`float`): The convergence condition for the method
+    return y
 
-            ``rm``  (:obj:`numpy.array`): 2D array containing the transition rates
-            between the levels
+def _f_vector(y_dt, y_i, rm):
+    return np.matmul(rm, y_dt) - y_i
 
-        Returns:
-            ``y`` (:obj:`numpy.array`): The filled up 2D array where each column is
-            the updated evolution at that time step
-        """
-        y_dt = y[0, :]
-        for i in range(1, len(time)):
-            dt = time[i] - time[i - 1]
-            rm = np.identity(len(y_dt)) - dt * rm
-            delta = np.ones(len(y_dt))
-            while max(delta) > tol:
-                delta = np.linalg.solve(
-                    rm, -self._f_vector(y_dt, y[i - 1, :], rm)
-                )
-                y_dt = y_dt + delta
-            y[i, :] = y_dt
+def csc(sp,temp,y0, time):
+    """Evolves a system using sparse solver
 
-        return y
+    Args:
+        ``sp`` (:obj:`lvlspy.species.Species`): The species containing the levels to be evolved
 
-    def _f_vector(self, y_dt, y_i, rm):
-        return np.matmul(rm, y_dt) - y_i
+        ``temp`` (:obj:`float`): The temperature in K to evolve the system at.
 
-    def csc_solve(self, y0, rm, time):
-        """Evolves a system using sparse solver
+        ``y0`` (:obj:`numpy.array`): Array containing the initial condition.
 
-        Args:
-            ``y0`` (:obj:`numpy.array`): Array containing the initial condition
+        ``time`` (:obj:`numpy.array`): An array containing the time stamps to evolve the system
 
-            ``rm`` (:obj:`numpy.array`): 2D numpy array containing the rate matrix of the system
+    Returns:
+        ``sol_expm_solver`` (:obj:`numpy.array`): A 2D array containing the evolved system
+    """
 
-            ``time`` (:obj:`numpy.array`): An array containing the time stamps to evolve the system
+    rm = sp.compute_rate_matrix(temp)
+    rm_csc = csc_matrix(rm)
+    sol_expm_solver = np.empty([time.shape[0], rm.shape[0]])
+    sol_expm_solver[0, :] = y0
 
-        Returns:
-            ``sol_expm_solver`` (:obj:`numpy.array`): A 2D array containing the evolved system
-        """
-
-        rm_csc = csc_matrix(rm)
-        sol_expm_solver = np.empty([time.shape[0], rm.shape[0]])
-        sol_expm_solver[0, :] = y0
-
-        for i in range(sol_expm_solver.shape[1]):
-            y = expm_multiply(
-                rm_csc,
-                y0,
-                start=time[i],
-                stop=time[i + 1],
-                num=2,
-                endpoint=True,
-            )[0, :]
-            sol_expm_solver[i + 1, :] = y
-            y0 = y
-        return sol_expm_solver
+    for i in range(len(time) - 1):
+        y = expm_multiply(
+            rm_csc,
+            y0,
+            start=time[i],
+            stop=time[i + 1],
+            num=2,
+            endpoint=True,
+        )[0, :]
+        sol_expm_solver[i + 1, :] = y
+        
+    return sol_expm_solver
