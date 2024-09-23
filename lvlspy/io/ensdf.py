@@ -464,7 +464,7 @@ def _construct_gamma_line(transition, identifiers):
     return s
 
 
-def fill_missing_ensdf(sp, a):
+def fill_missing_ensdf_transitions(sp, a):
     """Method to fill in missing transitions from either not listed in ENSDF
     or level with useable property flagged as false due to unclear J^pi
 
@@ -491,12 +491,12 @@ def fill_missing_ensdf(sp, a):
 
                 e = [levels[i].get_energy(), levels[j].get_energy()]
 
-                if jpi_i == "" or jpi_j == "":
+                # if jpi_i == "" or jpi_j == "":
 
-                    sp.add_transition(
-                        lt.Transition(levels[i], levels[j], ein_a)
-                    )
-                    continue
+                #    sp.add_transition(
+                #        lt.Transition(levels[i], levels[j], ein_a)
+                #    )
+                #    continue
 
                 if (
                     levels[i].get_properties()["useability"] is False
@@ -652,3 +652,19 @@ def _get_jpi_range(jpi):
                 m = int(2 * lp.Properties().evaluate_expression(j[0:-1]) + 1)
                 j_range.append([m, p])
     return j_range
+
+
+def remove_undefined_levels(sp):
+    """Method that removes levels read from ensdf where j^pi is left blank. This feature
+    facilitates calculations made in the isomer module
+
+    Args:
+        ``sp`` (:obj:`lvlspy.species.Species`) The species of which the levels are to be trimmed
+
+    Returns:
+        Upon successful return, the levels with blank j^pi from the ENSDF record will be removed
+    """
+    levels = sp.get_levels()
+    for l in levels:
+        if l.get_properties()["j^pi"] == "":
+            sp.remove_level(l)

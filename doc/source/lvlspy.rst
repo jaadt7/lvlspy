@@ -70,3 +70,8 @@ lvlspy.calculate module
    :members:
    :undoc-members:
    :show-inheritance:
+
+.. automodule:: lvlspy.calculate.isomer
+   :members:
+   :undoc-members:
+   :show-inheritance:
