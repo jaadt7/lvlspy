@@ -24,13 +24,13 @@ def transfer_properties(rate_matrix, level_low, level_high):
 
         ``tpm`` (:obj:`numpy.array`) A 2D array containing the Transition Probability Matrix
 
-        ``f_low_in (:obj:`numpy.array`) An array containing the branching ratio from all the
+        ``f_low_in`` (:obj:`numpy.array`) An array containing the branching ratio from all the
         upper levels into the low level
 
-        ``f_low_out (:obj:`numpy.array`) An array containing the branching ratio from the lower
+        ``f_low_out`` (:obj:`numpy.array`) An array containing the branching ratio from the lower
         levels into all the other levels
 
-        ``f_high_in (:obj:`numpy.array`) An array containing the branching ratio from all the
+        ``f_high_in`` (:obj:`numpy.array`) An array containing the branching ratio from all the
         levels into the high level
 
         ``f_high_out`` (:obj:`numpy.array`) An containing the branching ration out of the high
@@ -97,7 +97,7 @@ def effective_rate(t, sp, level_low=0, level_high=1):
 
         ``sp`` (:obj:`lvlspy.species.Species`) The species of which the level system belongs to.
 
-        ``level_low (:obj:`int`, optional) The lower level the effective transition rates are
+        ``level_low`` (:obj:`int`, optional) The lower level the effective transition rates are
         calculated to. Defaults to 0; the ground state.
 
         ``level_high`` (:obj:`int`, optional) The higher level the effective transtion rates are
@@ -107,10 +107,10 @@ def effective_rate(t, sp, level_low=0, level_high=1):
         Upon successful return, the method returns the effective transition rates between the higher
         and lower level at temperature T
 
-        ``l_low_high (:obj:`float`) The effective transition rate from the lower level to the
+        ``l_low_high`` (:obj:`float`) The effective transition rate from the lower level to the
         higher level
 
-        ``l_high_low (:obj:`float`) The effective transition rate from the higher level to the
+        ``l_high_low`` (:obj:`float`) The effective transition rate from the higher level to the
         lower level
     """
 
@@ -143,14 +143,16 @@ def _partial_sum(tpm):
 
 
 def cascade_probabilities(t, sp, level_low=0, level_high=1):
-    """Method to calculate the cascace probability vectores (gammas)
+    """
+    Method to calculate the cascace probability vectores (gammas)
+    
     Args:
         ``t`` (:obj:`float`) The temperature in K
 
         ``sp`` (:obj:`lvlspy.species.Species`) The species of which the
         probability vectors are to be calculated for
 
-        ``level_low (:obj:`int`, optional) The lower level the effective transition rates are
+        ``level_low`` (:obj:`int`, optional) The lower level the effective transition rates are
         calculated to. Defaults to 0; the ground state.
 
         ``level_high`` (:obj:`int`, optional) The higher level the effective transtion rates are
