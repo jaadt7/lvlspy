@@ -462,3 +462,193 @@ def _construct_gamma_line(transition, identifiers):
             s = s[: indices[0]] + str(properties[key]) + s[indices[0] + 1 :]
 
     return s
+
+
+def fill_missing_ensdf(sp, a):
+    """Method to fill in missing transitions from either not listed in ENSDF
+    or level with useable property flagged as false due to unclear J^pi
+
+    Args:
+        ``sp`` (:obj:`lvlspy.species.Species`) The species read in from ENSDF to
+        fill in missing transitions
+
+        ``a`` (:obj:`int`) Mass number of species
+
+
+
+    Returns:
+        Upon successful return, the species would be updated with all transitions
+    """
+
+    levels = sp.get_levels()
+    for i in range(1, len(levels)):
+        for j in range(i):
+            if sp.get_level_to_level_transition(levels[i], levels[j]) is None:
+                ein_a = 0.0
+
+                jpi_i = levels[i].get_properties()["j^pi"]
+                jpi_j = levels[j].get_properties()["j^pi"]
+
+                e = [levels[i].get_energy(), levels[j].get_energy()]
+
+                if jpi_i == "" or jpi_j == "":
+
+                    sp.add_transition(
+                        lt.Transition(levels[i], levels[j], ein_a)
+                    )
+                    continue
+
+                if (
+                    levels[i].get_properties()["useability"] is False
+                    and levels[j].get_properties()["useability"] is True
+                ):
+
+                    sp.add_transition(
+                        lt.Transition(
+                            levels[i],
+                            levels[j],
+                            _get_ein_a_from_mixed_upper_level_to_lower(
+                                [e, ein_a, jpi_i, levels[j], a]
+                            ),
+                        )
+                    )
+                    continue
+
+                if (
+                    levels[i].get_properties()["useability"] is True
+                    and levels[j].get_properties()["useability"] is True
+                ):
+
+                    jj = [
+                        int((levels[i].get_multiplicity() - 1) / 2),
+                        int((levels[j].get_multiplicity() - 1) / 2),
+                    ]
+                    p = [
+                        levels[i].get_properties()["parity"],
+                        levels[j].get_properties()["parity"],
+                    ]
+                    p = lp.Properties().set_parity(p)
+                    sp.add_transition(
+                        lt.Transition(
+                            levels[i],
+                            levels[j],
+                            calc.Weisskopf().estimate(e, jj, p, a),
+                        )
+                    )
+                    continue
+
+                if (
+                    levels[i].get_properties()["useability"]
+                    and levels[j].get_properties()["useability"] is False
+                ):
+
+                    sp.add_transition(
+                        lt.Transition(
+                            levels[i],
+                            levels[j],
+                            _get_ein_a_to_mixed_lower_level(
+                                [e, ein_a, jpi_j, levels[i], a]
+                            ),
+                        )
+                    )
+                    continue
+
+                if (
+                    levels[i].get_properties()["useability"] is False
+                    and levels[j].get_properties()["useability"] is False
+                ):
+
+                    sp.add_transition(
+                        lt.Transition(
+                            levels[i],
+                            levels[j],
+                            _get_ein_a_from_mixed_to_mixed(
+                                [e, ein_a, jpi_i, jpi_j, a]
+                            ),
+                        )
+                    )
+                    continue
+
+
+def _get_ein_a_from_mixed_to_mixed(in_list):
+    jpi_i_range = _get_jpi_range(in_list[2])
+    jpi_j_range = _get_jpi_range(in_list[3])
+    for ki in jpi_i_range:
+        for kj in jpi_j_range:
+            jj = [int(ki[0]), int(kj[0])]
+            p = [ki[1], kj[1]]
+            p = lp.Properties().set_parity(p)
+            in_list[1] += (
+                calc.Weisskopf().estimate(in_list[0], jj, p, in_list[4])
+                / len(jpi_i_range)
+                / len(jpi_j_range)
+            )
+
+    return in_list[1]
+
+
+def _get_ein_a_to_mixed_lower_level(in_list):
+
+    jpi_j_range = _get_jpi_range(in_list[2])
+
+    for k in jpi_j_range:
+        jj = [int((in_list[3].get_multiplicity() - 1) / 2), int(k[0])]
+        p = [in_list[3].get_properties()["parity"], k[1]]
+        p = lp.Properties().set_parity(p)
+        in_list[1] += calc.Weisskopf().estimate(
+            in_list[0], jj, p, in_list[4]
+        ) / len(jpi_j_range)
+
+    return in_list[1]
+
+
+def _get_ein_a_from_mixed_upper_level_to_lower(in_list):
+
+    jpi_i_range = _get_jpi_range(in_list[2])
+    for k in jpi_i_range:
+        jj = [int(k[0]), int((in_list[3].get_multiplicity() - 1) / 2)]
+        p = [k[1], in_list[3].get_properties()["parity"]]
+        p = lp.Properties().set_parity(p)
+        in_list[1] += calc.Weisskopf().estimate(
+            in_list[0], jj, p, in_list[4]
+        ) / len(jpi_i_range)
+    return in_list[1]
+
+
+def _get_jpi_range(jpi):
+
+    # first strip any available parentheses
+    jpi = jpi.replace("(", "")
+    jpi = jpi.replace(")", "")
+    j_range = []
+    if jpi == "":
+        return j_range
+    if "TO" in jpi or ":" in jpi:
+        p = jpi[-1]
+        if "TO" in jpi:
+            jpi = jpi.split("TO")
+        if ":" in jpi:
+            jpi = jpi.split(":")
+
+        if "+" not in jpi and "-" not in jpi:
+            p = "+"
+        m1 = int(lp.Properties().evaluate_expression(jpi[0].strip(p)))
+        m2 = int(lp.Properties().evaluate_expression(jpi[1].strip(p)))
+        for i in range(m1, m2 + 1):
+            j_range.append([i, p])
+
+    else:
+        if "OR" in jpi:
+            jpi = jpi.split("OR")
+        if "," in jpi:
+            jpi = jpi.split(",")
+        for j in jpi:
+            if "+" not in j and "-" not in j:
+                m = int(2 * lp.Properties().evaluate_expression(j) + 1)
+                p = "+"
+                j_range.append([m, p])
+            else:
+                p = j[-1]
+                m = int(2 * lp.Properties().evaluate_expression(j[0:-1]) + 1)
+                j_range.append([m, p])
+    return j_range

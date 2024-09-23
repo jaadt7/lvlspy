@@ -55,3 +55,15 @@ class Properties:
                 result /= num
 
         return result
+
+    def set_parity(self, p):
+        """Method to transform partity from +/- string to +/- 1 integer"""
+        if p[0] == "+":
+            p[0] = 1
+        else:
+            p[0] = -1
+        if p[1] == "+":
+            p[1] = 1
+        else:
+            p[1] = -1
+        return p
