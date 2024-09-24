@@ -18,7 +18,7 @@ affiliations:
     - name: Department of Physics and Astronomy, Clemson University, Clemson, SC, 29634
       index: 1
 
-date: October 2023
+date: September 2024
 bibliography: paper.bib
 ---
 
@@ -26,7 +26,7 @@ bibliography: paper.bib
 
 Atoms and molecules are examples of quantum level systems in which the allowed energy states take on discrete values.  These states, which are eigenstates of the system's Hamiltonian, are *levels*, which are characterized by the energy relative to the lowest energy level (the "ground state"), and by their *multiplicity* which accounts for states that have exactly the same energy, in which case the states are *degenerate* (for example, see [@griffiths_introduction_2018]).  Interaction with the external world allows a quantum level system to transition between one level and another.  The rate of transition between levels depends on the details of the levels and the nature of the interaction between the system and the external world.  In an ensemble of quantum level systems in contact with the external world at a given temperature (a "heat bath"), there will be a probability of a given system existing in a particular level.  Level probabilities will evolve with time, but, as long as the heat bath changes slowly compared to transition times between levels, the ensemble can achieve an equilibrium characterized by the temperature of the heat bath.  
 
-The Python package ``lvlspy`` stores generic quantum level system data, particularly level energies, multiplicities, and spontaneous transition rates, for levels in any species.  The API includes built-in functions that calculate induced transition rates from detailed balance, rate matrices, and equilibrium probabilites.  Optional properties may be added to any species, level, or spontaneous transition rate, and API routines allow the user to input the relevant data from XML with a well-defined schema.  The source code for ``lvlspy`` has been archived to Zenodo at the linked DOI [@jaad_tannous_2023_8193379].  
+The Python package ``lvlspy`` stores generic quantum level system data, particularly level energies, multiplicities, and spontaneous transition rates, for levels in any species. The API contains two modules in addition to the main one. The main module includes built-in functions that calculate induced transition rates from detailed balance, rate matrices, and equilibrium probabilites. Optional properties may be added to any species, level, or spontaneous transition rate. The io module contains routines which allow the user to input or output relevant data with XML in a well-defined schema. It also allows the input or output into Evaluated Nuclear Structure Data Format, ENSDF. This format is used by all national labs experimenting on nuclear structure. The third module contains calculation functions from system evolution to Weisskopf Estimates [@Kaplan1962-yy]. The whole API was built with modularization in mind, making it easier to implement new formats, calculation type functions, or even graphical features in the future. The source code for ``lvlspy`` has been archived to Zenodo at the linked DOI [@jaad_tannous_2023_8193379].  
 
 # Statement of Need
 
