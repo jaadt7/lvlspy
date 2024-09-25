@@ -120,12 +120,12 @@ def effective_rate(t, sp, level_low=0, level_high=1):
 
     # Lambda_21_eff
     l_high_low = trans_props[5][level_high] * np.matmul(
-        trans_props[4], np.matmul(f_n, trans_props[1])
+        trans_props[4].T, np.matmul(f_n, trans_props[1])
     )
     # Lambda_12_eff
     l_low_high = trans_props[5][level_low] * (
         np.matmul(
-            trans_props[2],
+            trans_props[2].T,
             np.matmul(f_n, trans_props[3]),
         )
     )
@@ -135,9 +135,13 @@ def effective_rate(t, sp, level_low=0, level_high=1):
 
 def _partial_sum(tpm):
     n_terms = 50000
-    f_n = np.identity(tpm.shape[0])
-    for i in range(1, n_terms):
-        f_n += np.linalg.matrix_power(tpm, i)
+    f_n = np.identity(tpm.shape[0]) + tpm
+    f_p = tpm
+    i = 2
+    while i < n_terms:
+        f_p  = np.matmul(f_p,tpm) 
+        f_n += f_p
+        i += 1
 
     return f_n
 

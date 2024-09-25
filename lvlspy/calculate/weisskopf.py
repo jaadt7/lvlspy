@@ -34,15 +34,13 @@ class Weisskopf:
         de = e_i - e_f
 
         s = (
-            2 * (j + 1) / (j * np.power(spc.factorial2(2 * j + 1), 2))
+            1.9 * (j + 1) / (j * np.power(spc.factorial2(2 * j + 1), 2))
         ) * np.power(3 / (j + 3), 2)
 
         return (
-            0.55
-            * s
-            * np.power(a, -2 / 3)
+            s
             * np.power(de / 197000.0, 2 * j + 1)
-            * np.power(1.4 * np.power(a, 1.0 / 3.0), 2 * j)
+            * np.power(1.2 * np.power(a, 1.0 / 3.0), 2 * j - 2)
             * GSL_CONST_NUM_ZETTA
         )
 
@@ -67,14 +65,13 @@ class Weisskopf:
         de = e_i - e_f  # energy difference
 
         s = (
-            2 * (j + 1) / (j * np.power(spc.factorial2(2 * j + 1), 2))
+            4.4 * (j + 1) / (j * np.power(spc.factorial2(2 * j + 1), 2))
         ) * np.power(3 / (j + 3), 2)
 
         return (
-            2.4
-            * s
+            s
             * np.power(de / 197000.0, 2 * j + 1)
-            * np.power(1.4 * np.power(a, 1.0 / 3.0), 2 * j)
+            * np.power(1.2 * np.power(a, 1.0 / 3.0), 2 * j)
             * GSL_CONST_NUM_ZETTA
         )
 
@@ -94,9 +91,10 @@ class Weisskopf:
             ``ein_a`` (:obj:`float`) The Einstein A coefficiet of the downwards transition
         """
         ein_a = 0.0
-
+        sm = int(j[0] + j[1])
+        df = int(j[0] - j[1])
         j_range = range(
-            max(1, abs(int(j[0] - j[1]))), j[0] + j[1] + 1
+            max(1, abs(df)), sm + 1
         )  # range of gamma angular momenta
 
         for jj in j_range:
@@ -122,17 +120,18 @@ class Weisskopf:
 
         e = [lvs[tran[0]].get_energy(), lvs[tran[1]].get_energy()]
         j = [
-            int((lvs[tran[0]].get_multiplicity() - 1) / 2),
-            int((lvs[tran[1]].get_multiplicity() - 1) / 2),
+            (lvs[tran[0]].get_multiplicity() - 1) / 2,
+            (lvs[tran[1]].get_multiplicity() - 1) / 2,
         ]
         p = [
             lvs[tran[0]].get_properties()["parity"],
             lvs[tran[1]].get_properties()["parity"],
         ]
         ein_a = 0.0
-
+        sm = int(j[0] + j[1])
+        df = int(j[0] - j[1])
         j_range = range(
-            max(1, abs(int(j[0] - j[1]))), j[0] + j[1] + 1
+            max(1, abs(df)), sm + 1
         )  # range of gamma angular momenta
         m_r = 0
 

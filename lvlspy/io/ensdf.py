@@ -491,13 +491,6 @@ def fill_missing_ensdf_transitions(sp, a):
 
                 e = [levels[i].get_energy(), levels[j].get_energy()]
 
-                # if jpi_i == "" or jpi_j == "":
-
-                #    sp.add_transition(
-                #        lt.Transition(levels[i], levels[j], ein_a)
-                #    )
-                #    continue
-
                 if (
                     levels[i].get_properties()["useability"] is False
                     and levels[j].get_properties()["useability"] is True
@@ -520,8 +513,8 @@ def fill_missing_ensdf_transitions(sp, a):
                 ):
 
                     jj = [
-                        int((levels[i].get_multiplicity() - 1) / 2),
-                        int((levels[j].get_multiplicity() - 1) / 2),
+                        (levels[i].get_multiplicity() - 1) / 2,
+                        (levels[j].get_multiplicity() - 1) / 2,
                     ]
                     p = [
                         levels[i].get_properties()["parity"],
