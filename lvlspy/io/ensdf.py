@@ -647,17 +647,25 @@ def _get_jpi_range(jpi):
     return j_range
 
 
-def remove_undefined_levels(sp):
+def remove_undefined_levels(sp, all_levs = False):
     """Method that removes levels read from ensdf where j^pi is left blank. This feature
     facilitates calculations made in the isomer module
 
     Args:
         ``sp`` (:obj:`lvlspy.species.Species`) The species of which the levels are to be trimmed
+        
+        ``all`` (:obj:`bool`) A flag to remove all undefined levels which have j^pi set blank or
+        a range of values. Defaults to False so only the blanks are removed
 
     Returns:
         Upon successful return, the levels with blank j^pi from the ENSDF record will be removed
     """
     levels = sp.get_levels()
-    for l in levels:
-        if l.get_properties()["j^pi"] == "":
-            sp.remove_level(l)
+    if all_levs:
+        for l in levels:
+            if l.get_multiplicity() == 10000:
+                sp.remove_level(l)
+    else:
+        for l in levels:
+            if l.get_properties()['j^pi'] == '':
+                sp.remove_level(l)
