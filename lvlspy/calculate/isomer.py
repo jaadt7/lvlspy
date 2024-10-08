@@ -142,6 +142,8 @@ def _partial_sum(tpm):
         f_p  = np.matmul(f_p,tpm) 
         f_n += f_p
         i += 1
+        if np.linalg.norm(f_n,np.inf) < 1e-16:
+            break
 
     return f_n
 

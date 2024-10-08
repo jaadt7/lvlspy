@@ -298,10 +298,16 @@ def _extract_multi_parity(jpi):
     jpi = jpi.replace("(", "")
     jpi = jpi.replace(")", "")
 
-    if jpi == "" or "TO" in jpi or "," in jpi or ":" in jpi or "OR" in jpi:
+    if jpi == "":
         multi = 10000
         parity = "+"
         useable = False
+    
+    elif "TO" in jpi or "," in jpi or ":" in jpi or "OR" in jpi:
+        useable = False
+        j_range = _get_jpi_range(jpi)
+        multi = j_range[0][0]
+        parity = j_range[0][1]
 
     else:
         if "+" not in jpi and "-" not in jpi:
@@ -513,8 +519,8 @@ def fill_missing_ensdf_transitions(sp, a):
                 ):
 
                     jj = [
-                        (levels[i].get_multiplicity() - 1) / 2,
-                        (levels[j].get_multiplicity() - 1) / 2,
+                        levels[i].get_multiplicity(),
+                        levels[j].get_multiplicity(),
                     ]
                     p = [
                         levels[i].get_properties()["parity"],
@@ -568,7 +574,7 @@ def _get_ein_a_from_mixed_to_mixed(in_list):
     jpi_j_range = _get_jpi_range(in_list[3])
     for ki in jpi_i_range:
         for kj in jpi_j_range:
-            jj = [int(ki[0]), int(kj[0])]
+            jj = [ki[0], kj[0]]
             p = [ki[1], kj[1]]
             p = lp.Properties().set_parity(p)
             in_list[1] += (
@@ -585,7 +591,7 @@ def _get_ein_a_to_mixed_lower_level(in_list):
     jpi_j_range = _get_jpi_range(in_list[2])
 
     for k in jpi_j_range:
-        jj = [int((in_list[3].get_multiplicity() - 1) / 2), int(k[0])]
+        jj = [in_list[3].get_multiplicity() , k[0]]
         p = [in_list[3].get_properties()["parity"], k[1]]
         p = lp.Properties().set_parity(p)
         in_list[1] += calc.Weisskopf().estimate(
@@ -599,7 +605,7 @@ def _get_ein_a_from_mixed_upper_level_to_lower(in_list):
 
     jpi_i_range = _get_jpi_range(in_list[2])
     for k in jpi_i_range:
-        jj = [int(k[0]), int((in_list[3].get_multiplicity() - 1) / 2)]
+        jj = [k[0], in_list[3].get_multiplicity()]
         p = [k[1], in_list[3].get_properties()["parity"]]
         p = lp.Properties().set_parity(p)
         in_list[1] += calc.Weisskopf().estimate(
@@ -625,8 +631,8 @@ def _get_jpi_range(jpi):
 
         if "+" not in jpi and "-" not in jpi:
             p = "+"
-        m1 = int(lp.Properties().evaluate_expression(jpi[0].strip(p)))
-        m2 = int(lp.Properties().evaluate_expression(jpi[1].strip(p)))
+        m1 = int(2*lp.Properties().evaluate_expression(jpi[0].strip(p))+1)
+        m2 = int(2*lp.Properties().evaluate_expression(jpi[1].strip(p))+1)
         for i in range(m1, m2 + 1):
             j_range.append([i, p])
 
@@ -663,7 +669,7 @@ def remove_undefined_levels(sp, all_levs = False):
     levels = sp.get_levels()
     if all_levs:
         for l in levels:
-            if l.get_multiplicity() == 10000:
+            if l.get_properties()['useability'] is False:
                 sp.remove_level(l)
     else:
         for l in levels:
