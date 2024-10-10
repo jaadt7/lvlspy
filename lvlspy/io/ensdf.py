@@ -519,8 +519,8 @@ def fill_missing_ensdf_transitions(sp, a):
                 ):
 
                     jj = [
-                        levels[i].get_multiplicity(),
-                        levels[j].get_multiplicity(),
+                        (levels[i].get_multiplicity() - 1)//2,
+                        (levels[j].get_multiplicity() - 1)//2,
                     ]
                     p = [
                         levels[i].get_properties()["parity"],
@@ -591,7 +591,7 @@ def _get_ein_a_to_mixed_lower_level(in_list):
     jpi_j_range = _get_jpi_range(in_list[2])
 
     for k in jpi_j_range:
-        jj = [in_list[3].get_multiplicity() , k[0]]
+        jj = [(in_list[3].get_multiplicity() - 1)//2 , (k[0] - 1)//2]
         p = [in_list[3].get_properties()["parity"], k[1]]
         p = lp.Properties().set_parity(p)
         in_list[1] += calc.Weisskopf().estimate(
@@ -605,7 +605,7 @@ def _get_ein_a_from_mixed_upper_level_to_lower(in_list):
 
     jpi_i_range = _get_jpi_range(in_list[2])
     for k in jpi_i_range:
-        jj = [k[0], in_list[3].get_multiplicity()]
+        jj = [(k[0] - 1)//2, (in_list[3].get_multiplicity() - 1)//2]
         p = [k[1], in_list[3].get_properties()["parity"]]
         p = lp.Properties().set_parity(p)
         in_list[1] += calc.Weisskopf().estimate(
@@ -673,5 +673,5 @@ def remove_undefined_levels(sp, all_levs = False):
                 sp.remove_level(l)
     else:
         for l in levels:
-            if l.get_properties()['j^pi'] == '':
+            if l.get_multiplicity() == 10000:
                 sp.remove_level(l)

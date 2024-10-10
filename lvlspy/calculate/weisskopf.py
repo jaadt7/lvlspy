@@ -91,8 +91,8 @@ class Weisskopf:
             ``ein_a`` (:obj:`float`) The Einstein A coefficiet of the downwards transition
         """
         ein_a = 0.0
-        sm = (j[0] + j[1] -2)//2
-        df = (j[0] - j[1])//2
+        sm = j[0] + j[1]
+        df = j[0] - j[1]
         j_range = range(
             max(1, abs(df)), sm + 1
         )  # range of gamma angular momenta
@@ -120,16 +120,16 @@ class Weisskopf:
 
         e = [lvs[tran[0]].get_energy(), lvs[tran[1]].get_energy()]
         j = [
-            lvs[tran[0]].get_multiplicity() ,
-            lvs[tran[1]].get_multiplicity() ,
+            (lvs[tran[0]].get_multiplicity() - 1) // 2,
+            (lvs[tran[1]].get_multiplicity() - 1) // 2,
         ]
         p = [
             lvs[tran[0]].get_properties()["parity"],
             lvs[tran[1]].get_properties()["parity"],
         ]
         ein_a = 0.0
-        sm = (j[0] + j[1]-2)//2
-        df = (j[0] - j[1])//2
+        sm = j[0] + j[1]
+        df = j[0] - j[1]
         j_range = range(
             max(1, abs(df)), sm + 1
         )  # range of gamma angular momenta
@@ -155,6 +155,7 @@ class Weisskopf:
 
         else:
             for jj in j_range:
+                
                 ein_a += self._get_adjusted_rate(
                     jj, p, e, [a, b, i_tran, m_r, tran]
                 )
