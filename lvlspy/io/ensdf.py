@@ -574,7 +574,7 @@ def _get_ein_a_from_mixed_to_mixed(in_list):
     jpi_j_range = _get_jpi_range(in_list[3])
     for ki in jpi_i_range:
         for kj in jpi_j_range:
-            jj = [ki[0], kj[0]]
+            jj = [(ki[0] - 1)//2, (kj[0] - 1)//2]
             p = [ki[1], kj[1]]
             p = lp.Properties().set_parity(p)
             in_list[1] += (
