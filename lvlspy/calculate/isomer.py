@@ -139,11 +139,11 @@ def _partial_sum(tpm):
     f_p = tpm
     i = 2
     while i < n_terms:
-        f_p  = np.matmul(f_p,tpm) 
+        f_p = np.matmul(f_p, tpm)
         f_n += f_p
         i += 1
-        if np.linalg.norm(f_n,np.inf) < 1e-6:
-           break
+        if np.linalg.norm(f_n, np.inf) < 1e-6:
+            break
 
     return f_n
 
@@ -151,7 +151,7 @@ def _partial_sum(tpm):
 def cascade_probabilities(t, sp, level_low=0, level_high=1):
     """
     Method to calculate the cascace probability vectores (gammas)
-    
+
     Args:
         ``t`` (:obj:`float`) The temperature in K
 

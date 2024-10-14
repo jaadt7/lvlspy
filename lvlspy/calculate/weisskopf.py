@@ -128,11 +128,10 @@ class Weisskopf:
             lvs[tran[1]].get_properties()["parity"],
         ]
         ein_a = 0.0
-        sm = j[0] + j[1]
-        df = j[0] - j[1]
         j_range = range(
-            max(1, abs(df)), sm + 1
+            max(1, abs(j[0] - j[1])), j[0] + j[1] + 1
         )  # range of gamma angular momenta
+
         m_r = 0
 
         if tran[7] != "":
@@ -145,6 +144,7 @@ class Weisskopf:
         ]  # first is electric,
         # second is magnetic
         for c, i in enumerate(i_tran):
+
             if len(i) == 0:
                 i = np.array([-1])
                 i_tran[c] = i
@@ -155,7 +155,7 @@ class Weisskopf:
 
         else:
             for jj in j_range:
-                
+
                 ein_a += self._get_adjusted_rate(
                     jj, p, e, [a, b, i_tran, m_r, tran]
                 )
@@ -168,21 +168,31 @@ class Weisskopf:
         i_tran = arr[2]
         m_r = arr[3]
         tran = arr[4]
-        b_1 = 1
+        b_1 = 1.0
         dummy = 0.0
 
         if np.power(-1, jj) * p[0] == p[1]:
             if b[int(i_tran[0])][1] == "E" and int(b[int(i_tran[0])][2]) == jj:
                 b_1 = float(b[int(i_tran[0])][5 : len(b[int(i_tran[0])])])
+
                 if b[int(i_tran[0])][1:3] == "E2" and tran[7] != "":
+
                     b_1 = b_1 * np.power(m_r, 2) / (1.0 + np.power(m_r, 2))
-            dummy += self.rate_elec(e[0], e[1], jj, a) * b_1
+            dummy += (
+                self.rate_elec(e[0], e[1], jj, a) * b_1 / self._b_sp_el(a, jj)
+            )
         else:
             if b[int(i_tran[1])][1] == "M" and int(b[int(i_tran[1])][2]) == jj:
                 b_1 = float(b[int(i_tran[1])][5 : len(b[int(i_tran[1])])])
+
                 if b[int(i_tran[1])][1:3] == "M1" and tran[7] != "":
+
                     b_1 = b_1 / (1.0 + np.power(m_r, 2))
-                dummy += self.rate_mag(e[0], e[1], jj, a) * b_1
+                dummy += (
+                    self.rate_mag(e[0], e[1], jj, a)
+                    * b_1
+                    / self._b_sp_ml(a, jj)
+                )
 
         return dummy
 
@@ -226,3 +236,18 @@ class Weisskopf:
                         reduced_prob.append(sp_mods[0] + "=" + sp_mods[2])
 
         return reduced_prob
+
+    def _b_sp_ml(self, a, j):
+        return (
+            10.0
+            * np.power(3.0 / (j + 3.0), 2)
+            * np.power(1.2 * np.power(a, 1 / 3), 2 * j - 2)
+            / np.pi
+        )
+
+    def _b_sp_el(self, a, j):
+        return (
+            np.power(3.0 / (3.0 + j), 2)
+            * np.power(1.2 * np.power(a, 1 / 3), 2 * j)
+            / (4 * np.pi)
+        )

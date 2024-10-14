@@ -302,7 +302,7 @@ def _extract_multi_parity(jpi):
         multi = 10000
         parity = "+"
         useable = False
-    
+
     elif "TO" in jpi or "," in jpi or ":" in jpi or "OR" in jpi:
         useable = False
         j_range = _get_jpi_range(jpi)
@@ -519,8 +519,8 @@ def fill_missing_ensdf_transitions(sp, a):
                 ):
 
                     jj = [
-                        (levels[i].get_multiplicity() - 1)//2,
-                        (levels[j].get_multiplicity() - 1)//2,
+                        (levels[i].get_multiplicity() - 1) // 2,
+                        (levels[j].get_multiplicity() - 1) // 2,
                     ]
                     p = [
                         levels[i].get_properties()["parity"],
@@ -574,7 +574,7 @@ def _get_ein_a_from_mixed_to_mixed(in_list):
     jpi_j_range = _get_jpi_range(in_list[3])
     for ki in jpi_i_range:
         for kj in jpi_j_range:
-            jj = [(ki[0] - 1)//2, (kj[0] - 1)//2]
+            jj = [(ki[0] - 1) // 2, (kj[0] - 1) // 2]
             p = [ki[1], kj[1]]
             p = lp.Properties().set_parity(p)
             in_list[1] += (
@@ -591,7 +591,7 @@ def _get_ein_a_to_mixed_lower_level(in_list):
     jpi_j_range = _get_jpi_range(in_list[2])
 
     for k in jpi_j_range:
-        jj = [(in_list[3].get_multiplicity() - 1)//2 , (k[0] - 1)//2]
+        jj = [(in_list[3].get_multiplicity() - 1) // 2, (k[0] - 1) // 2]
         p = [in_list[3].get_properties()["parity"], k[1]]
         p = lp.Properties().set_parity(p)
         in_list[1] += calc.Weisskopf().estimate(
@@ -605,7 +605,7 @@ def _get_ein_a_from_mixed_upper_level_to_lower(in_list):
 
     jpi_i_range = _get_jpi_range(in_list[2])
     for k in jpi_i_range:
-        jj = [(k[0] - 1)//2, (in_list[3].get_multiplicity() - 1)//2]
+        jj = [(k[0] - 1) // 2, (in_list[3].get_multiplicity() - 1) // 2]
         p = [k[1], in_list[3].get_properties()["parity"]]
         p = lp.Properties().set_parity(p)
         in_list[1] += calc.Weisskopf().estimate(
@@ -631,8 +631,8 @@ def _get_jpi_range(jpi):
 
         if "+" not in jpi and "-" not in jpi:
             p = "+"
-        m1 = int(2*lp.Properties().evaluate_expression(jpi[0].strip(p))+1)
-        m2 = int(2*lp.Properties().evaluate_expression(jpi[1].strip(p))+1)
+        m1 = int(2 * lp.Properties().evaluate_expression(jpi[0].strip(p)) + 1)
+        m2 = int(2 * lp.Properties().evaluate_expression(jpi[1].strip(p)) + 1)
         for i in range(m1, m2 + 1):
             j_range.append([i, p])
 
@@ -653,13 +653,13 @@ def _get_jpi_range(jpi):
     return j_range
 
 
-def remove_undefined_levels(sp, all_levs = False):
+def remove_undefined_levels(sp, all_levs=False):
     """Method that removes levels read from ensdf where j^pi is left blank. This feature
     facilitates calculations made in the isomer module
 
     Args:
         ``sp`` (:obj:`lvlspy.species.Species`) The species of which the levels are to be trimmed
-        
+
         ``all`` (:obj:`bool`) A flag to remove all undefined levels which have j^pi set blank or
         a range of values. Defaults to False so only the blanks are removed
 
@@ -669,9 +669,9 @@ def remove_undefined_levels(sp, all_levs = False):
     levels = sp.get_levels()
     if all_levs:
         for l in levels:
-            if l.get_properties()['useability'] is False:
+            if l.get_properties()["useability"] is False:
                 sp.remove_level(l)
     else:
         for l in levels:
-            if l.get_multiplicity() == 10000:
+            if l.get_properties()["j^pi"] == "":
                 sp.remove_level(l)

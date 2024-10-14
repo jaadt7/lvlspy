@@ -311,8 +311,8 @@ class Species(lp.Properties):
 
                     e = [levels[i].get_energy(), levels[j].get_energy()]
                     jj1 = [
-                        (levels[i].get_multiplicity() - 1)//2 ,
-                        (levels[j].get_multiplicity() - 1)//2,
+                        (levels[i].get_multiplicity() - 1) // 2,
+                        (levels[j].get_multiplicity() - 1) // 2,
                     ]
                     p1 = [
                         levels[i].get_properties()["parity"],
