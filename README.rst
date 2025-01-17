@@ -27,7 +27,7 @@ notebooks <https://github.com/jaadt7/lvlspy_tutorial>`_.
 
 A fleshed out implementation was developed using lvlspy to reproduce the results
 found in `Gupta and Meyer <https://journals.aps.org/prc/abstract/10.1103/PhysRevC.64.025805>`_. The implementation is in the form of a `Jupyter
-notebooks <https://github.com/jaadt7/lvlspy_app>`_.
+notebook <https://github.com/jaadt7/lvlspy_app>`_.
 
 Documentation
 -------------

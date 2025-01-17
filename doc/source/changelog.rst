@@ -17,6 +17,10 @@ New:
   * Added check for useable level when calculating rate matrix. 
   * Added feature that fills in undefined or missing transitions in a species
 
+Fix:
+
+  * Linked the application to the readme
+
 Version 3.0.3
 -------------
 
