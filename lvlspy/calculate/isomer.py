@@ -188,3 +188,73 @@ def cascade_probabilities(t, sp, level_low=0, level_high=1):
     g2_out = np.matmul(f_n.T, trans_props[4])
 
     return [g1_in, g2_in, g1_out, g2_out]
+
+
+def ensemble_weights(t, sp, level_low=0, level_high=1):
+    """
+    Method to calculate the ensemble weights
+
+    Args:
+        ``t`` (:obj:`float`) The temperature in K
+
+        ``sp`` (:obj:`lvlspy.species.Species`) The species of which the ensemble weights
+        are to be calculated for
+
+        ``level_low`` (:obj:`int`, optional) The lower level the effective transition rates are
+        calculated to. Defaults to 0; the ground state.
+
+        ``level_high`` (:obj:`int`, optional) The higher level the effective transtion rates are
+        calculated to. Defaults to 1; the first excited state
+
+    Returns:
+        Upon successful return, the ensemble weights and their properties will be returned
+        as an array
+
+        ``w_low``
+        ``w_high``
+        ``W_low``  (:obj:`numpy.float`)
+        ``W_high`` (:obj:`numpy.float`)
+        ``R_lowk``
+        ``R_highk``
+        ``G_low``  (:obj:`numpy.float`)
+        ``G_high`` (:obj:`numpy.float`)
+
+    """
+    # calculate the equilibrium probabilities
+    eq_prob = sp.compute_equilibrium_probabilities(t)
+
+    n = len(eq_prob)
+    # initialize arrays
+    w_low, w_high, r_lowk, r_highk = (
+        np.empty(n),
+        np.empty(n),
+        np.empty(n - 2),
+        np.empty(n - 1),
+    )
+
+    # get the cascade probabilities
+    # gammas structure = [g1_in, g2_in, g1_out, g2_out]
+    gammas = ensemble_weights(t, sp, level_low, level_high)
+
+    for i in range(n - 2):
+        r_lowk[i] = eq_prob[i + 2] / eq_prob[level_low]
+        r_highk[i] = eq_prob[i + 2] / eq_prob[level_high]
+
+    for i in range(n):
+        if i == level_low:
+            w_low[i] = 1.0
+            w_high[i] = 0.0
+        elif i == level_high:
+            w_low[i] = 0.0
+            w_high[i] = 1.0
+        else:
+            w_low[i] = gammas[0][i - 2] * r_lowk[i - 2]
+            w_high[i] = gammas[1][i - 2] * r_highk[i - 2]
+
+    w_low, w_high = np.sum(w_low), np.sum(w_high)
+    # Calculate the partition functions
+    levels = sp.get_levels()
+    g_low = levels[level_low].get_multiplicity() * w_low
+    g_high = levels[level_high].get_multiplicity() * w_high
+
+    return [w_low, w_high, w_low, w_high, r_lowk, r_highk, g_low, g_high]

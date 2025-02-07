@@ -1,5 +1,5 @@
 """
-    Module to handle the evolution of the level system based on temperature
+Module to handle the evolution of the level system based on temperature
 """
 
 import numpy as np

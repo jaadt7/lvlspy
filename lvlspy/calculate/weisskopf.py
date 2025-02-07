@@ -123,12 +123,12 @@ class Weisskopf:
             (lvs[tran[0]].get_multiplicity() - 1) // 2,
             (lvs[tran[1]].get_multiplicity() - 1) // 2,
         ]
-        if a%2 != 0:
+        if a % 2 != 0:
             j = [
-            (lvs[tran[0]].get_multiplicity() - 1) / 2,
-            (lvs[tran[1]].get_multiplicity() - 1) / 2,
-        ]
-        
+                (lvs[tran[0]].get_multiplicity() - 1) / 2,
+                (lvs[tran[1]].get_multiplicity() - 1) / 2,
+            ]
+
         p = [
             lvs[tran[0]].get_properties()["parity"],
             lvs[tran[1]].get_properties()["parity"],
@@ -137,7 +137,7 @@ class Weisskopf:
         j_range = range(
             int(max(1, abs(j[0] - j[1]))), int(j[0] + j[1] + 1)
         )  # range of gamma angular momenta
-        
+
         m_r = 0
 
         if tran[7] != "":
@@ -175,7 +175,6 @@ class Weisskopf:
         m_r = arr[3]
         tran = arr[4]
         b_1 = 1.0
-        
 
         if np.power(-1, jj) * p[0] == p[1]:
             if b[int(i_tran[0])][1] == "E" and int(b[int(i_tran[0])][2]) == jj:
@@ -185,23 +184,23 @@ class Weisskopf:
 
                 b_1 = b_1 * np.power(m_r, 2) / (1.0 + np.power(m_r, 2))
             if b_1 == 1.0:
-                return self.rate_elec(e[0], e[1], jj, a)/10
-            else:
-                return self.rate_elec(e[0], e[1], jj, a) * b_1 /self._b_sp_el(a, jj)
-            
-        else:
-            if b[int(i_tran[1])][1] == "M" and int(b[int(i_tran[1])][2]) == jj:
-                b_1 = float(b[int(i_tran[1])][5 : len(b[int(i_tran[1])])])
+                return self.rate_elec(e[0], e[1], jj, a) / 10
 
-            if b[int(i_tran[1])][1:3] == "M1" and tran[7] != "":
+            return (
+                self.rate_elec(e[0], e[1], jj, a) * b_1 / self._b_sp_el(a, jj)
+            )
 
-                b_1 = b_1 / (1.0 + np.power(m_r, 2))
-            
-            if b_1 == 1.0:
-                return self.rate_mag(e[0], e[1], jj, a)/10
-            else:
-                return self.rate_mag(e[0], e[1], jj, a) * b_1 /self._b_sp_ml(a, jj)
+        if b[int(i_tran[1])][1] == "M" and int(b[int(i_tran[1])][2]) == jj:
+            b_1 = float(b[int(i_tran[1])][5 : len(b[int(i_tran[1])])])
 
+        if b[int(i_tran[1])][1:3] == "M1" and tran[7] != "":
+
+            b_1 = b_1 / (1.0 + np.power(m_r, 2))
+
+        if b_1 == 1.0:
+            return self.rate_mag(e[0], e[1], jj, a) / 10
+
+        return self.rate_mag(e[0], e[1], jj, a) * b_1 / self._b_sp_ml(jj)
 
     def _get_rate(self, jj, p, e, a):
 
@@ -244,12 +243,9 @@ class Weisskopf:
 
         return reduced_prob
 
-    def _b_sp_ml(self, a, j):
+    def _b_sp_ml(self, j):
         return (
-            10.0
-            * np.power(3.0 / (j + 3.0), 2)
-            * np.power(1.2 ,  j - 1)
-            / np.pi
+            10.0 * np.power(3.0 / (j + 3.0), 2) * np.power(1.2, j - 1) / np.pi
         )
 
     def _b_sp_el(self, a, j):
