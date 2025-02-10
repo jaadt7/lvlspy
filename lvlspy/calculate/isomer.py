@@ -234,7 +234,7 @@ def ensemble_weights(t, sp, level_low=0, level_high=1):
 
     # get the cascade probabilities
     # gammas structure = [g1_in, g2_in, g1_out, g2_out]
-    gammas = ensemble_weights(t, sp, level_low, level_high)
+    gammas = cascade_probabilities(t, sp, level_low, level_high)
 
     for i in range(n - 2):
         r_lowk[i] = eq_prob[i + 2] / eq_prob[level_low]
