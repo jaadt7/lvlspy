@@ -210,14 +210,14 @@ def ensemble_weights(t, sp, level_low=0, level_high=1):
         Upon successful return, the ensemble weights and their properties will be returned
         as an array
 
-        ``w_low``
-        ``w_high``
-        ``W_low``  (:obj:`numpy.float`)
-        ``W_high`` (:obj:`numpy.float`)
-        ``R_lowk``
-        ``R_highk``
-        ``G_low``  (:obj:`numpy.float`)
-        ``G_high`` (:obj:`numpy.float`)
+        ``w_low``  (:obj:`numpy.array`) weight factor relative to the low level
+        ``w_high`` (:obj:`numpy.array`) weight factor relative to the high level
+        ``W_low``  (:obj:`numpy.float`) Enhancement of ensemble abundance over low level
+        ``W_high`` (:obj:`numpy.float`) Enhancement of ensemble abundance over high level
+        ``R_lowk`` (:obj:`numpy.array`) The reverse ratio relative to the low level
+        ``R_highk`` (:obj:`numpy.array`) The reverse ratio relative to the high level
+        ``G_low``  (:obj:`numpy.float`) Partition function associated with the low level
+        ``G_high`` (:obj:`numpy.float`) Patition function associated with the high level
 
     """
     # calculate the equilibrium probabilities
