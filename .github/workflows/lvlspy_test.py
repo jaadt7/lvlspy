@@ -9,7 +9,7 @@ from lvlspy.io import xml
 
 def get_collection():
     test_coll = lc.SpColl()
-    xml.update_from_xml(test_coll(),
+    xml.update_from_xml(test_coll,
         io.BytesIO(requests.get("https://osf.io/dqzs9/download").content)
     )
     return test_coll
