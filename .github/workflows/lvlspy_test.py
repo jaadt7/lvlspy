@@ -4,19 +4,21 @@ import lvlspy.spcoll as lc
 import lvlspy.species as ls
 import lvlspy.transition as lt
 
+from lvlspy.io import xml
+
 
 def get_collection():
     test_coll = lc.SpColl()
-    test_coll.update_from_xml(
+    xml.update_from_xml(test_coll(),
         io.BytesIO(requests.get("https://osf.io/dqzs9/download").content)
     )
     return test_coll
 
 
 def test_validation():
-    test_coll = lc.SpColl()
+    
     assert (
-        test_coll.validate(
+        xml.validate(
             io.BytesIO(requests.get("https://osf.io/dqzs9/download").content)
         )
         == None
@@ -124,4 +126,4 @@ def test_frequency():
 
 def test_write_xml():
     coll = get_collection()
-    assert coll.write_to_xml("out.xml") == None
+    assert xml.write_to_xml(coll,"out.xml") == None
