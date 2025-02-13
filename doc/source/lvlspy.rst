@@ -49,29 +49,29 @@ lvlspy.spcoll module
 lvlspy.io module
 ----------------
 
-.. automodule:: lvlspy.io.xml
+.. automodule:: lvlspy.io.xml._xml
    :members:
    :undoc-members:
    :show-inheritance:
 
-.. automodule:: lvlspy.io.ensdf
+.. automodule:: lvlspy.io.ensdf._ensdf
    :members:
    :undoc-members:
    :show-inheritance:
 
 lvlspy.calculate module
 -----------------------
-.. automodule:: lvlspy.calculate.evolve
+.. automodule:: lvlspy.calculate.evolve._evolve
    :members:
    :undoc-members:
    :show-inheritance:
 
-.. automodule:: lvlspy.calculate.weisskopf
+.. automodule:: lvlspy.calculate.weisskopf._weisskopf
    :members:
    :undoc-members:
    :show-inheritance:
 
-.. automodule:: lvlspy.calculate.isomer
+.. automodule:: lvlspy.calculate.isomer._isomer
    :members:
    :undoc-members:
    :show-inheritance:
