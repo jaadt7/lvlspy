@@ -88,7 +88,7 @@ class Weisskopf:
             ``a`` (:obj:`int`) The mass number of the species
 
         Returns:
-            ``ein_a`` (:obj:`float`) The Einstein A coefficiet of the downwards transition
+            ``ein_a`` (:obj:`float`) The Einstein A coefficient of the downwards transition
         """
         ein_a = 0.0
         sm = j[0] + j[1]
@@ -115,7 +115,7 @@ class Weisskopf:
 
         Returns:
             ``ein_a`` (:obj:`float`) The total estimate for the transition rate
-            (in per second) using Weisskopf single partice estimate
+            (in per second) using Weisskopf single particle estimate
         """
 
         e = [lvs[tran[0]].get_energy(), lvs[tran[1]].get_energy()]

@@ -61,12 +61,6 @@ lvlspy.io.xml
    :undoc-members:
    :show-inheritance:
 
-.. automodule:: lvlspy.io.ensdf
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
 lvlspy.io.ensdf
 ~~~~~~~~~~~~~~~
 
