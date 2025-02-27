@@ -117,9 +117,46 @@ def _set_transition_properties(t, tran):
     add_properties.append({properties[-1]: tran[-1]})
     for j in add_properties:
         t.update_properties(j)
+    if t.get_properties()["Reduced_Matrix_Coefficient"]!= "":     
+        _extract_rmc(t)
     return t
 
+def _extract_rmc(t):
+    s = t.get_properties()["Reduced_Matrix_Coefficient"]
+    parts = s.split('$')
+    rmc = parts[0].split()[2].split('=')
+    t.update_properties({'tran_1_type':rmc[0]})
+    t.update_properties({'tran_1_val' : float(rmc[1])})
+    if len(parts) == 2:
+        rmc = parts[1].split()[0].split('=')
+        t.update_properties({'tran_2_type':rmc[0]})
+        t.update_properties({'tran_2_val' : float(rmc[1])})
 
+    return t
+
+def update_reduced_matrix_coefficient(sp,a, t,rmc,mr = 0):
+    """Method to update a transition's reduced matrix coefficient
+    
+    Args:
+        ``sp`` (:obj:`lvlspy.species`) The species where the transition is found
+
+        ``a`` (:obj:`int`) The species mass number
+        
+        ``t`` (:obj:`lvlspy.transition`) The transition to be updated
+
+        ``rmc`` (:obj:`dict`) A dictionary containing the new updated transitions.
+
+        ``mr`` (:obj:`float`) An updated mixing ratio
+
+
+    Returns:
+        On successful return, the transition will be updated.
+    
+    """
+    
+    identifiers  = _get_file_sp_and_identifiers(sp.get_name(),sp,a)
+    t.get_properties()
+    return t
 def _get_additional_level_properties(line):
     delta_e = line[19:21].strip()  # energy uncertainty
     jpi = line[21:39].strip()  # strip the spaces
