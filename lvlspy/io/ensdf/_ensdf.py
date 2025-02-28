@@ -144,9 +144,10 @@ def update_reduced_matrix_coefficient(sp,a, t,rmc,mr = 0):
         
         ``t`` (:obj:`lvlspy.transition`) The transition to be updated
 
-        ``rmc`` (:obj:`dict`) A dictionary containing the new updated transitions.
+        ``rmc`` (:obj:`dict`) A dictionary containing the new updated reduced matrix coefficients.
+                              A sample would be {'BM1W': 0.05}
 
-        ``mr`` (:obj:`float`) An updated mixing ratio
+        ``mr`` (:obj:`float`,optional) An updated mixing ratio
 
 
     Returns:
@@ -154,9 +155,16 @@ def update_reduced_matrix_coefficient(sp,a, t,rmc,mr = 0):
     
     """
     
-    identifiers  = _get_file_sp_and_identifiers(sp.get_name(),sp,a)
-    t.get_properties()
+    identifiers  = _get_file_sp_and_identifiers(re.search(r"\d+", sp),sp,a)
+    
+
+    if mr != 0: t.update_properties({'Mixing_Ratio': mr}) 
+
+    for i in enumerate(rmc):
+        t.update_properties(rmc[i])
+
     return t
+
 def _get_additional_level_properties(line):
     delta_e = line[19:21].strip()  # energy uncertainty
     jpi = line[21:39].strip()  # strip the spaces
