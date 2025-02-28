@@ -155,11 +155,13 @@ class Weisskopf:
     def _get_adjusted_rate(self, jj, p, e, t, a):
 
         mixing_ratio = t.get_properties()["Mixing_Ratio"]
+        rmc_type_1 = ''
+        rmc_type_2 = ''
         if "tran_1_type" in t.get_properties():
             rmc_type_1 = t.get_properties()["tran_1_type"]
             rmc_val_1 = t.get_properties()["tran_1_val"]
         if "tran_2_type" in t.get_properties():
-            rmc_type_2 = t.get_properties()["tran_1_type"]
+            rmc_type_2 = t.get_properties()["tran_2_type"]
             rmc_val_2 = t.get_properties()["tran_2_val"]
 
         b_1 = 1.0
