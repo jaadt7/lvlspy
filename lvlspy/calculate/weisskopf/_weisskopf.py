@@ -102,7 +102,7 @@ class Weisskopf:
 
         return ein_a
 
-    def estimate_from_ensdf(self, lvs, tran, a):
+    def estimate_from_ensdf(self, t, a):
         """
         Calculates the Weisskopf estimate for a transition between two states based on the
         properties available from the ENSDF file.
@@ -118,71 +118,69 @@ class Weisskopf:
             (in per second) using Weisskopf single particle estimate
         """
 
-        e = [lvs[tran[0]].get_energy(), lvs[tran[1]].get_energy()]
+        l_upp = t.get_upper_level()
+        l_low = t.get_lower_level()
+
+        e = [l_upp.get_energy(), l_low.get_energy()]
         j = [
-            (lvs[tran[0]].get_multiplicity() - 1) // 2,
-            (lvs[tran[1]].get_multiplicity() - 1) // 2,
+            (l_upp.get_multiplicity() - 1) // 2,
+            (l_low.get_multiplicity() - 1) // 2,
         ]
         if a % 2 != 0:
             j = [
-                (lvs[tran[0]].get_multiplicity() - 1) / 2,
-                (lvs[tran[1]].get_multiplicity() - 1) / 2,
+                (l_upp.get_multiplicity() - 1) / 2,
+                (l_low.get_multiplicity() - 1) / 2,
             ]
 
         p = [
-            lvs[tran[0]].get_properties()["parity"],
-            lvs[tran[1]].get_properties()["parity"],
+            l_upp.get_properties()["parity"],
+            l_low.get_properties()["parity"],
         ]
         ein_a = 0.0
         j_range = range(
             int(max(1, abs(j[0] - j[1]))), int(j[0] + j[1] + 1)
         )  # range of gamma angular momenta
 
-        m_r = 0
-
-        if tran[7] != "":
-            m_r = float(tran[7])  # mixing ratio
-
-        b = self._get_reduced_trans_prob(tran[16])
-        i_tran = [
-            np.where(np.strings.find(b, "E") == 1)[0],
-            np.where(np.strings.find(b, "M") == 1)[0],
-        ]  # first is electric,
-        # second is magnetic
-        for c, i in enumerate(i_tran):
-
-            if len(i) == 0:
-                i = np.array([-1])
-                i_tran[c] = i
-
-        if tran[16] == "":
+        if t.get_properties()["Reduced_Matrix_Coefficient"] == "":
             for jj in j_range:
                 ein_a += self._get_rate(jj, p, e, a)
 
         else:
             for jj in j_range:
 
-                ein_a += self._get_adjusted_rate(
-                    jj, p, e, [a, b, i_tran, m_r, tran]
-                )
+                ein_a += self._get_adjusted_rate(jj, p, e, t, a)
 
         return ein_a
 
-    def _get_adjusted_rate(self, jj, p, e, arr):
-        a = arr[0]
-        b = arr[1]
-        i_tran = arr[2]
-        m_r = arr[3]
-        tran = arr[4]
+    def _get_adjusted_rate(self, jj, p, e, t, a):
+
+        mixing_ratio = t.get_properties()["Mixing_Ratio"]
+        if "tran_1_type" in t.get_properties():
+            rmc_type_1 = t.get_properties()["tran_1_type"]
+            rmc_val_1 = t.get_properties()["tran_1_val"]
+        if "tran_2_type" in t.get_properties():
+            rmc_type_2 = t.get_properties()["tran_1_type"]
+            rmc_val_2 = t.get_properties()["tran_2_val"]
+
         b_1 = 1.0
 
         if np.power(-1, jj) * p[0] == p[1]:
-            if b[int(i_tran[0])][1] == "E" and int(b[int(i_tran[0])][2]) == jj:
-                b_1 = float(b[int(i_tran[0])][5 : len(b[int(i_tran[0])])])
+            if "E" in rmc_type_1 and str(jj) in rmc_type_1:
+                b_1 = rmc_val_1
 
-            if b[int(i_tran[0])][1:3] == "E2" and tran[7] != "":
-
-                b_1 = b_1 * np.power(m_r, 2) / (1.0 + np.power(m_r, 2))
+            if (
+                "E" in rmc_type_2
+                and str(jj) in rmc_type_2
+                and "tran_2_type" in t.get_properties()
+            ):
+                b_1 = rmc_val_2
+            if mixing_ratio != "":
+                mixing_ratio = float(mixing_ratio)
+                b_1 = (
+                    b_1
+                    * np.power(mixing_ratio, 2)
+                    / (1.0 + np.power(mixing_ratio, 2))
+                )
             if b_1 == 1.0:
                 return self.rate_elec(e[0], e[1], jj, a) / 10
 
@@ -190,12 +188,17 @@ class Weisskopf:
                 self.rate_elec(e[0], e[1], jj, a) * b_1 / self._b_sp_el(a, jj)
             )
 
-        if b[int(i_tran[1])][1] == "M" and int(b[int(i_tran[1])][2]) == jj:
-            b_1 = float(b[int(i_tran[1])][5 : len(b[int(i_tran[1])])])
-
-        if b[int(i_tran[1])][1:3] == "M1" and tran[7] != "":
-
-            b_1 = b_1 / (1.0 + np.power(m_r, 2))
+        if "M" in rmc_type_1 and str(jj) in rmc_type_1:
+            b_1 = rmc_val_1
+        if (
+            "M" in rmc_type_2
+            and str(jj) in rmc_type_2
+            and "tran_2_type" in t.get_properties()
+        ):
+            b_1 = rmc_val_2
+        if mixing_ratio != "":
+            mixing_ratio = float(mixing_ratio)
+            b_1 = b_1 / (1.0 + np.power(mixing_ratio, 2))
 
         if b_1 == 1.0:
             return self.rate_mag(e[0], e[1], jj, a) / 10

@@ -192,7 +192,7 @@ def test_evolution():
     levs = s.get_levels()
     y0 = np.zeros(len(levs))
     y0[0] = 1.0
-    time = np.logspace(1e-300, 2,200 )
+    time = np.logspace(1e-300, 2, 200)
     y, f = evolve.newton_raphson(s, 1e9, y0, time)
     assert np.sum(f[:, -1]) - 22 < 1e-4
     assert np.sum(y[:, -1]) - 1.0 < 1e-5

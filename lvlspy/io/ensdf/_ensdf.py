@@ -85,9 +85,10 @@ def _get_species_from_ensdf(coll, file, sp):
         ):
             continue
 
-        ein_a = calc.Weisskopf().estimate_from_ensdf(lvs, tran[1], a)
-        t = lt.Transition(lvs[tran[1][0]], lvs[tran[1][1]], ein_a)
+        t = lt.Transition(lvs[tran[1][0]], lvs[tran[1][1]], 0.0)
         t = _set_transition_properties(t, tran[1])
+        ein_a = calc.Weisskopf().estimate_from_ensdf(t, a)
+        t.update_einstein_a(ein_a)
         s.add_transition(t)
 
     coll.add_species(s)
@@ -117,53 +118,63 @@ def _set_transition_properties(t, tran):
     add_properties.append({properties[-1]: tran[-1]})
     for j in add_properties:
         t.update_properties(j)
-    if t.get_properties()["Reduced_Matrix_Coefficient"]!= "":     
+    if t.get_properties()["Reduced_Matrix_Coefficient"] != "":
         _extract_rmc(t)
     return t
 
+
 def _extract_rmc(t):
     s = t.get_properties()["Reduced_Matrix_Coefficient"]
-    parts = s.split('$')
-    rmc = parts[0].split()[2].split('=')
-    t.update_properties({'tran_1_type':rmc[0]})
-    t.update_properties({'tran_1_val' : float(rmc[1])})
+    parts = s.split("$")
+    rmc = parts[0].split()[2].split("=")
+    t.update_properties({"tran_1_type": rmc[0]})
+    t.update_properties({"tran_1_val": float(rmc[1])})
     if len(parts) == 2:
-        rmc = parts[1].split()[0].split('=')
-        t.update_properties({'tran_2_type':rmc[0]})
-        t.update_properties({'tran_2_val' : float(rmc[1])})
+        rmc = parts[1].split()[0].split("=")
+        t.update_properties({"tran_2_type": rmc[0]})
+        t.update_properties({"tran_2_val": float(rmc[1])})
 
     return t
 
-def update_reduced_matrix_coefficient(sp,a, t,rmc,mr = 0):
-    """Method to update a transition's reduced matrix coefficient
-    
+
+def update_reduced_matrix_coefficient(sp, a, t, rmc, mr=0):
+    """Method to update a transition's reduced matrix coefficient and Einstein A coefficient
+
     Args:
         ``sp`` (:obj:`lvlspy.species`) The species where the transition is found
 
         ``a`` (:obj:`int`) The species mass number
-        
+
         ``t`` (:obj:`lvlspy.transition`) The transition to be updated
 
-        ``rmc`` (:obj:`dict`) A dictionary containing the new updated reduced matrix coefficients.
-                              A sample would be {'BM1W': 0.05}
+        ``rmc`` (:obj:`list`) A list of tuples containing the new updated reduced matrix coefficients.
+                              A sample would be [('BM1W',0.05)]
 
         ``mr`` (:obj:`float`,optional) An updated mixing ratio
 
 
     Returns:
-        On successful return, the transition will be updated.
-    
+        On successful return, the transition's Einstein A coefficient will be updated based on the new coefficients.
+
     """
-    
-    identifiers  = _get_file_sp_and_identifiers(re.search(r"\d+", sp),sp,a)
-    
 
-    if mr != 0: t.update_properties({'Mixing_Ratio': mr}) 
+    identifiers = _get_file_sp_and_identifiers(re.search(r"\d+", sp), sp, a)
 
-    for i in enumerate(rmc):
-        t.update_properties(rmc[i])
+    if mr != 0:
+        t.update_properties({"Mixing_Ratio": mr})
+
+    for i, b in enumerate(rmc):
+        t.update_properties({"tran_" + str(i + 1) + "_type": b[0]})
+        t.update_properties({"tran_" + str(i + 1) + "_val": b[1]})
+
+    new_string = identifiers[2] + " G " + rmc[0][0] + "=" + str(rmc[0][1])
+    if len(rmc) == 2:
+        new_string = new_string + "$" + rmc[1][0] + "=" + str(rmc[1][1])
+
+    t.update_einstein_a(calc.Weisskopf().estimate_from_ensdf(t, a))
 
     return t
+
 
 def _get_additional_level_properties(line):
     delta_e = line[19:21].strip()  # energy uncertainty
