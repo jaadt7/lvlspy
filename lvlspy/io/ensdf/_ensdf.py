@@ -126,9 +126,12 @@ def _set_transition_properties(t, tran):
 def _extract_rmc(t):
     s = t.get_properties()["Reduced_Matrix_Coefficient"]
     parts = s.split("$")
-    if '=' in parts[0]: rmc = parts[0].split()[2].split("=")
-    if '<' in parts[0]: rmc = parts[0].split()[2].split("<")
-    if '>' in parts[0]: rmc = parts[0].split()[2].split(">")
+    if "=" in parts[0]:
+        rmc = parts[0].split()[2].split("=")
+    if "<" in parts[0]:
+        rmc = parts[0].split()[2].split("<")
+    if ">" in parts[0]:
+        rmc = parts[0].split()[2].split(">")
     t.update_properties({"tran_1_type": rmc[0]})
     t.update_properties({"tran_1_val": float(rmc[1])})
     if len(parts) == 2:
