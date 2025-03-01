@@ -131,8 +131,8 @@ def effective_rate(t, sp, level_low=0, level_high=1):
     )
 
     return (
-        l_low_high + rate_matrix[level_high, level_low],
-        l_high_low + rate_matrix[level_low, level_high],
+        l_low_high,
+        l_high_low,
     )
 
 

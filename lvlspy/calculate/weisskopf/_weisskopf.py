@@ -141,7 +141,7 @@ class Weisskopf:
             int(max(1, abs(j[0] - j[1]))), int(j[0] + j[1] + 1)
         )  # range of gamma angular momenta
 
-        if t.get_properties()["Reduced_Matrix_Coefficient"] == "":
+        if "Reduced_Matrix_Coefficient" not in t.get_properties():
             for jj in j_range:
                 ein_a += self._get_rate(jj, p, e, a)
 
@@ -154,9 +154,15 @@ class Weisskopf:
 
     def _get_adjusted_rate(self, jj, p, e, t, a):
 
-        mixing_ratio = t.get_properties()["Mixing_Ratio"]
         rmc_type_1 = ""
         rmc_type_2 = ""
+        mixing_ratio = 0.0
+        if "Mixing_Ratio" in t.get_properties():
+            mixing_ratio = t.get_properties()["Mixing_Ratio"]
+            if mixing_ratio == "":
+                mixing_ratio = 0.0
+            else:
+                mixing_ratio = float(mixing_ratio)
         if "tran_1_type" in t.get_properties():
             rmc_type_1 = t.get_properties()["tran_1_type"]
             rmc_val_1 = t.get_properties()["tran_1_val"]
@@ -176,8 +182,8 @@ class Weisskopf:
                 and "tran_2_type" in t.get_properties()
             ):
                 b_1 = rmc_val_2
-            if mixing_ratio != "":
-                mixing_ratio = float(mixing_ratio)
+            if mixing_ratio != 0.0:
+
                 b_1 = (
                     b_1
                     * np.power(mixing_ratio, 2)
@@ -198,14 +204,13 @@ class Weisskopf:
             and "tran_2_type" in t.get_properties()
         ):
             b_1 = rmc_val_2
-        if mixing_ratio != "":
-            mixing_ratio = float(mixing_ratio)
-            b_1 = b_1 / (1.0 + np.power(mixing_ratio, 2))
+        if mixing_ratio != 0.0:
+            b_1 = b_1 / (1.0 + mixing_ratio**2)
 
         if b_1 == 1.0:
             return self.rate_mag(e[0], e[1], jj, a) / 10
 
-        return self.rate_mag(e[0], e[1], jj, a) * b_1 / self._b_sp_ml(jj)
+        return self.rate_mag(e[0], e[1], jj, a) * b_1 / self._b_sp_ml(a, jj)
 
     def _get_rate(self, jj, p, e, a):
 
@@ -248,9 +253,12 @@ class Weisskopf:
 
         return reduced_prob
 
-    def _b_sp_ml(self, j):
+    def _b_sp_ml(self, a, j):
         return (
-            10.0 * np.power(3.0 / (j + 3.0), 2) * np.power(1.2, j - 1) / np.pi
+            10.0
+            * np.power(3.0 / (j + 3.0), 2)
+            * np.power(1.2 * a ** (1 / 3), 2 * j - 2)
+            / np.pi
         )
 
     def _b_sp_el(self, a, j):

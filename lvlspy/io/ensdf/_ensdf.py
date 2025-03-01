@@ -162,8 +162,8 @@ def update_reduced_matrix_coefficient(sp, a, t, rmc, mr=0):
         On successful return, the transition's Einstein A coefficient will be updated based on the new coefficients.
 
     """
-
-    identifiers = _get_file_sp_and_identifiers(re.search(r"\d+", sp), sp, a)
+    s = sp.get_name()
+    identifiers = _get_file_sp_and_identifiers(re.search(r"\d+", s), s, a)
 
     if mr != 0:
         t.update_properties({"Mixing_Ratio": mr})
@@ -176,6 +176,7 @@ def update_reduced_matrix_coefficient(sp, a, t, rmc, mr=0):
     if len(rmc) == 2:
         new_string = new_string + "$" + rmc[1][0] + "=" + str(rmc[1][1])
 
+    t.update_properties({"Reduced_Matrix_Coefficient": new_string})
     t.update_einstein_a(calc.Weisskopf().estimate_from_ensdf(t, a))
 
     return t
