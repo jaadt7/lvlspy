@@ -116,13 +116,15 @@ def effective_rate(t, sp, level_low=0, level_high=1):
 
     rate_matrix = np.abs(sp.compute_rate_matrix(t))
     trans_props = transfer_properties(rate_matrix, level_low, level_high)
-    f_n = _partial_sum(trans_props[0])
+    # f_n = _partial_sum(trans_props[0])
 
-    # Lambda_21_eff
+    f_n = np.linalg.inv(np.identity(len(trans_props[0])) - trans_props[0])
+
+    # Lambda_high_low_eff
     l_high_low = trans_props[5][level_high] * np.matmul(
         trans_props[4].T, np.matmul(f_n, trans_props[1])
     )
-    # Lambda_12_eff
+    # Lambda_low_high_eff
     l_low_high = trans_props[5][level_low] * (
         np.matmul(
             trans_props[2].T,
@@ -136,6 +138,7 @@ def effective_rate(t, sp, level_low=0, level_high=1):
     )
 
 
+"""
 def _partial_sum(tpm):
     n_terms = 50000
     f_n = np.identity(tpm.shape[0]) + tpm
@@ -149,6 +152,7 @@ def _partial_sum(tpm):
             break
 
     return f_n
+"""
 
 
 def cascade_probabilities(t, sp, level_low=0, level_high=1):
