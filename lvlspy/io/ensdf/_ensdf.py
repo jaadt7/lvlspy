@@ -716,8 +716,8 @@ def _get_jpi_range(jpi):
 
 
 def remove_undefined_levels(sp, all_levs=False):
-    """Method that removes levels read from ensdf where j^pi is left blank. This feature
-    facilitates calculations made in the isomer module
+    """Method that removes levels read from ensdf where j^pi is left blank or unclear. 
+    This feature Wfacilitates calculations made in the isomer module
 
     Args:
         ``sp`` (:obj:`lvlspy.species.Species`) The species of which the levels are to be trimmed
