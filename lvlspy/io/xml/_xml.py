@@ -12,7 +12,7 @@ def write_to_xml(coll, file, pretty_print=True, units="keV"):
     """Method to write the collection to XML.
 
     Args:
-        ``coll`` (:obj: `obj') The collection to be written to the XML file
+        ``coll`` (:obj: `obj`) The collection to be written to the XML file
         ``file`` (:obj:`str`) The output file name.
 
         ``pretty_print`` (:obj:`bool`, optional): If set to True,
