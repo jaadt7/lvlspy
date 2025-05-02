@@ -56,7 +56,7 @@ lvlspy.io module
 lvlspy.io.xml
 ~~~~~~~~~~~~~
 
-.. automodule:: lvlspy.io.xml._xml
+.. automodule:: lvlspy.io.xml
    :members:
    :undoc-members:
    :show-inheritance:
@@ -64,7 +64,7 @@ lvlspy.io.xml
 lvlspy.io.ensdf
 ~~~~~~~~~~~~~~~
 
-.. automodule:: lvlspy.io.ensdf._ensdf
+.. automodule:: lvlspy.io.ensdf
    :members:
    :undoc-members:
    :show-inheritance:
@@ -79,14 +79,14 @@ lvlspy.calculate module
 
 lvlspy.calculate.evolve
 ~~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: lvlspy.calculate.evolve._evolve
+.. automodule:: lvlspy.calculate.evolve
    :members:
    :undoc-members:
    :show-inheritance:
 
 lvlspy.calculate.weisskopf
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: lvlspy.calculate.weisskopf._weisskopf
+.. automodule:: lvlspy.calculate.weisskopf
    :members:
    :undoc-members:
    :show-inheritance:
@@ -94,7 +94,7 @@ lvlspy.calculate.weisskopf
 lvlspy.calculate.isomer
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-.. automodule:: lvlspy.calculate.isomer._isomer
+.. automodule:: lvlspy.calculate.isomer
    :members:
    :undoc-members:
    :show-inheritance:

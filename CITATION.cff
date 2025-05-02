@@ -8,7 +8,7 @@ authors:
   given-names: "Bradley Stewart"
   orcid: "https://orcid.org/0000-0001-6307-9818"
 title: "wnutils"
-version: 4.0.0
+version: 4.0.1
 doi: 10.5281/zenodo.8193378
 date-released: 2025-02-14
 url: "https://github.com/jaadt7/lvlspy"
