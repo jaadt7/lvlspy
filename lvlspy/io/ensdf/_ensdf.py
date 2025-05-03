@@ -152,8 +152,8 @@ def update_reduced_matrix_coefficient(sp, a, t, rmc, mr=0):
 
         ``t`` (:obj:`lvlspy.transition`) The transition to be updated
 
-        ``rmc`` (:obj:`list`) A list of tuples containing the new updated reduced matrix coefficients.
-                              A sample would be [('BM1W',0.05)]
+        ``rmc`` (:obj:`list`) A list of tuples containing the new updated\
+        reduced matrix coefficients.  An example would be [('BM1W',0.05)]
 
         ``mr`` (:obj:`float`,optional) An updated mixing ratio
 
