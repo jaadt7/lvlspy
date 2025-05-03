@@ -15,6 +15,24 @@
 import os
 import sys
 
+# We rewrite module names for internal modules like _xml so that
+# Sphinx shows clean paths (lvlspy.io.xml) but still links to source.
+
+def autodoc_skip_member(app, what, name, obj, skip, options):
+    return None  # Don't skip anything automatically
+
+
+def process_docstring(app, what, name, obj, options, lines):
+    # Rewrites module path in the generated documentation
+    if hasattr(obj, "__module__") and obj.__module__.endswith("._xml"):
+        fake_mod = obj.__module__.replace("._xml", "")
+        obj.__module__ = fake_mod
+
+
+def setup(app):
+    app.connect("autodoc-skip-member", autodoc_skip_member)
+    app.connect("autodoc-process-docstring", process_docstring)
+    
 sys.path.insert(0, os.path.abspath("../.."))
 
 base_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../..")
