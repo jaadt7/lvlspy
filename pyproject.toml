@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools >= 77.0.3"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["lvlspy"]
+
+[tool.setuptools.package-data]
+include = ["io/xml/xsd_pub"]
+
+[project]
+name = "lvlspy"
+version = "4.0.1"
+dependencies = ["numpy", "lxml", "gslconsts"]
+requires-python = ">=3.0"
+authors = [
+  {name = "Jaad A. Tannous", email = "jtannou@g.clemson.edu"},
+  {name = "Bradley S. Meyer", email = "mbradle@g.clemson.edu"},
+]
+maintainers = [
+  {name = "Jaad A. Tannous", email = "jtannou@g.clemson.edu"},
+]
+description = "Package for working with quantum level-system data."
+readme = "README.rst"
+license = "GPL-3.0-or-later"
+license-files = ["LICEN[CS]E.*"]
+keywords = ["astronomy, nuclear astrophysics"]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: Science/Research",
+  "Topic :: Scientific/Engineering :: Astronomy",
+  "Programming Language :: Python :: 3"
+]
+
+[project.optional-dependencies]
+
+[project.urls]
+Documentation = "https://lvlspy.readthedocs.org"
+Repository = "https://github.com/jaadt7/lvlspy.git"
+"Bug Tracker" = "https://github.com/jaadt7/lvlspy/issues"
+
+[project.scripts]
+
+[project.gui-scripts]
+
+[project.entry-points."spam.magical"]

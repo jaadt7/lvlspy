@@ -7,7 +7,7 @@ import numpy as np
 
 
 def transfer_properties(rate_matrix, level_low, level_high):
-    """Method that calculatest the transfer properties based on the rate matrix
+    """Method that calculates the transfer properties based on the rate matrix
 
     Args:
         ``rate_matrix`` (:obj:`numpy.array`) A 2D array containing the rate matrix
