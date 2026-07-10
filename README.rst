@@ -62,11 +62,11 @@ The project is licensed under the GNU Public License v3 (or later).
 .. |doc_stat| image:: https://readthedocs.org/projects/lvlspy/badge/?version=latest
     :target: https://lvlspy.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
-.. |pytest| image:: https://github.com/jaadt7/lvlspy/actions/workflows/test.yml/badge.svg?branch=main
+.. |pytest| image:: https://github.com/jaadt7/lvlspy/actions/workflows/test.yml/badge.svg
    :target: https://github.com/jaadt7/lvlspy/actions/workflows/test.yml
    :alt: Pytest
 
-.. |pylint| image:: https://github.com/jaadt7/lvlspy/actions/workflows/test.yml/badge.svg
+.. |pylint| image:: https://github.com/jaadt7/lvlspy/actions/workflows/lint.yml/badge.svg
    :target: https://github.com/jaadt7/lvlspy/actions/workflows/lint.yml
    :alt: Pylint
 .. |black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
