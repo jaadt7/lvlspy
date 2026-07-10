@@ -66,7 +66,7 @@ The project is licensed under the GNU Public License v3 (or later).
    :target: https://github.com/jaadt7/lvlspy/actions/workflows/test.yml
    :alt: Pytest
 
-.. |pylint| image:: https://github.com/jaadt7/lvlspy/actions/workflows/lint.yml/badge.svg?branch=main
+.. |pylint| image:: https://github.com/jaadt7/lvlspy/actions/workflows/test.yml/badge.svg
    :target: https://github.com/jaadt7/lvlspy/actions/workflows/lint.yml
    :alt: Pylint
 .. |black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
