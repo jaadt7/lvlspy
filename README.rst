@@ -62,10 +62,13 @@ The project is licensed under the GNU Public License v3 (or later).
 .. |doc_stat| image:: https://readthedocs.org/projects/lvlspy/badge/?version=latest
     :target: https://lvlspy.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
-.. |pytest| image:: https://github.com/jaadt7/lvlspy/actions/workflows/test.yml/badge.svg?branch=main&event=push
-	:target: https://github.com/jaadt7/lvlspy/actions/workflows/test.yml
-.. |pylint| image:: https://github.com/jaadt7/lvlspy/actions/workflows/lint.yml/badge.svg?branch=main&event=push
-	:target: https://github.com/jaadt7/lvlspy/actions/workflows/lint.yml 
+.. |pytest| image:: https://github.com/jaadt7/lvlspy/actions/workflows/test.yml/badge.svg?branch=main
+   :target: https://github.com/jaadt7/lvlspy/actions/workflows/test.yml
+   :alt: Pytest
+
+.. |pylint| image:: https://github.com/jaadt7/lvlspy/actions/workflows/lint.yml/badge.svg?branch=main
+   :target: https://github.com/jaadt7/lvlspy/actions/workflows/lint.yml
+   :alt: Pylint
 .. |black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/psf/black
 .. |zenodo| image:: https://zenodo.org/badge/DOI/10.5281/zenodo.8193378.svg
