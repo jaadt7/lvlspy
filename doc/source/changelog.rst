@@ -11,6 +11,8 @@ Fix:
 
   * Updated Copyright year
   * Fixed documentation to properly match implementation
+  * Fixed issue with badges not showing properly
+  * Updated github workflow actions to new standard
   
 Version 4.0.0
 -------------
