@@ -94,6 +94,9 @@ Fix:
   * Rejected negative temperatures in Boltzmann and default blackbody
     calculations instead of returning overflowed or negative thermal rates,
     while preserving the zero-temperature limits and custom callbacks.
+  * Removed the legacy top-level core modules in favor of the explicit
+    ``lvlspy.core`` package, making the import-path change a documented
+    breaking change for version 5.0.0.
   * Performed an architectural package refactor by splitting the layout into
     ``lvlspy.core`` for the domain model and ``lvlspy.extensions`` for
     calculation and IO functionality, while keeping legacy import paths as
