@@ -2,8 +2,8 @@
 title: 'lvlspy: A Python Package for Quantum Level Systems'
 tags:
     - python
-    - nuclear levels
-    - atomic levels
+    - nuclear physics
+    - atomic physics
 authors:
     - name: Jaad A. Tannous
       orcid: 0000-0002-9970-6454
@@ -18,26 +18,50 @@ affiliations:
     - name: Department of Physics and Astronomy, Clemson University, Clemson, SC, 29634
       index: 1
 
-date: September 2024
+date: 2026-07-22
 bibliography: paper.bib
 ---
 
 # Summary
 
-Atoms and molecules are examples of quantum level systems in which the allowed energy states take on discrete values.  These states, which are eigenstates of the system's Hamiltonian, are *levels*, which are characterized by the energy relative to the lowest energy level (the "ground state"), and by their *multiplicity* which accounts for states that have exactly the same energy, in which case the states are *degenerate* (for example, see [@griffiths_introduction_2018]).  Interaction with the external world allows a quantum level system to transition between one level and another.  The rate of transition between levels depends on the details of the levels and the nature of the interaction between the system and the external world.  In an ensemble of quantum level systems in contact with the external world at a given temperature (a "heat bath"), there will be a probability of a given system existing in a particular level.  Level probabilities will evolve with time, but, as long as the heat bath changes slowly compared to transition times between levels, the ensemble can achieve an equilibrium characterized by the temperature of the heat bath.  
+Many physical systems are naturally described by discrete energy levels and transitions between them. Examples include atoms, molecules, and nuclei. In these systems, the state of a system is described by a level energy and a multiplicity, and transitions between levels determine how populations change with time and temperature [@griffiths_introduction_2018].
 
-The Python package ``lvlspy`` stores generic quantum level system data, particularly level energies, multiplicities, and spontaneous transition rates, for levels in any species. The API contains two modules in addition to the main one. The main module includes built-in functions that calculate induced transition rates from detailed balance, rate matrices, and equilibrium probabilites. Optional properties may be added to any species, level, or spontaneous transition rate. The io module contains routines which allow the user to input or output relevant data with XML in a well-defined schema. It also allows the input or output into Evaluated Nuclear Structure Data Format, ENSDF. This format is used by all national labs experimenting on nuclear structure. The third module contains calculation functions from system evolution to Weisskopf Estimates [@Kaplan1962-yy]. The whole API was built with modularization in mind, making it easier to implement new formats, calculation type functions, or even graphical features in the future. The source code for ``lvlspy`` has been archived to Zenodo at the linked DOI [@jaad_tannous_2023_8193379].  
+``lvlspy`` is an open-source Python package for representing and analyzing quantum level systems. Its core package provides classes for levels, transitions, species, and collections of species. Extension modules provide XML and ENSDF input and output, level-population evolution, Weisskopf estimates, and isomer-related calculations. The package is organized so that the core data model remains stable while format-specific and calculation-specific functionality can grow in extension modules.
 
 # Statement of Need
 
-Proper modeling of many physical and astrophysical phenomena requires detailed knowledge of the population of constituent atoms, molecules, or nuclei among their discrete energy levels and transition rates between those levels.  For example, calculation of opacity in a stellar atmosphere requires knowledge of the abundance of different species in the atmosphere, the levels in each species, the fraction of each species that exists in a given energy level, and the transition rate to a different level (either spontaneous or induced).  As another example, *astromers*, isotopes with long-lived isomeric states, can provide key information on various astronomical phenomena [@misch2020astromers].  In order to evaluate the importance of a given astromer, however, one requires calculation of the effective transition rates between the long-lived isomer and the ground state of the nucleus in a heat bath, which, in turn, requires knowledge of transition rates between energy levels and efficient storage of those rates in an easily managed data structure, such as a matrix [@gupta2001internal].
+Many scientific workflows require detailed knowledge of how a population is distributed among discrete energy levels and how those populations change through spontaneous and induced transitions. In astrophysics, opacity calculations depend on the level structure and transition network of each species. In nuclear physics, long-lived isomeric states can strongly affect reaction flow and thermal equilibration, so evaluating effective rates between isomeric and ground states requires a model that can represent the full level network [@misch2020astromers; @gupta2001internal].
 
-Apart from their key role in scientific research, models of quantum level systems provide excellent insight into quantum mechanics.  Energy-level diagrams in a textbook introduce the essential ideas behind such systems, but a simple-to-use software package that allows students to build their own level systems will greatly reinforce those ideas.
+`lvlspy` addresses this need with a Python interface for storing and manipulating level data, computing equilibrium populations and transition-rate matrices, and exchanging level systems with external data formats. A related C library, `liblvls` (<https://liblvls.sourceforge.net>), offers similar functionality, but `lvlspy` is intended to be easier to install, script, and extend in Python workflows. Its XML support uses the same schema family as `liblvls`, which helps users move data between tools without redefining the underlying level structure.
 
-These examples point to the need for a straightforward software package that is able to store and retrieve data about generic level systems, add, remove, and update information about levels, and compute transition rates between levels and their equilibrium populations.  A C library [liblvls](https://liblvls.sourceforge.net) is available for carrying out these tasks but requires familiarity with C, installation of a number of libraries, and compilation of the codes.  ``lvlspy`` is a stand-alone Python package that has most of the same features as *liblvls* but is easier to install and use.  ``lvlspy`` also has routines to read data from and store data to XML with a well-defined [schema](https://liblvls.sourceforge.net/xsd_pub/2022-10-14/spcoll.xsd), which it shares with liblvls.
+# State of the field
+
+Packages for discrete level systems generally fall into two groups: code focused on one data source or one calculation, and lower-level libraries that expose the entire workflow in a less extensible form. `lvlspy` is designed to sit between those extremes. It provides a general representation for level systems while still supporting common nuclear-data formats and calculation routines.
+
+Compared with `liblvls`, `lvlspy` emphasizes a Python-first interface and a modular package layout. That makes it easier to integrate into analysis scripts, notebooks, and automated pipelines. It also leaves room for future extensions, such as additional import/export formats or graphical tools, without expanding the core domain model.
+
+# Software design
+
+`lvlspy` is organized around a stable core and optional extensions. The `lvlspy.core` package contains the domain model: levels, transitions, species, and species collections. These objects provide the basic operations needed to build and query level systems, including updates, collection management, equilibrium probabilities, and rate matrices.
+
+The `lvlspy.extensions` package contains functionality that is specific to a format or a calculation method. `lvlspy.extensions.io` provides XML and ENSDF import/export. `lvlspy.extensions.calculate` provides time evolution, Weisskopf estimates, and isomer-related rate calculations. This separation keeps parsing rules and specialized numerical routines out of the core domain model, which makes the core easier to test and maintain.
+
+The public import structure also preserves compatibility for users who want a simple top-level API while still allowing the package to grow in a structured way.
+
+# Research impact statement
+
+`lvlspy` is intended to support research workflows in nuclear physics and related fields where discrete level systems are central. It can be used to assemble level data from external sources, compute thermodynamic populations, evolve populations in time, and estimate effective rates for isomeric systems.
+
+The package is also useful as a bridge between archived nuclear-data formats and analysis code. In practice, that means it can support data preparation, workflow automation, and prototyping for studies that depend on level networks and transition rates. Its modular structure should also make it straightforward to add future capabilities such as new file formats or visualization-oriented extensions.
+
+Because XML and ENSDF inputs populate the same core model, the package also supports reproducible comparisons between data sources and downstream calculations.
+
+# AI usage disclosure
+
+Generative AI tools were used to assist with drafting and revising this paper. The authors reviewed the text, verified the scientific content, and edited the final version.
 
 # Acknowledgements
 
-This work was partially supported by NASA Emerging Worlds grant 80NSSC20K0338.  The authors thank G. Wendell Misch and Matt Mumpower for valuable discussions and advice.
+This work was partially supported by NASA Emerging Worlds grant 80NSSC20K0338. The authors thank G. Wendell Misch and Matt Mumpower for valuable discussions and advice.
 
 # References
