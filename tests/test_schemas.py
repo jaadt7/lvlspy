@@ -19,6 +19,8 @@ EXPECTED_SCHEMA_FILES = {
 
 
 def test_all_vendored_schema_resources_are_available():
+    """All schema resources recorded in the package must be present."""
+
     schema_directory = files("lvlspy.extensions.io.xml") / "xsd_pub"
 
     for filename in EXPECTED_SCHEMA_FILES:
@@ -26,6 +28,8 @@ def test_all_vendored_schema_resources_are_available():
 
 
 def test_schema_provenance_matches_recorded_revision():
+    """The vendored schema provenance matches the recorded revision."""
+
     repository_root = Path(__file__).parent.parent
     revision = (
         (repository_root / "XSD_REVISION").read_text(encoding="ascii").strip()
@@ -46,4 +50,6 @@ def test_schema_provenance_matches_recorded_revision():
 
 
 def test_vendored_schema_validates_without_network_access():
+    """The vendored schema validates a minimal collection offline."""
+
     assert validate(io.BytesIO(b"<species_collection/>")) is None

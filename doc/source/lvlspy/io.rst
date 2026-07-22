@@ -1,7 +1,7 @@
-lvlspy.extensions.io package
-============================
+io
+==
 
-Application namespace for import and export helpers.
+Import and export extensions built on top of :mod:`lvlspy.core`.
 
 .. toctree::
    :maxdepth: 1

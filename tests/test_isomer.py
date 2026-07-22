@@ -1,5 +1,7 @@
 """Tests for isomer calculations."""
 
+# pylint: disable=too-few-public-methods,duplicate-code
+
 import numpy as np
 import pytest
 
@@ -17,6 +19,8 @@ class FourLevelSpecies:
     """Controlled four-level system with two independent cascade states."""
 
     def compute_rate_matrix(self, temperature):
+        """Return the fixed four-level rate matrix."""
+
         del temperature
         return np.array(
             [
@@ -28,10 +32,14 @@ class FourLevelSpecies:
         )
 
     def compute_equilibrium_probabilities(self, temperature):
+        """Return the fixed equilibrium probabilities."""
+
         del temperature
         return np.array([0.1, 0.2, 0.3, 0.4])
 
     def get_levels(self):
+        """Return synthetic levels with increasing multiplicity."""
+
         return [Level(0.0, multiplicity) for multiplicity in (1, 3, 5, 7)]
 
 
@@ -39,6 +47,8 @@ class ThreeLevelSpecies:
     """Controlled system containing direct and one-step cascade paths."""
 
     def compute_rate_matrix(self, temperature):
+        """Return the fixed three-level rate matrix."""
+
         del temperature
         return np.array(
             [
@@ -53,6 +63,8 @@ class SingularThreeLevelSpecies:
     """Controlled system whose reduced transfer matrix is singular."""
 
     def compute_rate_matrix(self, temperature):
+        """Return the singular reduced transfer matrix example."""
+
         del temperature
         return np.array(
             [

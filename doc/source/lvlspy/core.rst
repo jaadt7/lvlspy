@@ -1,5 +1,5 @@
-Core types
-==========
+core
+====
 
 .. automodule:: lvlspy.core
    :members: Level, Properties, SpColl, Species, Transition

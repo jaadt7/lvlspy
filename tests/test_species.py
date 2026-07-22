@@ -51,6 +51,8 @@ def test_equilibrium_probabilities_are_invariant_to_energy_offset():
 
 
 def test_zero_temperature_weights_degenerate_ground_levels_by_multiplicity():
+    """Zero-temperature weights split degenerate ground states by weight."""
+
     species = Species(
         "degenerate",
         [Level(100.0, 1), Level(100.0, 3), Level(200.0, 5)],
@@ -62,6 +64,8 @@ def test_zero_temperature_weights_degenerate_ground_levels_by_multiplicity():
 
 
 def test_low_temperature_probabilities_do_not_underflow_to_nan():
+    """Low temperatures remain finite after normalization."""
+
     species = Species("shifted", [Level(1000.0, 1), Level(1001.0, 3)])
 
     probabilities = species.compute_equilibrium_probabilities(1.0)
@@ -71,6 +75,8 @@ def test_low_temperature_probabilities_do_not_underflow_to_nan():
 
 
 def test_species_collection_tracks_renamed_species():
+    """Collection lookups track species renames and removals."""
+
     lower = Level(0.0, 1)
     upper = Level(100.0, 3)
     species = Species("old", [lower, upper])
@@ -82,4 +88,4 @@ def test_species_collection_tracks_renamed_species():
     assert "old" not in coll.get()
 
     coll.remove_species(species)
-    assert coll.get() == {}
+    assert not coll.get()

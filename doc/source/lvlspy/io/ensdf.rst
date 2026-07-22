@@ -1,5 +1,5 @@
-lvlspy.extensions.io.ensdf package
-==================================
+ensdf
+=====
 
 .. automodule:: lvlspy.extensions.io.ensdf
    :members:

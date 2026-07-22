@@ -3,6 +3,7 @@
 import numpy as np
 import pytest
 
+from lvlspy.calculate import fill_missing_transitions
 from lvlspy.extensions.calculate.weisskopf import (
     Weisskopf,
     spin_from_multiplicity,
@@ -21,28 +22,37 @@ from lvlspy.core.species import Species
 def test_spin_from_multiplicity_preserves_half_integer_values(
     multiplicity, expected_spin
 ):
+    """Multiplicity maps directly to the expected half-integer spin."""
+
     assert spin_from_multiplicity(multiplicity) == expected_spin
 
 
-def test_estimate_includes_all_multipoles_for_half_integer_spins():
+def test_estimate_includes_all_multipoles_for_half_integer_spins(monkeypatch):
     """J=3/2 to J=1/2 permits both dipole and quadrupole radiation."""
 
     weisskopf = Weisskopf()
-    energies = [100.0, 0.0]
-    spins = [1.5, 0.5]
-    parities = [1, 1]
+    calls = []
 
-    result = weisskopf.estimate(energies, spins, parities, 3)
-    expected = weisskopf._get_rate(
-        1, parities, energies, 3
-    ) + weisskopf._get_rate(2, parities, energies, 3)
+    def capture_rate_elec(_self, _e_i, _e_f, jj, _a):
+        calls.append(("E", jj))
+        return 100.0 * jj
 
-    np.testing.assert_allclose(result, expected)
+    def capture_rate_mag(_self, _e_i, _e_f, jj, _a):
+        calls.append(("M", jj))
+        return 1000.0 * jj
+
+    monkeypatch.setattr(Weisskopf, "rate_elec", capture_rate_elec)
+    monkeypatch.setattr(Weisskopf, "rate_mag", capture_rate_mag)
+
+    result = weisskopf.estimate([100.0, 0.0], [1.5, 0.5], [1, 1], 3)
+
+    assert calls == [("M", 1), ("E", 2)]
+    np.testing.assert_allclose(result, 120.0)
 
 
-def test_species_fill_missing_transitions_passes_half_integer_spins(
-    monkeypatch,
-):
+def test_fill_missing_transitions_passes_half_integer_spins(monkeypatch):
+    """Missing ENSDF transitions preserve the half-integer spin mapping."""
+
     captured_spins = []
 
     def capture_estimate(_self, _energies, spins, _parities, _mass):
@@ -55,12 +65,14 @@ def test_species_fill_missing_transitions_passes_half_integer_spins(
     lower.update_properties({"parity": "+"})
     upper.update_properties({"parity": "+"})
 
-    Species("odd-mass", [lower, upper]).fill_missing_transitions(3)
+    fill_missing_transitions(Species("odd-mass", [lower, upper]), 3)
 
     assert captured_spins == [[1.5, 0.5]]
 
 
 def test_ambiguous_ensdf_estimate_passes_half_integer_spins(monkeypatch):
+    """Ambiguous ENSDF assignments probe each allowed spin combination."""
+
     captured_spins = []
 
     def capture_estimate(_self, _energies, spins, _parities, _mass):

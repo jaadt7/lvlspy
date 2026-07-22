@@ -11,10 +11,14 @@ class TwoStateSpecies:
     """Two-state system with equal forward and reverse rates."""
 
     def compute_rate_matrix(self, temperature):
+        """Return the symmetric two-state rate matrix."""
+
         del temperature
         return np.array([[-1.0, 1.0], [1.0, -1.0]])
 
     def compute_equilibrium_probabilities(self, temperature):
+        """Return the equilibrium probabilities for the two-state system."""
+
         del temperature
         return np.array([0.5, 0.5])
 
@@ -23,6 +27,8 @@ class ThreeStateSpecies:
     """Three-state system used for validation and convergence checks."""
 
     def compute_rate_matrix(self, temperature):
+        """Return a fully connected three-state rate matrix."""
+
         del temperature
         return np.array(
             [
@@ -33,11 +39,15 @@ class ThreeStateSpecies:
         )
 
     def compute_equilibrium_probabilities(self, temperature):
+        """Return equal equilibrium probabilities for all states."""
+
         del temperature
         return np.array([1.0, 1.0, 1.0])
 
 
 def test_csc_rejects_nonmonotonic_time_grid():
+    """Time grids must be sorted for the sparse solver."""
+
     initial = np.array([1.0, 0.0])
     time = np.array([0.0, 1.0, 0.5])
 
@@ -46,6 +56,8 @@ def test_csc_rejects_nonmonotonic_time_grid():
 
 
 def test_csc_rejects_initial_population_length_mismatch():
+    """The population vector must match the number of states."""
+
     initial = np.array([1.0, 0.0, 0.0])
     time = np.array([0.0, 1.0])
 
@@ -56,6 +68,8 @@ def test_csc_rejects_initial_population_length_mismatch():
 
 
 def test_newton_raphson_uses_absolute_convergence_magnitude(monkeypatch):
+    """Newton-Raphson stops on the absolute update size."""
+
     species = ThreeStateSpecies()
     initial = np.array([1.0, 0.0, 0.0])
     time = np.array([0.0, 1.0])
@@ -73,7 +87,10 @@ def test_newton_raphson_uses_absolute_convergence_magnitude(monkeypatch):
 
     assert len(calls) == 2
     np.testing.assert_allclose(solution[:, 0], initial)
-    np.testing.assert_allclose(fugacity[:, 0], initial / species.compute_equilibrium_probabilities(1.0))
+    np.testing.assert_allclose(
+        fugacity[:, 0],
+        initial / species.compute_equilibrium_probabilities(1.0),
+    )
 
 
 def test_csc_matches_two_state_analytic_solution():

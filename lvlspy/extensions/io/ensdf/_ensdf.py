@@ -6,7 +6,6 @@ import re
 import math
 
 import lvlspy.core.level as lv
-import lvlspy.core.properties as lp
 import lvlspy.core.species as ls
 import lvlspy.core.transition as lt
 import lvlspy.extensions.calculate as calc
@@ -409,7 +408,7 @@ def _extract_multi_parity(jpi):
         )
         spin = normalized_jpi[:-1] if parity is not None else normalized_jpi
         if spin:
-            multi = int(2 * lp.Properties().evaluate_expression(spin) + 1)
+            multi = int(2 * _evaluate_expression(spin) + 1)
             useable = parity is not None
             if parity is None:
                 parity = "+"
@@ -668,7 +667,7 @@ def fill_missing_ensdf_transitions(sp, a):
                         levels[i].get_properties()["parity"],
                         levels[j].get_properties()["parity"],
                     ]
-                    p = lp.Properties().set_parity(p)
+                    p = calc.normalize_parity_pair(p)
                     sp.add_transition(
                         lt.Transition(
                             levels[i],
@@ -721,7 +720,7 @@ def _get_ein_a_from_mixed_to_mixed(in_list):
                 calc.spin_from_multiplicity(kj[0]),
             ]
             p = [ki[1], kj[1]]
-            p = lp.Properties().set_parity(p)
+            p = calc.normalize_parity_pair(p)
             in_list[1] += (
                 calc.Weisskopf().estimate(in_list[0], jj, p, in_list[4])
                 / len(jpi_i_range)
@@ -741,7 +740,7 @@ def _get_ein_a_to_mixed_lower_level(in_list):
             calc.spin_from_multiplicity(k[0]),
         ]
         p = [in_list[3].get_properties()["parity"], k[1]]
-        p = lp.Properties().set_parity(p)
+        p = calc.normalize_parity_pair(p)
         in_list[1] += calc.Weisskopf().estimate(
             in_list[0], jj, p, in_list[4]
         ) / len(jpi_j_range)
@@ -758,7 +757,7 @@ def _get_ein_a_from_mixed_upper_level_to_lower(in_list):
             calc.spin_from_multiplicity(in_list[3].get_multiplicity()),
         ]
         p = [k[1], in_list[3].get_properties()["parity"]]
-        p = lp.Properties().set_parity(p)
+        p = calc.normalize_parity_pair(p)
         in_list[1] += calc.Weisskopf().estimate(
             in_list[0], jj, p, in_list[4]
         ) / len(jpi_i_range)
@@ -850,8 +849,29 @@ def _parse_jpi_endpoint(endpoint):
     parity = endpoint[-1] if endpoint[-1] in ("+", "-") else None
     if parity is not None:
         endpoint = endpoint[:-1]
-    multiplicity = int(2 * lp.Properties().evaluate_expression(endpoint) + 1)
+    multiplicity = int(2 * _evaluate_expression(endpoint) + 1)
     return multiplicity, parity
+
+
+def _evaluate_expression(expression):
+    """Evaluate a simple ENSDF spin expression."""
+
+    elements = re.findall(r"(\d+|\+|\-|\*|\/)", expression)
+    result = int(elements[0])
+
+    for i in range(1, len(elements), 2):
+        operator = elements[i]
+        num = int(elements[i + 1])
+        if operator == "+":
+            result += num
+        elif operator == "-":
+            result -= num
+        elif operator == "*":
+            result *= num
+        elif operator == "/":
+            result /= num
+
+    return result
 
 
 def remove_undefined_levels(sp, all_levs=False):

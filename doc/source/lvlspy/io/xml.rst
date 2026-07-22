@@ -1,5 +1,5 @@
-lvlspy.extensions.io.xml package
-================================
+xml
+===
 
 .. automodule:: lvlspy.extensions.io.xml
    :members:

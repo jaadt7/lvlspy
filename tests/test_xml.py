@@ -1,5 +1,7 @@
 """Tests for XML input and output."""
 
+# pylint: disable=c-extension-no-member
+
 import io
 
 import pytest
@@ -40,7 +42,7 @@ def test_validate_accepts_schema_compliant_xml():
 def test_validate_rejects_schema_noncompliant_xml():
     """Invalid documents raise with the schema validation details."""
 
-    with pytest.raises(etree.DocumentInvalid):
+    with pytest.raises(etree.DocumentInvalid):  # pylint: disable=no-member
         xml_module.validate(io.BytesIO(b"<invalid/>"))
 
 
@@ -82,7 +84,7 @@ def test_update_from_xml_does_not_process_xinclude_by_default(tmp_path):
 
     default_result = SpColl()
     update_from_xml(default_result, io.BytesIO(document))
-    assert default_result.get() == {}
+    assert not default_result.get()
 
     included_result = SpColl()
     update_from_xml(included_result, io.BytesIO(document), xinclude=True)
@@ -124,7 +126,7 @@ def test_xml_export_uses_current_species_name():
     write_to_xml(coll, xml_file)
     xml_file.seek(0)
 
-    xml = etree.parse(xml_file)
+    xml = etree.parse(xml_file)  # pylint: disable=no-member
     assert xml.xpath("string(/species_collection/species/@name)") == "new"
 
 
@@ -240,6 +242,8 @@ def test_xml_export_rejects_invalid_property_keys(property_key):
 
 
 def test_xml_import_rejects_unsupported_property_attributes():
+    """Unsupported property attributes are rejected during XML import."""
+
     xml_file = io.BytesIO(b"""\
 <species_collection>
   <optional_properties>

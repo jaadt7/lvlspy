@@ -33,17 +33,23 @@ def test_zero_temperature_boltzmann_factor_retains_multiplicity():
 
 
 def test_boltzmann_factor_rejects_negative_temperature():
+    """Negative temperatures are rejected by the Boltzmann factor."""
+
     with pytest.raises(ValueError, match="temperature must be nonnegative"):
         Level(0.0, 1).compute_boltzmann_factor(-1.0)
 
 
 @pytest.mark.parametrize("multiplicity", [0, -1, 2.5, float("nan")])
 def test_level_rejects_invalid_multiplicity(multiplicity):
+    """Invalid multiplicities are rejected at construction time."""
+
     with pytest.raises(ValueError, match="multiplicity must be a finite positive integer"):
         Level(0.0, multiplicity)
 
 
 def test_update_multiplicity_rejects_invalid_multiplicity():
+    """Invalid multiplicities are rejected during updates."""
+
     level = Level(0.0, 1)
 
     with pytest.raises(ValueError, match="multiplicity must be a finite positive integer"):

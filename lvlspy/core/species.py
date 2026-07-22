@@ -1,9 +1,6 @@
 """Module to handle species."""
 
 import numpy as np
-
-import lvlspy.core.transition as lt
-import lvlspy.extensions.calculate as calc
 from lvlspy.core.properties import Properties
 
 
@@ -291,47 +288,6 @@ class Species(Properties):
             rate_matrix[i_lower, i_lower] -= r_lower_to_upper
 
         return rate_matrix
-
-    def fill_missing_transitions(self, a):
-        """Method to fill in transitions between levels using a Weisskopf estimate.
-        Parity must be set as a property, otherwise method would return wrong estimates
-
-        Args:
-            `a` (:obj:`int`) Mass number of the species
-        Returns:
-            Upon successful return, the species will have an updated list of transitions
-            based on Weisskopf estimate
-        """
-
-        levels = self.get_levels()
-        for i in range(1, len(levels)):
-            for j in range(i):
-                t_dummy = self.get_level_to_level_transition(
-                    levels[i], levels[j]
-                )
-                if t_dummy is None:
-
-                    e = [levels[i].get_energy(), levels[j].get_energy()]
-                    jj1 = [
-                        calc.spin_from_multiplicity(
-                            levels[i].get_multiplicity()
-                        ),
-                        calc.spin_from_multiplicity(
-                            levels[j].get_multiplicity()
-                        ),
-                    ]
-                    p1 = [
-                        levels[i].get_properties()["parity"],
-                        levels[j].get_properties()["parity"],
-                    ]
-
-                    p1 = Properties().set_parity(p1)
-
-                    ein_a = calc.Weisskopf().estimate(e, jj1, p1, a)
-
-                    self.add_transition(
-                        lt.Transition(levels[i], levels[j], ein_a)
-                    )
 
 
 def _level_is_useable(level):

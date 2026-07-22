@@ -1,5 +1,7 @@
-lvlspy.extensions.calculate.evolve package
-===========================================
+evolve
+======
+
+Evolution calculations built on top of :mod:`lvlspy.core`.
 
 .. automodule:: lvlspy.extensions.calculate.evolve
    :members:
