@@ -235,11 +235,16 @@ class Species(lp.Properties):
         """
 
         levs = self.get_levels()
+        if not levs:
+            return np.empty(0)
 
         prob = np.empty(len(levs))
+        ground_energy = levs[0].get_energy()
 
         for i, lev in enumerate(levs):
-            prob[i] = lev.compute_boltzmann_factor(temperature)
+            prob[i] = lev.compute_boltzmann_factor(
+                temperature, reference_energy=ground_energy
+            )
 
         prob /= np.sum(prob)
 
@@ -266,12 +271,8 @@ class Species(lp.Properties):
         for transition in transitions:
             i_upper = levels.index(transition.get_upper_level())
             i_lower = levels.index(transition.get_lower_level())
-            if (
-                "useable" in levels[i_upper].get_properties()
-                and levels[i_upper].get_properties()["useable"] is False
-            ) or (
-                "useable" in levels[i_lower].get_properties()
-                and levels[i_lower].get_properties()["useable"] is False
+            if not _level_is_useable(levels[i_upper]) or not _level_is_useable(
+                levels[i_lower]
             ):
                 continue
 
@@ -311,8 +312,12 @@ class Species(lp.Properties):
 
                     e = [levels[i].get_energy(), levels[j].get_energy()]
                     jj1 = [
-                        (levels[i].get_multiplicity() - 1) // 2,
-                        (levels[j].get_multiplicity() - 1) // 2,
+                        calc.spin_from_multiplicity(
+                            levels[i].get_multiplicity()
+                        ),
+                        calc.spin_from_multiplicity(
+                            levels[j].get_multiplicity()
+                        ),
                     ]
                     p1 = [
                         levels[i].get_properties()["parity"],
@@ -326,3 +331,14 @@ class Species(lp.Properties):
                     self.add_transition(
                         lt.Transition(levels[i], levels[j], ein_a)
                     )
+
+
+def _level_is_useable(level):
+    properties = level.get_properties()
+    value = properties.get("useability", properties.get("useable", True))
+    if isinstance(value, str):
+        normalized_value = value.strip().lower()
+        if normalized_value in ("true", "false"):
+            value = normalized_value == "true"
+
+    return value is not False

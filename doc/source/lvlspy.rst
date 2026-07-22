@@ -1,100 +1,13 @@
 lvlspy package
 ==============
 
-.. automodule:: lvlspy
-   :members:
-   :undoc-members:
-   :show-inheritance:
+The package is organized into core types and application packages.
+New applications should be added as their own package page under this tree.
 
-lvlspy.level module
--------------------
+.. toctree::
+   :maxdepth: 1
 
-.. automodule:: lvlspy.level
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   lvlspy/core
+   lvlspy/io
+   lvlspy/calculate
 
-lvlspy.properties module
-------------------------
-
-.. automodule:: lvlspy.properties
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-lvlspy.transition module
-------------------------
-
-.. automodule:: lvlspy.transition
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-lvlspy.species module
----------------------
-
-.. automodule:: lvlspy.species
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-lvlspy.spcoll module
---------------------
-
-.. automodule:: lvlspy.spcoll
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-lvlspy.io module
-----------------
-.. automodule:: lvlspy.io
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-lvlspy.io.xml
-~~~~~~~~~~~~~
-
-.. automodule:: lvlspy.io.xml._xml
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-lvlspy.io.ensdf
-~~~~~~~~~~~~~~~
-
-.. automodule:: lvlspy.io.ensdf._ensdf
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-lvlspy.calculate module
------------------------
-
-.. automodule:: lvlspy.calculate
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-lvlspy.calculate.evolve
-~~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: lvlspy.calculate.evolve._evolve
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-lvlspy.calculate.weisskopf
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: lvlspy.calculate.weisskopf._weisskopf
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-lvlspy.calculate.isomer
-~~~~~~~~~~~~~~~~~~~~~~~
-
-.. automodule:: lvlspy.calculate.isomer._isomer
-   :members:
-   :undoc-members:
-   :show-inheritance:

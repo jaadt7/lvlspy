@@ -31,6 +31,7 @@ class Transition(lp.Properties):
         self.properties = {}
         self.upper_level = upper_level
         self.lower_level = lower_level
+        self._validate_einstein_a(einstein_a)
         self.einstein_a = einstein_a
 
     def __eq__(self, other):
@@ -87,6 +88,7 @@ class Transition(lp.Properties):
             has been updated.
         """
 
+        self._validate_einstein_a(einstein_a)
         self.einstein_a = einstein_a
 
     def get_einstein_b_upper_to_lower(self):
@@ -181,9 +183,21 @@ class Transition(lp.Properties):
         Returns:
             :obj:`float`: The frequency (in Hz) of the transition.
 
+        Raises:
+            :obj:`ValueError`: If the upper-level energy is not greater than
+            the lower-level energy.
+
         """
 
-        delta_e = self.upper_level.get_energy() - self.lower_level.get_energy()
+        upper_energy = self.upper_level.get_energy()
+        lower_energy = self.lower_level.get_energy()
+        delta_e = upper_energy - lower_energy
+        if delta_e <= 0:
+            raise ValueError(
+                "Radiative transitions require upper-level energy greater "
+                f"than lower-level energy; got {upper_energy} keV and "
+                f"{lower_energy} keV"
+            )
 
         delta_e_erg = (1e3) * delta_e * GSL_CONST_CGSM_ELECTRON_VOLT
 
@@ -198,7 +212,13 @@ class Transition(lp.Properties):
         )
 
     def _bb(self, temperature):
+        if temperature < 0:
+            raise ValueError("Blackbody temperature must be nonnegative")
+
         k_bt = GSL_CONST_CGSM_BOLTZMANN * temperature
+
+        if k_bt == 0:
+            return 0.0
 
         delta_e = self.upper_level.get_energy() - self.lower_level.get_energy()
 
@@ -207,3 +227,10 @@ class Transition(lp.Properties):
         if x_p < 500:
             return self._fnu() / np.expm1(x_p)
         return self._fnu() * np.exp(-x_p)
+
+    @staticmethod
+    def _validate_einstein_a(einstein_a):
+        if not np.isfinite(einstein_a) or einstein_a < 0:
+            raise ValueError(
+                "Einstein A coefficient must be a finite, nonnegative value"
+            )

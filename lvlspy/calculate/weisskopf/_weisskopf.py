@@ -7,6 +7,25 @@ import scipy.special as spc
 from gslconsts.consts import GSL_CONST_NUM_ZETTA
 
 
+def spin_from_multiplicity(multiplicity):
+    """Return angular momentum J from the level multiplicity 2J + 1."""
+
+    return (multiplicity - 1) / 2
+
+
+def _multipole_range(spins):
+    """Return the allowed integer photon multipoles for two level spins."""
+
+    lower = max(1, abs(spins[0] - spins[1]))
+    upper = spins[0] + spins[1]
+    if not float(lower).is_integer() or not float(upper).is_integer():
+        raise ValueError(
+            "Level spins must both be integer or both be half-integer"
+        )
+
+    return range(int(lower), int(upper) + 1)
+
+
 class Weisskopf:
     """
     A class for handling Weisskopf related calculations
@@ -91,13 +110,7 @@ class Weisskopf:
             ``ein_a`` (:obj:`float`) The Einstein A coefficient of the downwards transition
         """
         ein_a = 0.0
-        sm = j[0] + j[1]
-        df = j[0] - j[1]
-        j_range = range(
-            max(1, abs(df)), sm + 1
-        )  # range of gamma angular momenta
-
-        for jj in j_range:
+        for jj in _multipole_range(j):
             ein_a += self._get_rate(jj, p, e, a)
 
         return ein_a
@@ -123,23 +136,16 @@ class Weisskopf:
 
         e = [l_upp.get_energy(), l_low.get_energy()]
         j = [
-            (l_upp.get_multiplicity() - 1) // 2,
-            (l_low.get_multiplicity() - 1) // 2,
+            spin_from_multiplicity(l_upp.get_multiplicity()),
+            spin_from_multiplicity(l_low.get_multiplicity()),
         ]
-        if a % 2 != 0:
-            j = [
-                (l_upp.get_multiplicity() - 1) / 2,
-                (l_low.get_multiplicity() - 1) / 2,
-            ]
 
         p = [
             l_upp.get_properties()["parity"],
             l_low.get_properties()["parity"],
         ]
         ein_a = 0.0
-        j_range = range(
-            int(max(1, abs(j[0] - j[1]))), int(j[0] + j[1] + 1)
-        )  # range of gamma angular momenta
+        j_range = _multipole_range(j)
 
         if "Reduced_Matrix_Coefficient" not in t.get_properties():
             for jj in j_range:
@@ -147,48 +153,29 @@ class Weisskopf:
 
         else:
             for jj in j_range:
-
-                ein_a += self._get_adjusted_rate(jj, p, e, t, a)
+                ein_a += self._get_adjusted_rate(jj, t, a)
 
         return ein_a
 
-    def _get_adjusted_rate(self, jj, p, e, t, a):
-
-        rmc_type_1 = ""
-        rmc_type_2 = ""
-        mixing_ratio = 0.0
-        if "Mixing_Ratio" in t.get_properties():
-            mixing_ratio = t.get_properties()["Mixing_Ratio"]
-            if mixing_ratio == "":
-                mixing_ratio = 0.0
-            else:
-                mixing_ratio = float(mixing_ratio)
-        if "tran_1_type" in t.get_properties():
-            rmc_type_1 = t.get_properties()["tran_1_type"]
-            rmc_val_1 = t.get_properties()["tran_1_val"]
-        if "tran_2_type" in t.get_properties():
-            rmc_type_2 = t.get_properties()["tran_2_type"]
-            rmc_val_2 = t.get_properties()["tran_2_val"]
-
-        b_1 = 1.0
+    def _get_adjusted_rate(self, jj, t, a):
+        properties = t.get_properties()
+        e = [
+            t.get_upper_level().get_energy(),
+            t.get_lower_level().get_energy(),
+        ]
+        p = [
+            t.get_upper_level().get_properties()["parity"],
+            t.get_lower_level().get_properties()["parity"],
+        ]
+        mixing_ratio = self._get_mixing_ratio(properties)
 
         if np.power(-1, jj) * p[0] == p[1]:
-            if "E" in rmc_type_1 and str(jj) in rmc_type_1:
-                b_1 = rmc_val_1
-
-            if (
-                "E" in rmc_type_2
-                and str(jj) in rmc_type_2
-                and "tran_2_type" in t.get_properties()
-            ):
-                b_1 = rmc_val_2
-            if mixing_ratio != 0.0:
-
-                b_1 = (
-                    b_1
-                    * np.power(mixing_ratio, 2)
-                    / (1.0 + np.power(mixing_ratio, 2))
-                )
+            b_1 = self._get_adjustment_factor(
+                jj,
+                properties,
+                transition_kind="E",
+                mixing_ratio=mixing_ratio,
+            )
             if b_1 == 1.0:
                 return self.rate_elec(e[0], e[1], jj, a) / 10
 
@@ -196,21 +183,49 @@ class Weisskopf:
                 self.rate_elec(e[0], e[1], jj, a) * b_1 / self._b_sp_el(a, jj)
             )
 
-        if "M" in rmc_type_1 and str(jj) in rmc_type_1:
-            b_1 = rmc_val_1
-        if (
-            "M" in rmc_type_2
-            and str(jj) in rmc_type_2
-            and "tran_2_type" in t.get_properties()
-        ):
-            b_1 = rmc_val_2
-        if mixing_ratio != 0.0:
-            b_1 = b_1 / (1.0 + mixing_ratio**2)
-
+        b_1 = self._get_adjustment_factor(
+            jj,
+            properties,
+            transition_kind="M",
+            mixing_ratio=mixing_ratio,
+        )
         if b_1 == 1.0:
             return self.rate_mag(e[0], e[1], jj, a) / 10
 
         return self.rate_mag(e[0], e[1], jj, a) * b_1 / self._b_sp_ml(a, jj)
+
+    def _get_mixing_ratio(self, properties):
+        mixing_ratio = properties.get("Mixing_Ratio", 0.0)
+        if mixing_ratio == "":
+            return 0.0
+        return float(mixing_ratio)
+
+    def _get_adjustment_factor(
+        self, jj, properties, transition_kind, mixing_ratio
+    ):
+        b_1 = 1.0
+        rmc_type_1 = properties.get("tran_1_type", "")
+        rmc_type_2 = properties.get("tran_2_type", "")
+        rmc_val_1 = properties.get("tran_1_val", 1.0)
+        rmc_val_2 = properties.get("tran_2_val", 1.0)
+
+        if transition_kind in rmc_type_1 and str(jj) in rmc_type_1:
+            b_1 = rmc_val_1
+
+        if transition_kind in rmc_type_2 and str(jj) in rmc_type_2:
+            b_1 = rmc_val_2
+
+        if mixing_ratio != 0.0:
+            if transition_kind == "E":
+                b_1 = (
+                    b_1
+                    * np.power(mixing_ratio, 2)
+                    / (1.0 + np.power(mixing_ratio, 2))
+                )
+            else:
+                b_1 = b_1 / (1.0 + mixing_ratio**2)
+
+        return b_1
 
     def _get_rate(self, jj, p, e, a):
 

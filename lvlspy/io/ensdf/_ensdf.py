@@ -126,20 +126,43 @@ def _set_transition_properties(t, tran):
 def _extract_rmc(t):
     s = t.get_properties()["Reduced_Matrix_Coefficient"]
     parts = s.split("$")
-    if "=" in parts[0]:
-        rmc = parts[0].split()[2].split("=")
-    if "<" in parts[0]:
-        rmc = parts[0].split()[2].split("<")
-    if ">" in parts[0]:
-        rmc = parts[0].split()[2].split(">")
-    t.update_properties({"tran_1_type": rmc[0]})
-    t.update_properties({"tran_1_val": float(rmc[1])})
+    if len(parts) not in (1, 2):
+        raise ValueError(
+            "Malformed ENSDF reduced-matrix-coefficient record: " f"{s!r}"
+        )
+
+    _extract_rmc_term(parts[0], t, 1)
     if len(parts) == 2:
-        rmc = parts[1].split()[0].split("=")
-        t.update_properties({"tran_2_type": rmc[0]})
-        t.update_properties({"tran_2_val": float(rmc[1])})
+        _extract_rmc_term(parts[1], t, 2)
 
     return t
+
+
+def _extract_rmc_term(term, t, index):
+    match = re.search(r"(\S+)\s*([=<>])\s*([^\s$]+)", term)
+    if not match:
+        raise ValueError(
+            "Malformed ENSDF reduced-matrix-coefficient term: "
+            f"{term.strip()!r}"
+        )
+
+    coefficient_type, operator, coefficient_value = match.groups()
+    if operator not in ("=", "<", ">"):
+        raise ValueError(
+            "Malformed ENSDF reduced-matrix-coefficient operator: "
+            f"{operator!r}"
+        )
+
+    try:
+        coefficient_val = float(coefficient_value)
+    except ValueError as exc:
+        raise ValueError(
+            "Malformed ENSDF reduced-matrix-coefficient value: "
+            f"{coefficient_value!r}"
+        ) from exc
+
+    t.update_properties({f"tran_{index}_type": coefficient_type})
+    t.update_properties({f"tran_{index}_val": coefficient_val})
 
 
 def update_reduced_matrix_coefficient(sp, a, t, rmc, mr=0):
@@ -152,14 +175,16 @@ def update_reduced_matrix_coefficient(sp, a, t, rmc, mr=0):
 
         ``t`` (:obj:`lvlspy.transition`) The transition to be updated
 
-        ``rmc`` (:obj:`list`) A list of tuples containing the new updated reduced matrix coefficients.
-                              A sample would be [('BM1W',0.05)]
+        ``rmc`` (:obj:`list`) A list of tuples containing the new updated
+                              reduced matrix coefficients. A sample would be
+                              [('BM1W',0.05)]
 
         ``mr`` (:obj:`float`,optional) An updated mixing ratio
 
 
     Returns:
-        On successful return, the transition's Einstein A coefficient will be updated based on the new coefficients.
+        On successful return, the transition's Einstein A coefficient will be
+        updated based on the new coefficients.
 
     """
     s = sp.get_name()
@@ -239,17 +264,31 @@ def _get_additional_gamma_properties(line):
     ]
 
 
-def _read_levels(line, a, zero_counter):
-    energy = line[9:19].strip()
-    temp = []
-    if energy[0] in a:
-        str_dummy = energy[0] + "+"
-        energy = energy.replace(str_dummy, "")
-    if energy[-1] in a:
-        str_dummy = "+" + energy[-1]
-        energy = energy.replace(str_dummy, "")
+def _parse_energy_field(field, offset_symbols, default=None):
+    """Parse an ENSDF energy after removing symbolic offset notation."""
 
-    energy = float(energy)  # strip the spaces and cast to float
+    energy = field.strip()
+    if not energy or energy.isalpha():
+        if default is not None:
+            return default
+        raise ValueError("ENSDF level energy is blank or nonnumeric")
+
+    if len(energy) >= 2 and energy[0] in offset_symbols and energy[1] == "+":
+        energy = energy[2:]
+    if len(energy) >= 2 and energy[-1] in offset_symbols and energy[-2] == "+":
+        energy = energy[:-2]
+
+    if not energy:
+        if default is not None:
+            return default
+        raise ValueError("ENSDF level energy contains only an offset symbol")
+
+    return float(energy)
+
+
+def _read_levels(line, a, zero_counter):
+    energy = _parse_energy_field(line[9:19], a)
+    temp = []
     if energy == 0.0:
         zero_counter += 1
     if zero_counter == 2:
@@ -271,21 +310,11 @@ def _read_levels(line, a, zero_counter):
 
 
 def _read_transition(line, a, lvls):
-    e_g = line[9:19].strip()  # gamma ray energy
-
-    if e_g[0] in a:
-        str_dummy = e_g[0] + "+"
-        e_g = e_g.replace(str_dummy, "")
-    if e_g[-1] in a:
-        str_dummy = "+" + e_g[0]
-        e_g = e_g.replace(str_dummy, "")
-
-    if e_g.isalpha() or e_g == "":
-        e_g = str(0)
-
-    e_g = float(e_g)
+    energy_field = line[9:19].strip()
+    energy_is_known = bool(energy_field) and not energy_field.isalpha()
+    e_g = _parse_energy_field(energy_field, a, default=0.0)
     index = -1
-    for i, lev in enumerate(lvls):
+    for i, lev in enumerate(lvls[:-1] if energy_is_known else []):
 
         if math.isclose(
             abs(e_g - (lvls[-1][0] - lev[0])),
@@ -356,30 +385,37 @@ def _extract_multi_parity(jpi):
         on if jpi clearly defined
 
     """
-    # first strip any available parentheses
-    jpi = jpi.replace("(", "")
-    jpi = jpi.replace(")", "")
+    normalized_jpi = jpi.replace("(", "").replace(")", "")
 
-    if jpi == "":
+    if normalized_jpi == "":
         multi = 10000
         parity = "+"
         useable = False
 
-    elif "TO" in jpi or "," in jpi or ":" in jpi or "OR" in jpi:
+    elif (
+        "TO" in normalized_jpi
+        or "," in normalized_jpi
+        or ":" in normalized_jpi
+        or "OR" in normalized_jpi
+    ):
         useable = False
         j_range = _get_jpi_range(jpi)
         multi = j_range[0][0]
         parity = j_range[0][1]
 
     else:
-        if "+" not in jpi and "-" not in jpi:
-            parity = "+"
-            multi = int(2 * lp.Properties().evaluate_expression(jpi) + 1)
-            useable = True
+        parity = (
+            normalized_jpi[-1] if normalized_jpi[-1] in ("+", "-") else None
+        )
+        spin = normalized_jpi[:-1] if parity is not None else normalized_jpi
+        if spin:
+            multi = int(2 * lp.Properties().evaluate_expression(spin) + 1)
+            useable = parity is not None
+            if parity is None:
+                parity = "+"
         else:
-            parity = jpi[-1]
-            multi = int(2 * lp.Properties().evaluate_expression(jpi[0:-1]) + 1)
-            useable = True
+            multi = 10000
+            useable = False
 
     return multi, parity, useable
 
@@ -449,16 +485,15 @@ def write_to_ensdf(coll, file):
                         ].get_level_to_level_transition(lev, l_lev)
                         line = _construct_gamma_line(transition, identifiers)
                         f.write(line + "\n")
-                        if (
-                            transition.get_properties()[
+                        reduced_matrix_coefficient = (
+                            transition.get_properties().get(
                                 "Reduced_Matrix_Coefficient"
-                            ]
-                            != ""
-                        ):
+                            )
+                        )
+                        if reduced_matrix_coefficient:
                             f.write(
-                                transition.get_properties()[
-                                    "Reduced_Matrix_Coefficient"
-                                ]
+                                str(reduced_matrix_coefficient).rstrip("\n")
+                                + "\n"
                             )
 
 
@@ -467,7 +502,7 @@ def _construct_level_line(lev, identifiers):
     properties = lev.get_properties()
 
     props = {
-        "energy_uncertainty": [19, 21],
+        "energy uncertainty": [19, 21],
         "j^pi": [21, 39],
         "half life": [39, 49],
         "half life uncertainty": [49, 55],
@@ -481,16 +516,38 @@ def _construct_level_line(lev, identifiers):
 
     s = " " * 80
     s = identifiers[0] + s[8:]
-    s = s[:9] + str(energy).center(19 - 9) + s[19:]
+    s = (
+        s[:9]
+        + _format_fixed_width_field(energy, 19 - 9, "level energy")
+        + s[19:]
+    )
     for key, indices in props.items():
-        if key in properties and len(indices) == 2:
+        property_key = key
+        if (
+            key == "energy uncertainty"
+            and key not in properties
+            and "energy_uncertainty" in properties
+        ):
+            property_key = "energy_uncertainty"
+
+        if property_key in properties and len(indices) == 2:
             s = (
                 s[: indices[0]]
-                + str(properties[key]).center(indices[1] - indices[0])
+                + _format_fixed_width_field(
+                    properties[property_key],
+                    indices[1] - indices[0],
+                    f"level property {property_key!r}",
+                )
                 + s[indices[1] :]
             )
-        if key in properties and len(indices) == 1:
-            s = s[: indices[0]] + str(properties[key]) + s[indices[0] + 1 :]
+        if property_key in properties and len(indices) == 1:
+            value = str(properties[property_key])
+            if len(value) > 1:
+                raise ValueError(
+                    "ENSDF level property "
+                    f"{property_key!r} does not fit in its 1-character field"
+                )
+            s = s[: indices[0]] + value + s[indices[0] + 1 :]
 
     return s
 
@@ -523,13 +580,32 @@ def _construct_gamma_line(transition, identifiers):
         if key in properties and len(indices) == 2:
             s = (
                 s[: indices[0]]
-                + str(properties[key]).center(indices[1] - indices[0])
+                + _format_fixed_width_field(
+                    properties[key],
+                    indices[1] - indices[0],
+                    f"gamma property {key!r}",
+                )
                 + s[indices[1] :]
             )
         if key in properties and len(indices) == 1:
+            value = str(properties[key])
+            if len(value) > 1:
+                raise ValueError(
+                    "ENSDF gamma property "
+                    f"{key!r} does not fit in its 1-character field"
+                )
             s = s[: indices[0]] + str(properties[key]) + s[indices[0] + 1 :]
 
     return s
+
+
+def _format_fixed_width_field(value, width, field_name):
+    text = str(value)
+    if len(text) > width:
+        raise ValueError(
+            f"ENSDF {field_name} {text!r} does not fit in a {width}-character field"
+        )
+    return text.center(width)
 
 
 def fill_missing_ensdf_transitions(sp, a):
@@ -581,8 +657,12 @@ def fill_missing_ensdf_transitions(sp, a):
                 ):
 
                     jj = [
-                        (levels[i].get_multiplicity() - 1) // 2,
-                        (levels[j].get_multiplicity() - 1) // 2,
+                        calc.spin_from_multiplicity(
+                            levels[i].get_multiplicity()
+                        ),
+                        calc.spin_from_multiplicity(
+                            levels[j].get_multiplicity()
+                        ),
                     ]
                     p = [
                         levels[i].get_properties()["parity"],
@@ -636,7 +716,10 @@ def _get_ein_a_from_mixed_to_mixed(in_list):
     jpi_j_range = _get_jpi_range(in_list[3])
     for ki in jpi_i_range:
         for kj in jpi_j_range:
-            jj = [(ki[0] - 1) // 2, (kj[0] - 1) // 2]
+            jj = [
+                calc.spin_from_multiplicity(ki[0]),
+                calc.spin_from_multiplicity(kj[0]),
+            ]
             p = [ki[1], kj[1]]
             p = lp.Properties().set_parity(p)
             in_list[1] += (
@@ -653,7 +736,10 @@ def _get_ein_a_to_mixed_lower_level(in_list):
     jpi_j_range = _get_jpi_range(in_list[2])
 
     for k in jpi_j_range:
-        jj = [(in_list[3].get_multiplicity() - 1) // 2, (k[0] - 1) // 2]
+        jj = [
+            calc.spin_from_multiplicity(in_list[3].get_multiplicity()),
+            calc.spin_from_multiplicity(k[0]),
+        ]
         p = [in_list[3].get_properties()["parity"], k[1]]
         p = lp.Properties().set_parity(p)
         in_list[1] += calc.Weisskopf().estimate(
@@ -667,7 +753,10 @@ def _get_ein_a_from_mixed_upper_level_to_lower(in_list):
 
     jpi_i_range = _get_jpi_range(in_list[2])
     for k in jpi_i_range:
-        jj = [(k[0] - 1) // 2, (in_list[3].get_multiplicity() - 1) // 2]
+        jj = [
+            calc.spin_from_multiplicity(k[0]),
+            calc.spin_from_multiplicity(in_list[3].get_multiplicity()),
+        ]
         p = [k[1], in_list[3].get_properties()["parity"]]
         p = lp.Properties().set_parity(p)
         in_list[1] += calc.Weisskopf().estimate(
@@ -677,42 +766,92 @@ def _get_ein_a_from_mixed_upper_level_to_lower(in_list):
 
 
 def _get_jpi_range(jpi):
-
-    # first strip any available parentheses
-    jpi = jpi.replace("(", "")
-    jpi = jpi.replace(")", "")
+    grouped_alternative_parity = None
+    grouped_alternatives = re.fullmatch(r"\((.+)\)([+-])", jpi.strip())
+    if grouped_alternatives and (
+        "," in grouped_alternatives.group(1)
+        or "OR" in grouped_alternatives.group(1)
+    ):
+        jpi = grouped_alternatives.group(1)
+        grouped_alternative_parity = grouped_alternatives.group(2)
+    else:
+        jpi = jpi.replace("(", "").replace(")", "")
     j_range = []
     if jpi == "":
         return j_range
     if "TO" in jpi or ":" in jpi:
-        p = jpi[-1]
-        if "TO" in jpi:
-            jpi = jpi.split("TO")
-        if ":" in jpi:
-            jpi = jpi.split(":")
+        endpoints = jpi.split("TO") if "TO" in jpi else jpi.split(":")
+        return _build_jpi_range_from_endpoints(
+            endpoints, grouped_alternative_parity
+        )
 
-        if "+" not in jpi and "-" not in jpi:
-            p = "+"
-        m1 = int(2 * lp.Properties().evaluate_expression(jpi[0].strip(p)) + 1)
-        m2 = int(2 * lp.Properties().evaluate_expression(jpi[1].strip(p)) + 1)
-        for i in range(m1, m2 + 1):
-            j_range.append([i, p])
+    return _build_jpi_range_from_assignments(jpi, grouped_alternative_parity)
 
-    else:
-        if "OR" in jpi:
-            jpi = jpi.split("OR")
-        if "," in jpi:
-            jpi = jpi.split(",")
-        for j in jpi:
-            if "+" not in j and "-" not in j:
-                m = int(2 * lp.Properties().evaluate_expression(j) + 1)
-                p = "+"
-                j_range.append([m, p])
-            else:
-                p = j[-1]
-                m = int(2 * lp.Properties().evaluate_expression(j[0:-1]) + 1)
-                j_range.append([m, p])
+
+def _build_jpi_range_from_endpoints(endpoints, grouped_parity):
+    """Build an inclusive J range from ENSDF TO or : notation."""
+
+    j_range = []
+    m1, p1 = _parse_jpi_endpoint(endpoints[0])
+    m2, p2 = _parse_jpi_endpoint(endpoints[1])
+
+    # ENSDF defines J TO J'PI as an inclusive range with parity PI.
+    # Since multiplicity is 2J+1, unit steps in J are steps of two here.
+    if p1 is None and p2 is not None:
+        for multiplicity in range(m1, m2 + 1, 2):
+            j_range.append([multiplicity, p2])
+        return j_range
+
+    for multiplicity in range(m1, m2 + 1, 2):
+        if multiplicity == m1 and p1 is not None:
+            parities = [p1]
+        elif multiplicity == m2 and p2 is not None:
+            parities = [p2]
+        elif grouped_parity is not None:
+            parities = [grouped_parity]
+        else:
+            parities = ["+", "-"]
+        for parity in parities:
+            j_range.append([multiplicity, parity])
+
     return j_range
+
+
+def _build_jpi_range_from_assignments(jpi, grouped_parity):
+    """Build a J range from ENSDF comma-separated or OR-separated choices."""
+
+    if "OR" in jpi:
+        assignments = jpi.split("OR")
+    elif "," in jpi:
+        assignments = jpi.split(",")
+    else:
+        assignments = [jpi]
+
+    j_range = []
+    for assignment in assignments:
+        assignment = assignment.strip()
+        if assignment in ("+", "-"):
+            continue
+
+        multiplicity, parity = _parse_jpi_endpoint(assignment)
+        if parity is None and grouped_parity is not None:
+            parity = grouped_parity
+        if parity is None:
+            j_range.append([multiplicity, "+"])
+            j_range.append([multiplicity, "-"])
+        else:
+            j_range.append([multiplicity, parity])
+
+    return j_range
+
+
+def _parse_jpi_endpoint(endpoint):
+    endpoint = endpoint.strip()
+    parity = endpoint[-1] if endpoint[-1] in ("+", "-") else None
+    if parity is not None:
+        endpoint = endpoint[:-1]
+    multiplicity = int(2 * lp.Properties().evaluate_expression(endpoint) + 1)
+    return multiplicity, parity
 
 
 def remove_undefined_levels(sp, all_levs=False):

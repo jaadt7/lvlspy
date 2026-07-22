@@ -28,7 +28,8 @@ class Level(lp.Properties):
     def __init__(self, energy, multiplicity, units="keV"):
         super().__init__()
         self.energy = energy / units_dict[units]
-        self.multiplicity = multiplicity
+        self._validate_multiplicity(multiplicity)
+        self.multiplicity = int(multiplicity)
         self.properties = {}
         self.units = "keV"
 
@@ -80,7 +81,7 @@ class Level(lp.Properties):
 
         """
 
-        self.energy = units_dict[units] * energy
+        self.energy = energy / units_dict[units]
 
     def update_multiplicity(self, multiplicity):
         """Method to update the multiplicity for a level.
@@ -93,28 +94,54 @@ class Level(lp.Properties):
 
         """
 
-        self.multiplicity = multiplicity
+        self._validate_multiplicity(multiplicity)
+        self.multiplicity = int(multiplicity)
 
-    def compute_boltzmann_factor(self, temperature):
+    def compute_boltzmann_factor(self, temperature, reference_energy=0.0):
         """Method to compute the Boltzmann factor for a level.
 
         Args:
             ``temperature`` (:obj:`float`):  The temperature in K at which to
             compute the factor.
 
+            ``reference_energy`` (:obj:`float`, optional): Energy in keV to
+            subtract from the level energy before computing the factor.
+            Defaults to zero.
+
         Returns:
             :obj:`float`: The computed Boltzmann factor
-            multiplicity * exp(-Energy/kT).
+            multiplicity * exp(-(Energy - reference_energy)/kT).
+
+        Raises:
+            :obj:`ValueError`: If the temperature is negative.
 
         """
+        if temperature < 0:
+            raise ValueError("Boltzmann temperature must be nonnegative")
+
         # the factor of 1e+3 is to convert the energy to keV.
         k_bt = GSL_CONST_CGSM_BOLTZMANN * temperature
 
-        energy = 1.0e3 * GSL_CONST_CGSM_ELECTRON_VOLT * self.energy
+        energy = (
+            1.0e3
+            * GSL_CONST_CGSM_ELECTRON_VOLT
+            * (self.energy - reference_energy)
+        )
 
         if k_bt == 0:
             if energy == 0:
-                return 1
+                return self.multiplicity
             return 0
 
         return self.multiplicity * np.exp(-energy / k_bt)
+
+    @staticmethod
+    def _validate_multiplicity(multiplicity):
+        if isinstance(multiplicity, bool) or not np.isfinite(multiplicity):
+            raise ValueError(
+                "Level multiplicity must be a finite positive integer"
+            )
+        if multiplicity <= 0 or int(multiplicity) != multiplicity:
+            raise ValueError(
+                "Level multiplicity must be a finite positive integer"
+            )

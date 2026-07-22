@@ -47,7 +47,7 @@ Authors
 Contribute
 ----------
 
-- Issue Tracker: `<https://github.com/jaadt7/issues/>`_
+- Issue Tracker: `<https://github.com/jaadt7/lvlspy/issues>`_
 - Source Code: `<https://github.com/jaadt7/lvlspy/>`_
 
 License

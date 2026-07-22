@@ -2,12 +2,14 @@
 A module to handle input and output of xml.
 """
 
-import os
-from ._xml import *
+from pathlib import Path
 
-xml_catalog = os.path.join(os.path.dirname(__file__), "xsd_pub/catalog")
+from ._xml import update_from_xml, validate, write_to_xml
 
-if "XML_CATALOG_FILES" in os.environ:
-    os.environ["XML_CATALOG_FILES"] += " " + xml_catalog
-else:
-    os.environ["XML_CATALOG_FILES"] = xml_catalog
+XML_CATALOG = str(Path(__file__).parent / "xsd_pub" / "catalog")
+
+__all__ = [
+    "update_from_xml",
+    "validate",
+    "write_to_xml",
+]

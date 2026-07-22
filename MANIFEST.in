@@ -4,5 +4,9 @@ include *.rst
 # Include the license file
 include LICENSE
 
-# Include the data files
-#recursive-include data *
+# Include schema provenance and maintenance tooling
+include XSD_REVISION
+include tools/update_xsd_pub.sh
+
+# Include the self-contained test suite in source distributions
+recursive-include tests *.py

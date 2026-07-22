@@ -6,6 +6,19 @@ Module to handle isomer related calculations. Functions are built based on the m
 import numpy as np
 
 
+def _safe_divide(numerator, denominator):
+    """Divide rates while assigning zero where the total rate is zero."""
+
+    numerator = np.asarray(numerator, dtype=float)
+    denominator = np.asarray(denominator, dtype=float)
+    return np.divide(
+        numerator,
+        denominator,
+        out=np.zeros_like(numerator, dtype=float),
+        where=denominator != 0,
+    )
+
+
 def transfer_properties(rate_matrix, level_low, level_high):
     """Method that calculatest the transfer properties based on the rate matrix
 
@@ -63,11 +76,11 @@ def transfer_properties(rate_matrix, level_low, level_high):
     # this array is the reduced array above without the removed levels
     lambda_red = np.delete(lambda_sum, [level_low, level_high])
 
-    f_low_out = lambda_low_out / lambda_sum[level_low]
-    f_high_out = lambda_high_out / lambda_sum[level_high]
+    f_low_out = _safe_divide(lambda_low_out, lambda_sum[level_low])
+    f_high_out = _safe_divide(lambda_high_out, lambda_sum[level_high])
 
-    f_low_in = lambda_low_in / lambda_red
-    f_high_in = lambda_high_in / lambda_red
+    f_low_in = _safe_divide(lambda_low_in, lambda_red)
+    f_high_in = _safe_divide(lambda_high_in, lambda_red)
 
     # setting up the transfer matrix
     tpm = rate_matrix
@@ -78,14 +91,35 @@ def transfer_properties(rate_matrix, level_low, level_high):
     tpm = np.delete(tpm, [level_low, level_high], axis=0)
 
     # Divide the row by the diagonal term
-    tpm = (
-        tpm / lambda_red[:, None]
-    )  # This only works if the arrays are numpy arrays
+    tpm = _safe_divide(tpm, lambda_red[:, None])
 
     # set the diagonal to 0
     np.fill_diagonal(tpm, 0.0)
 
     return [tpm, f_low_in, f_low_out, f_high_in, f_high_out, lambda_sum]
+
+
+def _solve_transfer_system(transfer_matrix, rhs, level_low, level_high):
+    """Solve the reduced transfer system or raise a descriptive error."""
+
+    if transfer_matrix.size == 0:
+        return np.zeros_like(rhs, dtype=float)
+
+    system = np.identity(len(transfer_matrix)) - transfer_matrix
+
+    if np.linalg.matrix_rank(system) < system.shape[0]:
+        raise ValueError(
+            "Isomer transfer system is singular for reference levels "
+            f"{level_low} and {level_high}"
+        )
+
+    try:
+        return np.linalg.solve(system, rhs)
+    except np.linalg.LinAlgError as exc:
+        raise ValueError(
+            "Isomer transfer system is singular for reference levels "
+            f"{level_low} and {level_high}"
+        ) from exc
 
 
 def effective_rate(t, sp, level_low=0, level_high=1):
@@ -118,17 +152,28 @@ def effective_rate(t, sp, level_low=0, level_high=1):
     trans_props = transfer_properties(rate_matrix, level_low, level_high)
     # f_n = _partial_sum(trans_props[0])
 
-    f_n = np.linalg.inv(np.identity(len(trans_props[0])) - trans_props[0])
+    reduced_transfer = trans_props[0]
 
-    # Lambda_high_low_eff
-    l_high_low = trans_props[5][level_high] * np.matmul(
-        trans_props[4].T, np.matmul(f_n, trans_props[1])
+    # Lambda_high_low_eff: direct transition plus all paths through
+    # intermediate levels.
+    l_high_low = rate_matrix[level_low, level_high] + trans_props[5][
+        level_high
+    ] * np.matmul(
+        trans_props[4].T,
+        _solve_transfer_system(
+            reduced_transfer, trans_props[1], level_low, level_high
+        ),
     )
-    # Lambda_low_high_eff
-    l_low_high = trans_props[5][level_low] * (
+    # Lambda_low_high_eff: direct transition plus all paths through
+    # intermediate levels.
+    l_low_high = rate_matrix[level_high, level_low] + trans_props[5][
+        level_low
+    ] * (
         np.matmul(
             trans_props[2].T,
-            np.matmul(f_n, trans_props[3]),
+            _solve_transfer_system(
+                reduced_transfer.T, trans_props[3], level_low, level_high
+            ),
         )
     )
 
@@ -136,23 +181,6 @@ def effective_rate(t, sp, level_low=0, level_high=1):
         l_low_high,
         l_high_low,
     )
-
-
-"""
-def _partial_sum(tpm):
-    n_terms = 50000
-    f_n = np.identity(tpm.shape[0]) + tpm
-    f_p = tpm
-    i = 2
-    while i < n_terms:
-        f_p = np.matmul(f_p, tpm)
-        f_n += f_p
-        i += 1
-        if np.linalg.norm(f_n, np.inf) < 1e-6:
-            break
-
-    return f_n
-"""
 
 
 def cascade_probabilities(t, sp, level_low=0, level_high=1):
@@ -185,13 +213,21 @@ def cascade_probabilities(t, sp, level_low=0, level_high=1):
 
     # f_n = _partial_sum(trans_props[0])
 
-    f_n = np.linalg.inv(np.identity(len(trans_props[0])) - trans_props[0])
+    reduced_transfer = trans_props[0]
 
-    g1_in = np.matmul(f_n, trans_props[1])
-    g2_in = np.matmul(f_n, trans_props[3])
+    g1_in = _solve_transfer_system(
+        reduced_transfer, trans_props[1], level_low, level_high
+    )
+    g2_in = _solve_transfer_system(
+        reduced_transfer, trans_props[3], level_low, level_high
+    )
 
-    g1_out = np.matmul(f_n.T, trans_props[2])
-    g2_out = np.matmul(f_n.T, trans_props[4])
+    g1_out = _solve_transfer_system(
+        reduced_transfer.T, trans_props[2], level_low, level_high
+    )
+    g2_out = _solve_transfer_system(
+        reduced_transfer.T, trans_props[4], level_low, level_high
+    )
 
     return [g1_in, g2_in, g1_out, g2_out]
 
@@ -226,41 +262,49 @@ def ensemble_weights(t, sp, level_low=0, level_high=1):
         ``G_high`` (:obj:`numpy.float`) Patition function associated with the high level
 
     """
-    # calculate the equilibrium probabilities
     eq_prob = sp.compute_equilibrium_probabilities(t)
+    gammas = cascade_probabilities(t, sp, level_low, level_high)
+    w_low, w_high, big_w_low, big_w_high, r_lowk, r_highk = (
+        _build_ensemble_weights(eq_prob, gammas, level_low, level_high)
+    )
+    levels = sp.get_levels()
+    g_low = levels[level_low].get_multiplicity() * big_w_low
+    g_high = levels[level_high].get_multiplicity() * big_w_high
+
+    return [
+        w_low,
+        w_high,
+        big_w_low,
+        big_w_high,
+        r_lowk,
+        r_highk,
+        g_low,
+        g_high,
+    ]
+
+
+def _build_ensemble_weights(eq_prob, gammas, level_low, level_high):
+    """Construct the ensemble weight arrays and intermediate ratios."""
 
     n = len(eq_prob)
-    # initialize arrays
-    w_low, w_high, r_lowk, r_highk = (
-        np.empty(n),
-        np.empty(n),
-        np.empty(n - 2),
-        np.empty(n - 1),
+    intermediate_levels = [
+        i for i in range(n) if i not in (level_low, level_high)
+    ]
+    r_lowk = eq_prob[intermediate_levels] / eq_prob[level_low]
+    r_highk = eq_prob[intermediate_levels] / eq_prob[level_high]
+
+    w_low = np.zeros(n)
+    w_high = np.zeros(n)
+    w_low[level_low] = 1.0
+    w_high[level_high] = 1.0
+    w_low[intermediate_levels] = gammas[0] * r_lowk
+    w_high[intermediate_levels] = gammas[1] * r_highk
+
+    return (
+        w_low,
+        w_high,
+        np.sum(w_low),
+        np.sum(w_high),
+        r_lowk,
+        r_highk,
     )
-
-    # get the cascade probabilities
-    # gammas structure = [g1_in, g2_in, g1_out, g2_out]
-    gammas = cascade_probabilities(t, sp, level_low, level_high)
-
-    for i in range(n - 2):
-        r_lowk[i] = eq_prob[i + 2] / eq_prob[level_low]
-        r_highk[i] = eq_prob[i + 2] / eq_prob[level_high]
-
-    for i in range(n):
-        if i == level_low:
-            w_low[i] = 1.0
-            w_high[i] = 0.0
-        elif i == level_high:
-            w_low[i] = 0.0
-            w_high[i] = 1.0
-        else:
-            w_low[i] = gammas[0][i - 2] * r_lowk[i - 2]
-            w_high[i] = gammas[1][i - 2] * r_highk[i - 2]
-
-    w_low, w_high = np.sum(w_low), np.sum(w_high)
-    # Calculate the partition functions
-    levels = sp.get_levels()
-    g_low = levels[level_low].get_multiplicity() * w_low
-    g_high = levels[level_high].get_multiplicity() * w_high
-
-    return [w_low, w_high, w_low, w_high, r_lowk, r_highk, g_low, g_high]

@@ -2,5 +2,10 @@
 A submodule to handle calculations involving isomers
 """
 
-import os
-from ._isomer import *
+from ._isomer import cascade_probabilities, effective_rate, ensemble_weights
+
+__all__ = [
+    "cascade_probabilities",
+    "effective_rate",
+    "ensemble_weights",
+]

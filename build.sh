@@ -1,10 +1,18 @@
 # Script to automate build for PyPI.
 
+set -e
+
 rm -fr dist
-cd lvlspy/io/xml
-rm -fr xsd_pub
-git clone https://bitbucket.org/mbradle/liblvls_xsd.git xsd_pub
-cd ../../..
+
+python -m pip install --upgrade pip
+python -m pip install -e ".[test]"
+python -m pip install black pylint
+
+python -m pytest -v tests
+
+python -m black --check --verbose --line-length=79 ./lvlspy
+python -m pylint --extension-pkg-whitelist=lxml.etree --fail-under=9.9 \
+    lvlspy
 
 python -m pip install --upgrade build
 python -m build
@@ -22,4 +30,3 @@ echo "Check the release date:"
 echo ""
 grep date CITATION.cff
 echo ""
-

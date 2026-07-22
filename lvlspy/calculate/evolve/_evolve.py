@@ -7,6 +7,38 @@ from scipy.sparse import csc_matrix
 from scipy.sparse.linalg import expm_multiply
 
 
+def _validate_evolution_inputs(sp, y0, time, tol):
+    """Validate common evolution inputs before solving."""
+
+    y0 = np.asarray(y0, dtype=float)
+    time = np.asarray(time, dtype=float)
+
+    if y0.ndim != 1:
+        raise ValueError("Initial population vector must be one-dimensional")
+    if time.ndim != 1:
+        raise ValueError("Evolution time grid must be one-dimensional")
+    if len(time) == 0:
+        raise ValueError("Evolution time grid must contain at least one value")
+    if not np.all(np.isfinite(y0)):
+        raise ValueError(
+            "Initial population vector must contain only finite values"
+        )
+    if not np.all(np.isfinite(time)):
+        raise ValueError("Evolution time grid must contain only finite values")
+    if np.any(np.diff(time) < 0):
+        raise ValueError("Evolution time grid must be nondecreasing")
+    if len(y0) != sp.compute_rate_matrix(0.0).shape[0]:
+        raise ValueError(
+            "Initial population vector length must match the number of levels"
+        )
+    if not np.isfinite(tol) or tol <= 0:
+        raise ValueError(
+            "Convergence tolerance must be a positive finite value"
+        )
+
+    return y0, time
+
+
 def newton_raphson(sp, temp, y0, time, tol=1e-6):
     """
     Evolves a system using the Newton-Raphson method
@@ -27,6 +59,8 @@ def newton_raphson(sp, temp, y0, time, tol=1e-6):
         ``fug`` (:obj:`numpy.array`) 2D array containing the fugacities as a function of time
     """
 
+    y0, time = _validate_evolution_inputs(sp, y0, time, tol)
+
     y = np.empty((len(y0), len(time)))
     fug = np.empty((len(y0), len(time)))
     y[:, 0] = y0
@@ -41,7 +75,7 @@ def newton_raphson(sp, temp, y0, time, tol=1e-6):
         dt = time[i] - time[i - 1]
         matrix = np.identity(len(y_dt)) - dt * rm
         delta = np.ones(len(y_dt))
-        while max(delta) > tol:
+        while np.max(np.abs(delta)) > tol:
             delta = np.linalg.solve(
                 matrix, -_f_vector(y_dt, y[:, i - 1], matrix)
             )
@@ -74,6 +108,8 @@ def csc(sp, temp, y0, time):
         ``fug`` (:obj:`numpy.array`) 2D array containing the fugacities as a function of time
     """
 
+    y0, time = _validate_evolution_inputs(sp, y0, time, 1.0)
+
     rm = sp.compute_rate_matrix(temp)
     eq_prob = sp.compute_equilibrium_probabilities(temp)
     rm_csc = csc_matrix(rm)
@@ -82,14 +118,8 @@ def csc(sp, temp, y0, time):
     fug = np.empty((len(y0), len(time)))
     fug[:, 0] = y0 / eq_prob
     for i in range(len(time) - 1):
-        y = expm_multiply(
-            rm_csc,
-            y0,
-            start=time[i],
-            stop=time[i + 1],
-            num=2,
-            endpoint=True,
-        )[0, :]
+        dt = time[i + 1] - time[i]
+        y = expm_multiply(rm_csc * dt, sol_expm_solver[:, i])
         sol_expm_solver[:, i + 1] = y
         fug[:, i + 1] = y / eq_prob
 
