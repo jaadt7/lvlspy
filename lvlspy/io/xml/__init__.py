@@ -1,15 +1,5 @@
-"""
-A module to handle input and output of xml.
-"""
+"""Compatibility wrapper for :mod:`lvlspy.extensions.io.xml`."""
 
-from pathlib import Path
+from lvlspy.extensions.io.xml import XML_CATALOG, update_from_xml, validate, write_to_xml
 
-from ._xml import update_from_xml, validate, write_to_xml
-
-XML_CATALOG = str(Path(__file__).parent / "xsd_pub" / "catalog")
-
-__all__ = [
-    "update_from_xml",
-    "validate",
-    "write_to_xml",
-]
+__all__ = ["XML_CATALOG", "update_from_xml", "validate", "write_to_xml"]

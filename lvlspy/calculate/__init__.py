@@ -1,14 +1,14 @@
-"""
-A subdirectoy of lvlspy to handle calculations
-"""
+"""Compatibility wrapper for :mod:`lvlspy.extensions.calculate`."""
 
-from lvlspy.calculate.evolve import csc, newton_raphson
-from lvlspy.calculate.isomer import (
+from lvlspy.extensions.calculate import (
+    Weisskopf,
     cascade_probabilities,
+    csc,
     effective_rate,
     ensemble_weights,
+    newton_raphson,
+    spin_from_multiplicity,
 )
-from lvlspy.calculate.weisskopf import Weisskopf, spin_from_multiplicity
 
 __all__ = [
     "csc",

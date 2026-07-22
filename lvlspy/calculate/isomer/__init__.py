@@ -1,11 +1,9 @@
-"""
-A submodule to handle calculations involving isomers
-"""
+"""Compatibility wrapper for :mod:`lvlspy.extensions.calculate.isomer`."""
 
-from ._isomer import cascade_probabilities, effective_rate, ensemble_weights
+from lvlspy.extensions.calculate.isomer import (
+    cascade_probabilities,
+    effective_rate,
+    ensemble_weights,
+)
 
-__all__ = [
-    "cascade_probabilities",
-    "effective_rate",
-    "ensemble_weights",
-]
+__all__ = ["cascade_probabilities", "effective_rate", "ensemble_weights"]
