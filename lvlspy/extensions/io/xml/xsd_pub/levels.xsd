@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<!--////////////////////////////////////////////////////////////////////////////
+// <file type="public">
+//
+//   <license>
+//      Copyright (c) 2006-2022 Clemson University.
+//
+//      This file is part of the Clemson Webnucleo group's
+//      liblvls module, originally developed by Fang Bao, Joseph P. Johnson,
+//      and Bradley S. Meyer.  For more information,
+//      please see http://www.webnucleo.org.
+//
+//      This is free software; you can redistribute it and/or modify it
+//      under the terms of the GNU General Public License as published by
+//      the Free Software Foundation; either version 2 of the License, or
+//      (at your option) any later version.
+//
+//      This software is distributed in the hope that it will be useful,
+//      but WITHOUT ANY WARRANTY; without even the implied warranty of
+//      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//      GNU General Public License for more details.
+//
+//      To obtain a copy of the GNU GPL, write to the Free Software
+//      Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
+//      USA
+//   </license>
+//
+//
+//   <description>
+//     <abstract>
+//       This is a schema for an xml file appropriate as input to liblvls
+//       codes.
+//     </abstract>
+//     <keywords>
+//       xsd, schema, levels, xml, liblvls
+//     </keywords>
+//   </description>
+//
+//   <authors>
+//     <current>
+//       <author userid="mbradle" start_date="2006/08/13" />
+//     </current>
+//     <previous>
+//     </previous>
+//   </authors>
+//
+//   <compatibility>
+//     Browser: IE: Version: 6.0.2900.2180.xpsp_sp2_rtm.040803-2158;
+//     Browser: Mozilla: Mozilla 1.7 build 200406180;
+//     MSV v.20030225;
+//   </compatibility>
+//
+// </file>
+/////////////////////////////////////////////////////////////////////////////-->
+
+<xsd:schema
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:lev_types="https://liblvls.sourceforge.net/xsd_pub/2022-10-14/level_types/"
+>
+
+<!--############################################################################
+//  Import level_types namespace
+//###########################################################################-->
+
+  <xsd:import
+    namespace="https://liblvls.sourceforge.net/xsd_pub/2022-10-14/level_types/"
+    schemaLocation="https://liblvls.sourceforge.net/xsd_pub/2022-10-14/level_types.xsd"
+  />
+
+<!--############################################################################
+//  Levels.
+//###########################################################################-->
+
+  <xsd:element
+     name="species_collection"
+     type="lev_types:species_collection_type"
+  />
+
+</xsd:schema>
