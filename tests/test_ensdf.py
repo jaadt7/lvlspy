@@ -2,17 +2,17 @@
 
 import pytest
 
-from lvlspy.io.ensdf._ensdf import (
+from lvlspy.extensions.io.ensdf._ensdf import (
     _extract_multi_parity,
     _get_jpi_range,
     _read_transition,
     update_from_ensdf,
     write_to_ensdf,
 )
-from lvlspy.level import Level
-from lvlspy.spcoll import SpColl
-from lvlspy.species import Species
-from lvlspy.transition import Transition
+from lvlspy.core.level import Level
+from lvlspy.core.spcoll import SpColl
+from lvlspy.core.species import Species
+from lvlspy.core.transition import Transition
 
 
 def _make_ensdf_collection(reduced_matrix_coefficient=None):

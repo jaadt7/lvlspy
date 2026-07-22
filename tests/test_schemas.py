@@ -4,7 +4,7 @@ import io
 from importlib.resources import files
 from pathlib import Path
 
-from lvlspy.io.xml import validate
+from lvlspy.extensions.io.xml import validate
 
 EXPECTED_SCHEMA_FILES = {
     "catalog",
@@ -19,7 +19,7 @@ EXPECTED_SCHEMA_FILES = {
 
 
 def test_all_vendored_schema_resources_are_available():
-    schema_directory = files("lvlspy.io.xml") / "xsd_pub"
+    schema_directory = files("lvlspy.extensions.io.xml") / "xsd_pub"
 
     for filename in EXPECTED_SCHEMA_FILES:
         assert (schema_directory / filename).is_file(), filename
@@ -31,7 +31,13 @@ def test_schema_provenance_matches_recorded_revision():
         (repository_root / "XSD_REVISION").read_text(encoding="ascii").strip()
     )
     provenance = (
-        repository_root / "lvlspy" / "io" / "xml" / "xsd_pub" / "README.md"
+        repository_root
+        / "lvlspy"
+        / "extensions"
+        / "io"
+        / "xml"
+        / "xsd_pub"
+        / "README.md"
     ).read_text(encoding="utf-8")
 
     assert len(revision) == 40

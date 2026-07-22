@@ -3,12 +3,15 @@
 import numpy as np
 import pytest
 
-from lvlspy.calculate.weisskopf import Weisskopf, spin_from_multiplicity
-from lvlspy.io.ensdf._ensdf import (
+from lvlspy.extensions.calculate.weisskopf import (
+    Weisskopf,
+    spin_from_multiplicity,
+)
+from lvlspy.extensions.io.ensdf._ensdf import (
     _get_ein_a_from_mixed_upper_level_to_lower,
 )
-from lvlspy.level import Level
-from lvlspy.species import Species
+from lvlspy.core.level import Level
+from lvlspy.core.species import Species
 
 
 @pytest.mark.parametrize(

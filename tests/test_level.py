@@ -2,7 +2,7 @@
 
 import pytest
 
-from lvlspy.level import Level
+from lvlspy.core.level import Level
 
 
 @pytest.mark.parametrize(

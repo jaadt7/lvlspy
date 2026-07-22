@@ -10,7 +10,7 @@ include = ["lvlspy*"]
 exclude = ["tests*"]
 
 [tool.setuptools.package-data]
-"lvlspy.io.xml" = [
+"lvlspy.extensions.io.xml" = [
   "xsd_pub/catalog",
   "xsd_pub/*.xsd",
   "xsd_pub/README.md",

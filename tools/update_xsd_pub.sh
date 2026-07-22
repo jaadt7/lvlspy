@@ -15,7 +15,7 @@ fi
 
 script_directory=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 repository_root=$(cd -- "$script_directory/.." && pwd)
-schema_directory="$repository_root/lvlspy/io/xml/xsd_pub"
+schema_directory="$repository_root/lvlspy/extensions/io/xml/xsd_pub"
 revision_file="$repository_root/XSD_REVISION"
 provenance_file="$schema_directory/README.md"
 upstream_url="https://bitbucket.org/mbradle/liblvls_xsd.git"
@@ -116,14 +116,14 @@ from zipfile import ZipFile
 distribution_directory = Path(sys.argv[1])
 wheel = next(distribution_directory.glob("*.whl"))
 expected = {
-    "lvlspy/io/xml/xsd_pub/catalog",
-    "lvlspy/io/xml/xsd_pub/level_types.xsd",
-    "lvlspy/io/xml/xsd_pub/levels.xsd",
-    "lvlspy/io/xml/xsd_pub/liblvls_input.xsd",
-    "lvlspy/io/xml/xsd_pub/spcoll.xsd",
-    "lvlspy/io/xml/xsd_pub/zone_types.xsd",
-    "lvlspy/io/xml/xsd_pub/zones.xsd",
-    "lvlspy/io/xml/xsd_pub/README.md",
+    "lvlspy/extensions/io/xml/xsd_pub/catalog",
+    "lvlspy/extensions/io/xml/xsd_pub/level_types.xsd",
+    "lvlspy/extensions/io/xml/xsd_pub/levels.xsd",
+    "lvlspy/extensions/io/xml/xsd_pub/liblvls_input.xsd",
+    "lvlspy/extensions/io/xml/xsd_pub/spcoll.xsd",
+    "lvlspy/extensions/io/xml/xsd_pub/zone_types.xsd",
+    "lvlspy/extensions/io/xml/xsd_pub/zones.xsd",
+    "lvlspy/extensions/io/xml/xsd_pub/README.md",
 }
 
 with ZipFile(wheel) as archive:
@@ -134,5 +134,5 @@ if missing:
 print(f"Verified vendored schemas in {wheel.name}.")
 PY
 
-git status --short -- XSD_REVISION lvlspy/io/xml/xsd_pub
+git status --short -- XSD_REVISION lvlspy/extensions/io/xml/xsd_pub
 echo "Schema snapshot updated to $revision; review and commit the changes above."

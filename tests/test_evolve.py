@@ -3,8 +3,8 @@
 import numpy as np
 import pytest
 
-from lvlspy.calculate.evolve import csc
-from lvlspy.calculate.evolve import _evolve as evolve_module
+from lvlspy.extensions.calculate.evolve import csc
+from lvlspy.extensions.calculate.evolve import _evolve as evolve_module
 
 
 class TwoStateSpecies:

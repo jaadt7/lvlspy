@@ -5,12 +5,12 @@ import io
 import pytest
 from lxml import etree
 
-import lvlspy.io.xml as xml_module
-from lvlspy.io.xml import update_from_xml, write_to_xml
-from lvlspy.level import Level
-from lvlspy.spcoll import SpColl
-from lvlspy.species import Species
-from lvlspy.transition import Transition
+import lvlspy.extensions.io.xml as xml_module
+from lvlspy.extensions.io.xml import update_from_xml, write_to_xml
+from lvlspy.core.level import Level
+from lvlspy.core.spcoll import SpColl
+from lvlspy.core.species import Species
+from lvlspy.core.transition import Transition
 
 
 @pytest.fixture

@@ -10,3 +10,5 @@ include tools/update_xsd_pub.sh
 
 # Include the self-contained test suite in source distributions
 recursive-include tests *.py
+recursive-include lvlspy/extensions/io/xml/xsd_pub *.xsd
+recursive-include lvlspy/extensions/io/xml/xsd_pub README.md

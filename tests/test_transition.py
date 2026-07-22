@@ -2,8 +2,8 @@
 
 import pytest
 
-from lvlspy.level import Level
-from lvlspy.transition import Transition
+from lvlspy.core.level import Level
+from lvlspy.core.transition import Transition
 
 
 def test_zero_temperature_has_only_spontaneous_decay():

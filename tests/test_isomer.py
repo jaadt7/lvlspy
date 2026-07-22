@@ -3,14 +3,14 @@
 import numpy as np
 import pytest
 
-from lvlspy.calculate.isomer import (
+from lvlspy.extensions.calculate.isomer import (
     cascade_probabilities,
     effective_rate,
     ensemble_weights,
 )
-from lvlspy.level import Level
-from lvlspy.species import Species
-from lvlspy.transition import Transition
+from lvlspy.core.level import Level
+from lvlspy.core.species import Species
+from lvlspy.core.transition import Transition
 
 
 class FourLevelSpecies:

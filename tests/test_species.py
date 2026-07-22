@@ -3,10 +3,10 @@
 import numpy as np
 import pytest
 
-from lvlspy.level import Level
-from lvlspy.spcoll import SpColl
-from lvlspy.species import Species
-from lvlspy.transition import Transition
+from lvlspy.core.level import Level
+from lvlspy.core.spcoll import SpColl
+from lvlspy.core.species import Species
+from lvlspy.core.transition import Transition
 
 
 def make_two_level_species():
