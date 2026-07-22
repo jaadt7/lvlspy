@@ -2,8 +2,8 @@
 
 import numpy as np
 
-import lvlspy.calculate as calc
-import lvlspy.transition as lt
+import lvlspy.core.transition as lt
+import lvlspy.extensions.calculate as calc
 from lvlspy.core.properties import Properties
 
 
@@ -343,4 +343,3 @@ def _level_is_useable(level):
             value = normalized_value == "true"
 
     return value is not False
-
