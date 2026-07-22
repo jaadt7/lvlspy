@@ -20,7 +20,7 @@ Fix:
     by resolving destinations using both energy and multiplicity after all
     levels have been loaded.
   * Corrected ``ensemble_weights()`` for arbitrary reference-level indices and
-    made its return values match the documented vector and scalar structure.
+    aligned its return values with the documented vector and scalar structure.
     Callers relying on the previous duplicated scalar values must be updated.
   * Corrected ENSDF spin-parity range parsing to advance by whole spin units
     and to apply common, endpoint-specific, and unspecified parities according
@@ -41,8 +41,7 @@ Fix:
   * Corrected grouped ENSDF alternatives such as ``(3,4)-`` so the parity
     outside the parentheses applies to every spin in the group.
   * Disabled XML external-entity resolution, network access, and automatic
-    XInclude processing. XInclude is now available only through an explicit
-    opt-in argument on XML validation and import.
+    XInclude processing. XInclude now requires an explicit opt-in argument.
   * Corrected effective isomer transition rates to include direct transitions
     between the two reference levels in addition to paths through intermediate
     levels.
@@ -50,11 +49,10 @@ Fix:
     odd-mass nuclei use the correct range of photon multipoles in ordinary and
     ambiguous ENSDF transition paths.
   * Stabilized equilibrium probabilities by using excitation energies relative
-    to the ground state and corrected the zero-temperature limit to weight
-    degenerate ground levels by multiplicity.
+    to the ground state and weighting degenerate ground levels by
+    multiplicity at zero temperature.
   * Fixed ENSDF export for transitions without the optional reduced-matrix
-    coefficient and ensured supplied continuation records end on their own
-    line.
+    coefficient and ensured continuation records end on their own line.
   * Prevented division by zero in isomer branching probabilities when a
     reference or intermediate level has no outgoing transitions, keeping
     effective and cascade rates finite at zero temperature.
@@ -96,37 +94,33 @@ Fix:
   * Rejected negative temperatures in Boltzmann and default blackbody
     calculations instead of returning overflowed or negative thermal rates,
     while preserving the zero-temperature limits and custom callbacks.
+  * Performed an architectural package refactor by splitting the layout into
+    ``lvlspy.core`` for the domain model and ``lvlspy.extensions`` for
+    calculation and IO functionality, while keeping legacy import paths as
+    compatibility wrappers.
 
 Internal:
 
   * Added analytic regression tests for sparse evolution, population
-    conservation, fugacity calculation, level energy updates, and XML
-    transition round trips, as well as ensemble weights with non-default
-    reference levels, ENSDF spin-parity range variants, and zero-temperature
-    transition rates, together with valid and invalid XML schema checks and
-    rate-matrix filtering and conservation, plus definite and incomplete ENSDF
-    spin-parity assignments and grouped-parity alternatives, and effective
-    rates containing direct and cascade contributions, plus half-integer spin
-    conversion and Weisskopf multipole selection, energy-offset invariance, and
-    zero- and low-temperature equilibrium probabilities, plus ENSDF transition
-    round trips with and without reduced-matrix continuation records, and
-    zero-rate reference and disconnected intermediate isomer levels, plus
-    blank and symbolic-offset ENSDF gamma energies, and XML round trips of
-    canonical and legacy level-usability flags, plus ENSDF level energy
-    uncertainties using canonical and legacy property names, and unresolved
-    gamma records that must not produce self-transitions, plus renamed-species
-    collection synchronization, plus Einstein-A validation, plus multiplicity
-    validation, plus isomer solve-based linear algebra, plus evolution input
-    validation and absolute-convergence Newton iteration, plus ENSDF RMC and
-    fixed-width field hardening, plus missing-energy and wrong-multiplicity XML
-    transition references, and invalid XML optional property key and attribute
-    shapes, plus degenerate and reversed radiative transitions and custom
-    nonradiative rate callbacks, and negative-temperature thermal calculations.
+    conservation, fugacity calculation, level energy updates, XML transition
+    round trips, ensemble weights with non-default reference levels, ENSDF
+    spin-parity variants, and zero-temperature transition rates.
+  * Added tests for XML schema validation, rate-matrix filtering and
+    conservation, direct and cascade isomer rates, half-integer spin handling,
+    energy-offset invariance, low-temperature probabilities, ENSDF continuation
+    records, zero-rate isomer edge cases, XML round trips for legacy and
+    canonical flags, renamed species, Einstein-A and multiplicity validation,
+    solve-based isomer linear algebra, evolution input validation, ENSDF fixed-
+    width record hardening, XML transition references, XML property key
+    validation, and negative-temperature thermal calculations.
   * Added SciPy to the declared runtime dependencies because it is required by
     the evolution and Weisskopf calculation modules.
   * Replaced ``setup.py`` metadata with ``pyproject.toml``, added schema
     provenance and update tooling, and made schema imports resolve locally with
     network access disabled.
+  * Updated the documentation, package metadata, tests, and build tooling to
+    reflect the new layout and preserve the vendored XML schema resources in
+    the relocated XML package.
 
 Version 4.0.0
 -------------
