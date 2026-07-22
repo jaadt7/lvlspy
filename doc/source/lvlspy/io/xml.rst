@@ -1,8 +1,7 @@
-lvlspy.io.xml package
-=====================
+lvlspy.extensions.io.xml package
+================================
 
-.. automodule:: lvlspy.io.xml
+.. automodule:: lvlspy.extensions.io.xml
    :members:
    :undoc-members:
    :show-inheritance:
-

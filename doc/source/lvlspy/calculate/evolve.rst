@@ -1,8 +1,7 @@
-lvlspy.calculate.evolve package
-===============================
+lvlspy.extensions.calculate.evolve package
+===========================================
 
-.. automodule:: lvlspy.calculate.evolve
+.. automodule:: lvlspy.extensions.calculate.evolve
    :members:
    :undoc-members:
    :show-inheritance:
-

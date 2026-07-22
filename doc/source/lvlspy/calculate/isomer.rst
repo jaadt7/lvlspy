@@ -1,7 +1,7 @@
-lvlspy.calculate.isomer package
-===============================
+lvlspy.extensions.calculate.isomer package
+===========================================
 
-.. automodule:: lvlspy.calculate.isomer
+.. automodule:: lvlspy.extensions.calculate.isomer
    :members:
    :undoc-members:
    :show-inheritance:

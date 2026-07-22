@@ -1,5 +1,5 @@
-lvlspy.calculate package
-========================
+lvlspy.extensions.calculate package
+===================================
 
 Application namespace for calculation helpers.
 

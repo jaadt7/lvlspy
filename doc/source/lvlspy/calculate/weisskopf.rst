@@ -1,8 +1,7 @@
-lvlspy.calculate.weisskopf package
-===================================
+lvlspy.extensions.calculate.weisskopf package
+=============================================
 
-.. automodule:: lvlspy.calculate.weisskopf
+.. automodule:: lvlspy.extensions.calculate.weisskopf
    :members:
    :undoc-members:
    :show-inheritance:
-

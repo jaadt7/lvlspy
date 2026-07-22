@@ -1,8 +1,7 @@
 Core types
 ==========
 
-.. automodule:: lvlspy
-   :members: __version__, Level, Properties, SpColl, Species, Transition
+.. automodule:: lvlspy.core
+   :members: Level, Properties, SpColl, Species, Transition
    :undoc-members:
    :show-inheritance:
-

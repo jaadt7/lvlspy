@@ -1,8 +1,7 @@
-lvlspy.io.ensdf package
-=======================
+lvlspy.extensions.io.ensdf package
+==================================
 
-.. automodule:: lvlspy.io.ensdf
+.. automodule:: lvlspy.extensions.io.ensdf
    :members:
    :undoc-members:
    :show-inheritance:
-

@@ -1,5 +1,5 @@
-lvlspy.io package
-=================
+lvlspy.extensions.io package
+============================
 
 Application namespace for import and export helpers.
 
