@@ -1,5 +1,7 @@
 """Compatibility wrapper for :mod:`lvlspy.extensions.io`."""
 
+# pylint: disable=duplicate-code
+
 from lvlspy.extensions.io import (
     XML_CATALOG,
     update_from_ensdf,

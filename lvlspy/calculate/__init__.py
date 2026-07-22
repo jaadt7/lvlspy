@@ -1,5 +1,7 @@
 """Compatibility wrapper for :mod:`lvlspy.extensions.calculate`."""
 
+# pylint: disable=duplicate-code
+
 from lvlspy.extensions.calculate import (
     Weisskopf,
     cascade_probabilities,

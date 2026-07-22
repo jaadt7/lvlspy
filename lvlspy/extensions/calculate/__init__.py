@@ -1,5 +1,7 @@
 """Calculation-oriented extensions."""
 
+# pylint: disable=duplicate-code
+
 from lvlspy.extensions.calculate.evolve import csc, newton_raphson
 from lvlspy.extensions.calculate.isomer import (
     cascade_probabilities,

@@ -855,11 +855,13 @@ def _parse_jpi_endpoint(endpoint):
 
 
 def remove_undefined_levels(sp, all_levs=False):
-    """Method that removes levels read from ensdf where j^pi is left blank or unclear.
-    This feature Wfacilitates calculations made in the isomer module
+    """Method that removes levels read from ensdf where j^pi is left blank
+    or unclear. This feature facilitates calculations made in the isomer
+    module.
 
     Args:
-        ``sp`` (:obj:`lvlspy.core.species.Species`) The species of which the levels are to be trimmed
+        ``sp`` (:obj:`lvlspy.core.species.Species`) The species of which the
+        levels are to be trimmed
 
         ``all`` (:obj:`bool`) A flag to remove all undefined levels which have j^pi set blank or
         a range of values. Defaults to False so only the blanks are removed

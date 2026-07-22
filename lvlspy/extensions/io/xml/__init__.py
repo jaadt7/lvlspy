@@ -1,5 +1,7 @@
 """XML import/export support."""
 
+# pylint: disable=duplicate-code
+
 from pathlib import Path
 
 from ._xml import update_from_xml, validate, write_to_xml

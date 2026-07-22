@@ -1,5 +1,7 @@
 """Import/export extensions."""
 
+# pylint: disable=duplicate-code
+
 from lvlspy.extensions.io.ensdf import update_from_ensdf, write_to_ensdf
 from lvlspy.extensions.io.xml import (
     XML_CATALOG,

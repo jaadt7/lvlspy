@@ -99,8 +99,7 @@ Fix:
     breaking change for version 5.0.0.
   * Performed an architectural package refactor by splitting the layout into
     ``lvlspy.core`` for the domain model and ``lvlspy.extensions`` for
-    calculation and IO functionality, while keeping legacy import paths as
-    compatibility wrappers.
+    calculation and IO functionality.
 
 Internal:
 
