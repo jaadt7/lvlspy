@@ -15,10 +15,10 @@ class Transition(Properties):
     """A class for storing and retrieving data about a transition.
 
     Args:
-        ``upper_level`` (:obj:`lvlspy.level.Level`) The level from which
+        ``upper_level`` (:obj:`lvlspy.core.level.Level`) The level from which
         there is a spontaneous decay.
 
-        ``lower_level`` (:obj:`lvlspy.level.Level`) The level to which
+        ``lower_level`` (:obj:`lvlspy.core.level.Level`) The level to which
         there is a spontaneous decay.
 
         ``einstein_A`` (:obj:`float`): The Einstein A coefficient
@@ -48,7 +48,7 @@ class Transition(Properties):
         """Method to retrieve the `upper_level` for the transition.
 
         Returns:
-            :obj:`lvlspy.level.Level`: The `upper_level` for the transition.
+            :obj:`lvlspy.core.level.Level`: The `upper_level` for the transition.
 
         """
 
@@ -58,7 +58,7 @@ class Transition(Properties):
         """Method to retrieve the `lower_level` for the transition.
 
         Returns:
-            :obj:`lvlspy.level.Level`: The `lower_level` for the transition.
+            :obj:`lvlspy.core.level.Level`: The `lower_level` for the transition.
 
         """
 
@@ -78,7 +78,7 @@ class Transition(Properties):
         """Method that updates the Einstein A coefficient of a transition.
 
         Args:
-            ``transition`` (:obj:`lvlspy.transition.Transition`) The
+            ``transition`` (:obj:`lvlspy.core.transition.Transition`) The
             transition to be modified.
 
             ``einstein_A`` (:obj:`float`) The new value for the Einstein A
@@ -235,4 +235,3 @@ class Transition(Properties):
             raise ValueError(
                 "Einstein A coefficient must be a finite, nonnegative value"
             )
-

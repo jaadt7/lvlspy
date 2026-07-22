@@ -14,10 +14,10 @@ class Species(Properties):
         ``name`` (:obj:`str`): The name of the species.
 
         ``levels`` (:obj:`list`, optional): A list of individual
-        :obj:`lvlspy.level.Level` objects.
+        :obj:`lvlspy.core.level.Level` objects.
 
         ``transitions`` (:obj:`list`, optional): A list of individual
-        :obj:`lvlspy.transition.Transition` objects.
+        :obj:`lvlspy.core.transition.Transition` objects.
 
         ``units`` (:obj:`str`, optional):  A string giving the
         units for the energy.
@@ -63,7 +63,7 @@ class Species(Properties):
         """Method to add a level to a species.
 
         Args:
-            ``level`` (:obj:`lvlspy.level.Level`) The level to be added.
+            ``level`` (:obj:`lvlspy.core.level.Level`) The level to be added.
 
         Return:
             On successful return, the level has been added.  If the level
@@ -81,7 +81,7 @@ class Species(Properties):
         """Method to remove a level from a species.
 
         Args:
-            ``level`` (:obj:`lvlspy.level.Level`) The level to be removed.
+            ``level`` (:obj:`lvlspy.core.level.Level`) The level to be removed.
 
         Return:
             On successful return, the level and all connected transitions have been removed.
@@ -103,7 +103,7 @@ class Species(Properties):
         """Method to add a transition to a species.
 
         Args:
-            ``transition`` (:obj:`lvlspy.transition.Transition`) The transition
+            ``transition`` (:obj:`lvlspy.core.transition.Transition`) The transition
             to be added.
 
         Return:
@@ -122,7 +122,7 @@ class Species(Properties):
         """Method to remove a transition from a species.
 
         Args:
-            ``transition`` (:obj:`lvlspy.transition.Transition`) The transition
+            ``transition`` (:obj:`lvlspy.core.transition.Transition`) The transition
             to be removed.
 
         Return:
@@ -137,7 +137,7 @@ class Species(Properties):
         by transitions in the species.
 
         Args:
-            ``level`` (:obj:`lvlspy.level.Level`) The level for which
+            ``level`` (:obj:`lvlspy.core.level.Level`) The level for which
             the linked levels are sought.
 
         Return:
@@ -158,7 +158,7 @@ class Species(Properties):
         by transitions in the species.
 
         Args:
-            ``level`` (:obj:`lvlspy.level.Level`) The level for which
+            ``level`` (:obj:`lvlspy.core.level.Level`) The level for which
             the linked levels are sought.
 
         Return:
@@ -179,14 +179,14 @@ class Species(Properties):
         upper level to a particular lower level.
 
         Args:
-            ``upper_level`` (:obj:`lvlspy.level.Level`) The level from which
+            ``upper_level`` (:obj:`lvlspy.core.level.Level`) The level from which
             the transition originates.
 
-            ``lowerlevel`` (:obj:`lvlspy.level.Level`) The level to which
+            ``lowerlevel`` (:obj:`lvlspy.core.level.Level`) The level to which
             the transition goes.
 
         Return:
-            :obj:`lvlspy.transition.Transition`: The transition, or None
+            :obj:`lvlspy.core.transition.Transition`: The transition, or None
             if the transition is not found.
 
         """

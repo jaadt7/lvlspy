@@ -44,7 +44,7 @@ def newton_raphson(sp, temp, y0, time, tol=1e-6):
     Evolves a system using the Newton-Raphson method
 
     Args:
-        ``sp`` (:obj:`lvlspy.species.Species`): The species containing the levels to be evolved
+        ``sp`` (:obj:`lvlspy.core.species.Species`): The species containing the levels to be evolved
 
         ``temp`` (:obj:`float`): The temperature in K to evolve the system at.
 
@@ -94,7 +94,7 @@ def csc(sp, temp, y0, time):
     """Evolves a system using sparse solver
 
     Args:
-        ``sp`` (:obj:`lvlspy.species.Species`): The species containing the levels to be evolved
+        ``sp`` (:obj:`lvlspy.core.species.Species`): The species containing the levels to be evolved
 
         ``temp`` (:obj:`float`): The temperature in K to evolve the system at.
 

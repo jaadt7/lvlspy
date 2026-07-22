@@ -169,11 +169,11 @@ def update_reduced_matrix_coefficient(sp, a, t, rmc, mr=0):
     """Method to update a transition's reduced matrix coefficient and Einstein A coefficient
 
     Args:
-        ``sp`` (:obj:`lvlspy.species`) The species where the transition is found
+        ``sp`` (:obj:`lvlspy.core.species`) The species where the transition is found
 
         ``a`` (:obj:`int`) The species mass number
 
-        ``t`` (:obj:`lvlspy.transition`) The transition to be updated
+        ``t`` (:obj:`lvlspy.core.transition`) The transition to be updated
 
         ``rmc`` (:obj:`list`) A list of tuples containing the new updated
                               reduced matrix coefficients. A sample would be
@@ -460,7 +460,7 @@ def write_to_ensdf(coll, file):
     Method that writes a collection of species to ENSDF format
 
     Args:
-        ``coll`` (:obj:`lvlspy.spcoll.SpColl`) The collection to be written to file.
+        ``coll`` (:obj:`lvlspy.core.spcoll.SpColl`) The collection to be written to file.
         Each species in the collection must have the species' name, level and gamma
         properties must be within ENSDF spec
 
@@ -613,7 +613,7 @@ def fill_missing_ensdf_transitions(sp, a):
     or level with useable property flagged as false due to unclear J^pi
 
     Args:
-        ``sp`` (:obj:`lvlspy.species.Species`) The species read in from ENSDF to
+        ``sp`` (:obj:`lvlspy.core.species.Species`) The species read in from ENSDF to
         fill in missing transitions
 
         ``a`` (:obj:`int`) Mass number of species
@@ -859,7 +859,7 @@ def remove_undefined_levels(sp, all_levs=False):
     This feature Wfacilitates calculations made in the isomer module
 
     Args:
-        ``sp`` (:obj:`lvlspy.species.Species`) The species of which the levels are to be trimmed
+        ``sp`` (:obj:`lvlspy.core.species.Species`) The species of which the levels are to be trimmed
 
         ``all`` (:obj:`bool`) A flag to remove all undefined levels which have j^pi set blank or
         a range of values. Defaults to False so only the blanks are removed

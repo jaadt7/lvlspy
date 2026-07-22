@@ -129,7 +129,7 @@ def effective_rate(t, sp, level_low=0, level_high=1):
     Args:
         ``t`` (:obj:`float`) The temperature in K.
 
-        ``sp`` (:obj:`lvlspy.species.Species`) The species of which the level system belongs to.
+        ``sp`` (:obj:`lvlspy.core.species.Species`) The species of which the level system belongs to.
 
         ``level_low`` (:obj:`int`, optional) The lower level the effective transition rates are
         calculated to. Defaults to 0; the ground state.
@@ -190,7 +190,7 @@ def cascade_probabilities(t, sp, level_low=0, level_high=1):
     Args:
         ``t`` (:obj:`float`) The temperature in K
 
-        ``sp`` (:obj:`lvlspy.species.Species`) The species of which the
+        ``sp`` (:obj:`lvlspy.core.species.Species`) The species of which the
         probability vectors are to be calculated for
 
         ``level_low`` (:obj:`int`, optional) The lower level the effective transition rates are
@@ -239,7 +239,7 @@ def ensemble_weights(t, sp, level_low=0, level_high=1):
     Args:
         ``t`` (:obj:`float`) The temperature in K
 
-        ``sp`` (:obj:`lvlspy.species.Species`) The species of which the ensemble weights
+        ``sp`` (:obj:`lvlspy.core.species.Species`) The species of which the ensemble weights
         are to be calculated for
 
         ``level_low`` (:obj:`int`, optional) The lower level the effective transition rates are

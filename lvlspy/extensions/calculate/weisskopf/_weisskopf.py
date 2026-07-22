@@ -121,7 +121,7 @@ class Weisskopf:
         properties available from the ENSDF file.
 
         Args:
-            ``lvs`` (:obj:`lvlspy.level.Level`) The levels of the species
+            ``lvs`` (:obj:`lvlspy.core.level.Level`) The levels of the species
 
             ``tran`` (:obj:`list`) An array containing all the data from
             ENSDF regarding a single transition

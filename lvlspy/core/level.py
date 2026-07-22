@@ -146,4 +146,3 @@ class Level(Properties):
             raise ValueError(
                 "Level multiplicity must be a finite positive integer"
             )
-

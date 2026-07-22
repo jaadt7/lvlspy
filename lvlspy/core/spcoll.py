@@ -8,7 +8,7 @@ class SpColl(Properties):
 
     Args:
         ``species`` (:obj:`list`, optional): A list of individual
-        :obj:`lvlspy.species.Species` objects.
+        :obj:`lvlspy.core.species.Species` objects.
 
     """
 
@@ -39,7 +39,7 @@ class SpColl(Properties):
         """Method to add a species to a collection.
 
         Args:
-            ``species`` (:obj:`lvlspy.species.Species`) The species to be
+            ``species`` (:obj:`lvlspy.core.species.Species`) The species to be
             added.
 
         Return:
@@ -56,7 +56,7 @@ class SpColl(Properties):
         """Method to remove a species from a species collection.
 
         Args:
-            ``species`` (:obj:`lvlspy.species.Species`) The species to be
+            ``species`` (:obj:`lvlspy.core.species.Species`) The species to be
             removed.
 
         Return:
@@ -77,4 +77,3 @@ class SpColl(Properties):
 
         self._sync_species_names()
         return self.spcoll
-

@@ -67,4 +67,3 @@ class Properties:
         else:
             p[1] = -1
         return p
-
