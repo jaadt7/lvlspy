@@ -53,6 +53,9 @@ Fix:
     multiplicity at zero temperature.
   * Fixed ENSDF export for transitions without the optional reduced-matrix
     coefficient and ensured continuation records end on their own line.
+  * Normalized ENSDF reduced-matrix coefficient values in memory while
+    reconstructing the fixed-width continuation record only when writing ENSDF
+    output.
   * Prevented division by zero in isomer branching probabilities when a
     reference or intermediate level has no outgoing transitions, keeping
     effective and cascade rates finite at zero temperature.

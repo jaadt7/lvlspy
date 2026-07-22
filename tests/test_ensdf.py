@@ -129,20 +129,17 @@ def test_ensdf_round_trip_without_reduced_matrix_coefficient(tmp_path):
 def test_ensdf_round_trip_with_reduced_matrix_coefficient(tmp_path):
     """A supplied continuation record is emitted on its own line and restored."""
 
-    coefficient = " 26ALB  G BM1W=0.05"
+    coefficient = "26ALB  G BM1W=0.05"
     output = tmp_path / "levels.ens"
     write_to_ensdf(_make_ensdf_collection(coefficient), output)
 
-    assert coefficient in output.read_text(encoding="utf-8").splitlines()
+    assert f" {coefficient}" in output.read_text(encoding="utf-8").splitlines()
 
     result = SpColl()
     update_from_ensdf(result, output, "Al26")
 
     transition = result.get()["Al26"].get_transitions()[0]
-    assert (
-        transition.get_properties()["Reduced_Matrix_Coefficient"].rstrip("\n")
-        == coefficient
-    )
+    assert transition.get_properties()["Reduced_Matrix_Coefficient"] == coefficient
 
 
 def test_ensdf_import_rejects_malformed_reduced_matrix_coefficient(tmp_path):
@@ -150,7 +147,7 @@ def test_ensdf_import_rejects_malformed_reduced_matrix_coefficient(tmp_path):
 
     output = tmp_path / "levels.ens"
     write_to_ensdf(
-        _make_ensdf_collection(" 26ALB  G BM1W=0.05"), output
+        _make_ensdf_collection("26ALB  G BM1W=0.05"), output
     )
 
     lines = output.read_text(encoding="utf-8").splitlines()

@@ -241,6 +241,23 @@ def test_xml_export_rejects_invalid_property_keys(property_key):
         write_to_xml(collection, io.BytesIO())
 
 
+def test_xml_export_skips_blank_optional_property_values():
+    """Blank optional properties are omitted from XML output."""
+
+    collection = SpColl()
+    collection.update_properties({"blank": "", "present": "value"})
+
+    xml_file = io.BytesIO()
+    write_to_xml(collection, xml_file)
+    xml_file.seek(0)
+
+    xml = etree.parse(xml_file)  # pylint: disable=no-member
+    assert xml.xpath("count(/species_collection/optional_properties/property)") == 1
+    assert xml.xpath(
+        "string(/species_collection/optional_properties/property/@name)"
+    ) == "present"
+
+
 def test_xml_import_rejects_unsupported_property_attributes():
     """Unsupported property attributes are rejected during XML import."""
 

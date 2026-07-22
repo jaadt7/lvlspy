@@ -115,10 +115,13 @@ def _add_transitions_to_xml(xml_level, species, level, units):
 
 def _add_optional_properties(my_element, my_object):
     my_props = my_object.get_properties()
+    valid_props = [
+        prop for prop in my_props if my_props[prop] not in (None, "")
+    ]
 
-    if len(my_props):
+    if valid_props:
         props = etree.SubElement(my_element, "optional_properties")
-        for prop in my_props:
+        for prop in valid_props:
             if isinstance(prop, str):
                 my_prop = etree.SubElement(props, "property", name=prop)
             elif isinstance(prop, tuple):
