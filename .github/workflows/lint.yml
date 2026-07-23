@@ -1,23 +1,31 @@
 name: pylint
 on:
   push:
-      branches:
-        - develop
-        - main
+    branches:
+      - develop
+      - main
+  pull_request:
+    branches:
+      - develop
+      - main
+
+permissions:
+  contents: read
 
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
       - name: Setup Python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v6
         with:
-          python-version: "3.x"
+          python-version: "3.14"
       - name: install dependencies
         run: |
-          pip install pylint numpy gslconsts lxml scipy
+          python -m pip install --upgrade "pip==26.1.2"
+          python -m pip install -e . -r .github/requirements-lint.txt
       - name: run linter
         run: |
           pylint --extension-pkg-whitelist=lxml.etree --fail-under=9.9 lvlspy

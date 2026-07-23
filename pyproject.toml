@@ -21,7 +21,7 @@ version = {attr = "lvlspy.__about__.__version__"}
 
 [tool.black]
 line-length = 79
-target-version = ["py39", "py310", "py311", "py312", "py313"]
+target-version = ["py39", "py310", "py311", "py312", "py313", "py314"]
 
 [project]
 name = "lvlspy"
