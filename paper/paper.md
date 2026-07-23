@@ -46,7 +46,9 @@ Compared with `liblvls`, `lvlspy` emphasizes a Python-first interface and a modu
 
 The `lvlspy.extensions` package contains functionality that is specific to a format or a calculation method. `lvlspy.extensions.io` provides XML and ENSDF import/export. `lvlspy.extensions.calculate` provides time evolution, Weisskopf estimates, and isomer-related rate calculations. This separation keeps parsing rules and specialized numerical routines out of the core domain model, which makes the core easier to test and maintain.
 
-The public import structure also preserves compatibility for users who want a simple top-level API while still allowing the package to grow in a structured way.
+The public import structure keeps the core domain classes available through a
+simple top-level API, while specialized functionality is exposed explicitly
+through `lvlspy.extensions`.
 
 # Research impact statement
 

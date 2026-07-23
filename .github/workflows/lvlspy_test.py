@@ -1,14 +1,18 @@
-import numpy as np
-import requests, io
-import lvlspy.spcoll as lc
-import lvlspy.transition as lt
+import io
 
-from lvlspy.io import xml, ensdf
-from lvlspy.calculate import evolve
+import numpy as np
+import requests
+
+from lvlspy.core import SpColl, Transition
+from lvlspy.extensions.calculate import evolve
+from lvlspy.extensions.io import ensdf, xml
+from lvlspy.extensions.io.ensdf._ensdf import (
+    fill_missing_ensdf_transitions,
+)
 
 
 def get_collection():
-    test_coll = lc.SpColl()
+    test_coll = SpColl()
     xml.update_from_xml(
         test_coll,
         io.BytesIO(requests.get("https://osf.io/dqzs9/download").content),
@@ -17,7 +21,7 @@ def get_collection():
 
 
 def get_ensdf_collection():
-    test_coll = lc.SpColl()
+    test_coll = SpColl()
     response = requests.get("https://osf.io/76qc3/download")
     with open("ensdf.026", "wb") as file:
         file.write(response.content)
@@ -120,7 +124,7 @@ def test_einstein():
     lower = trans.get_lower_level()
     ein_a = trans.get_einstein_a()
     s.remove_transition(trans)
-    s.add_transition(lt.Transition(upper, lower, ein_a))
+    s.add_transition(Transition(upper, lower, ein_a))
     trans = s.get_level_to_level_transition(levs[1], levs[0])
     assert trans.get_einstein_a() == 3.83356e-17
     assert trans.get_einstein_b_upper_to_lower() == 1.5454261181603054e-29
@@ -166,7 +170,7 @@ def test_ensdf_einstein():
     coll = get_ensdf_collection()
     s = coll.get()["al26"]
 
-    ensdf.fill_missing_ensdf_transitions(s, 26)
+    fill_missing_ensdf_transitions(s, 26)
     levs = s.get_levels()
 
     trans = s.get_level_to_level_transition(levs[1], levs[0])
@@ -174,7 +178,7 @@ def test_ensdf_einstein():
     lower = trans.get_lower_level()
     ein_a = trans.get_einstein_a()
     s.remove_transition(trans)
-    s.add_transition(lt.Transition(upper, lower, ein_a))
+    s.add_transition(Transition(upper, lower, ein_a))
     trans = s.get_level_to_level_transition(levs[1], levs[0])
     assert trans.get_einstein_a() == 3.833555795514418e-17
     assert trans.get_einstein_b_upper_to_lower() == 1.54542442320266e-29

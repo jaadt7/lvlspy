@@ -100,6 +100,9 @@ Fix:
   * Removed the legacy top-level core modules in favor of the explicit
     ``lvlspy.core`` package, making the import-path change a documented
     breaking change for version 5.0.0.
+  * Removed the legacy ``lvlspy.calculate`` and ``lvlspy.io`` compatibility
+    packages; calculation and input/output APIs now live exclusively under
+    ``lvlspy.extensions``.
   * Performed an architectural package refactor by splitting the layout into
     ``lvlspy.core`` for the domain model and ``lvlspy.extensions`` for
     calculation and IO functionality.

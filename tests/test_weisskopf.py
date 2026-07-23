@@ -3,7 +3,7 @@
 import numpy as np
 import pytest
 
-from lvlspy.calculate import fill_missing_transitions
+from lvlspy.extensions.calculate import fill_missing_transitions
 from lvlspy.extensions.calculate.weisskopf import (
     Weisskopf,
     spin_from_multiplicity,
