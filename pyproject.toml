@@ -32,7 +32,8 @@ requires-python = ">=3.9"
 license = "GPL-3.0-or-later"
 license-files = ["LICENSE"]
 authors = [
-  {name = "Clemson University", email = "jtannou@g.clemson.edu"},
+  {name = "Jaad A. Tannous", email = "jaad.tannous@UND.edu"},
+  {name = "Bradley S. Meyer", email = "mbradle@clemson.edu"},
 ]
 keywords = ["astronomy", "nuclear astrophysics"]
 dependencies = ["gslconsts", "lxml", "numpy", "scipy"]

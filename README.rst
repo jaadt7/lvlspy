@@ -38,22 +38,40 @@ Attribution
 To cite this code, please visit the `Zenodo <https://zenodo.org/badge/latestdoi/532987706>`_ page
 for this project.  From that page, you can export the appropriate reference in BibTex or other formats.
 
+Project History
+---------------
+
+``lvlspy`` is a joint effort of Jaad A. Tannous and Bradley S. Meyer.
+The project began while both authors were in the Department of Physics
+and Astronomy at Clemson University, where Tannous was a graduate
+student and Meyer was a professor. Following Tannous's appointment at
+the University of North Dakota, development of ``lvlspy`` continues as
+a collaboration between Clemson University and the University of North
+Dakota.
+
+The project supports open scientific collaboration, reproducible
+research, and community contributions.
+
 Authors
 -------
 
-- Jaad A. Tannous <jtannou@g.clemson.edu>
-- Bradley S. Meyer <mbradle@g.clemson.edu>
+- Jaad A. Tannous — Department of Physics and Astrophysics, University
+  of North Dakota
+- Bradley S. Meyer — Department of Physics and Astronomy, Clemson
+  University
 
 Contribute
 ----------
 
+- Contribution Guide: `CONTRIBUTING.md <https://github.com/jaadt7/lvlspy/blob/main/CONTRIBUTING.md>`_
 - Issue Tracker: `<https://github.com/jaadt7/lvlspy/issues>`_
 - Source Code: `<https://github.com/jaadt7/lvlspy/>`_
 
 License
 -------
 
-The project is licensed under the GNU Public License v3 (or later).
+The project is licensed under the GNU General Public License v3 (or
+later).
 
 .. |pypi| image:: https://badge.fury.io/py/lvlspy.svg
     :target: https://badge.fury.io/py/lvlspy 

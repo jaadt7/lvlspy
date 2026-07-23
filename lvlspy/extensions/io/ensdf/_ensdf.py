@@ -116,9 +116,7 @@ def _set_transition_properties(t, tran):
         for key, value in zip(properties, tran[2:-1])
     ]
     add_properties.append(
-        {
-            properties[-1]: _normalize_optional_property_value(tran[-1])
-        }
+        {properties[-1]: _normalize_optional_property_value(tran[-1])}
     )
     for j in add_properties:
         t.update_properties(j)
@@ -218,11 +216,7 @@ def update_reduced_matrix_coefficient(sp, a, t, rmc, mr=0):
         t.update_properties({"tran_" + str(i + 1) + "_val": b[1]})
 
     new_string = (
-        identifiers[2].lstrip()
-        + " G "
-        + rmc[0][0]
-        + "="
-        + str(rmc[0][1])
+        identifiers[2].lstrip() + " G " + rmc[0][0] + "=" + str(rmc[0][1])
     )
     if len(rmc) == 2:
         new_string = new_string + "$" + rmc[1][0] + "=" + str(rmc[1][1])

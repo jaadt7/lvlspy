@@ -4,9 +4,11 @@ authors:
 - family-names: "Tannous"
   given-names: "Jaad Antoun"
   orcid: "https://orcid.org/0000-0002-9970-6454"
+  affiliation: "Department of Physics and Astrophysics, University of North Dakota"
 - family-names: "Meyer"
   given-names: "Bradley Stewart"
   orcid: "https://orcid.org/0000-0001-6307-9818"
+  affiliation: "Department of Physics and Astronomy, Clemson University"
 title: "lvlspy"
 version: 5.0.0
 doi: 10.5281/zenodo.8193378
