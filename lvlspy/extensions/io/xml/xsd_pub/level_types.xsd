@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<!--////////////////////////////////////////////////////////////////////////////
+// <file type="public">
+//
+//   <license>
+//      Copyright (c) 2006-2022 Clemson University.
+//
+//      This file is part of the Clemson Webnucleo group's
+//      liblvls module, originally developed by Fang Bao, Joseph P. Johnson,
+//      and Bradley S. Meyer.  For more information,
+//      please see http://www.webnucleo.org.
+//
+//      This is free software; you can redistribute it and/or modify it
+//      under the terms of the GNU General Public License as published by
+//      the Free Software Foundation; either version 2 of the License, or
+//      (at your option) any later version.
+//
+//      This software is distributed in the hope that it will be useful,
+//      but WITHOUT ANY WARRANTY; without even the implied warranty of
+//      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//      GNU General Public License for more details.
+//
+//      To obtain a copy of the GNU GPL, write to the Free Software
+//      Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
+//      USA
+//   </license>
+//
+//
+//   <description>
+//     <abstract>
+//       This is a schema that defines level types for liblvls data.
+//     </abstract>
+//     <keywords>
+//       xsd, schema, levels, xml, types 
+//     </keywords>
+//   </description>
+//
+//   <authors>
+//     <current>
+//       <author userid="mbradle" start_date="2006/06/20" />
+//     </current>
+//     <previous>
+//     </previous>
+//   </authors>
+//
+//   <compatibility>
+//     Browser: IE: Version: 6.0.2900.2180.xpsp_sp2_rtm.040803-2158;
+//     Browser: Mozilla: Mozilla 1.7 build 200406180;
+//     MSV v.20030225;
+//   </compatibility>
+//
+// </file>
+/////////////////////////////////////////////////////////////////////////////-->
+
+<xsd:schema
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:lev_types="https://liblvls.sourceforge.net/xsd_pub/2022-10-14/level_types/"
+  targetNamespace="https://liblvls.sourceforge.net/xsd_pub/2022-10-14/level_types/"
+>
+
+<!--############################################################################
+//  define the simple elements
+//###########################################################################-->
+
+  <xsd:simpleType name="multiplicity_type">
+    <xsd:restriction base="xsd:positiveInteger">
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="d_float">
+    <xsd:restriction base="xsd:float">
+      <xsd:minInclusive value="0." />
+      <xsd:maxInclusive value="1.e38" />
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="energy_attribute">
+     <xsd:restriction base="xsd:string">
+       <xsd:pattern value="[kMGT]?e[vV]"/>
+     </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="possible_names">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="[a-zA-Z]{1,3}[0-9]{1,3}"/>
+      <xsd:pattern value=".{1,}"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+ 
+<!--############################################################################
+//  define the complex types
+//###########################################################################-->
+
+  <xsd:complexType name="species_collection_type">
+    <xsd:sequence>
+      <xsd:element
+        name="optional_properties"
+        type="lev_types:optional_properties_type"
+        minOccurs="0"
+      />
+      <xsd:element
+        name="species"
+        type="lev_types:species_type"
+        minOccurs="0"
+        maxOccurs="unbounded"
+      />
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="species_type">
+    <xsd:sequence>
+      <xsd:element
+        name="optional_properties"
+        type="lev_types:optional_properties_type"
+        minOccurs="0"
+      />
+      <xsd:element
+        name="levels"
+        type="lev_types:levels_type"
+      />
+    </xsd:sequence>
+    <xsd:attribute name="name" type="lev_types:possible_names" use="required"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="levels_type">
+    <xsd:sequence>
+      <xsd:element
+        name="level"
+        type="lev_types:level_type"
+        minOccurs="0"
+        maxOccurs="unbounded"
+      />
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="level_type">
+    <xsd:all>
+      <xsd:element
+        name="optional_properties"
+        type="lev_types:optional_properties_type"
+        minOccurs="0"
+      />
+      <xsd:element
+        name="properties"
+        type="lev_types:level_properties_type"
+      />
+      <xsd:element
+        name="transitions"
+        type="lev_types:transitions_type"
+        minOccurs="0"
+      />
+    </xsd:all>
+  </xsd:complexType>
+
+  <xsd:complexType name="level_properties_type">
+    <xsd:sequence>
+      <xsd:element
+        name="energy"
+        type="lev_types:energy_type"
+      />
+      <xsd:element
+        name="multiplicity"
+        type="lev_types:multiplicity_type"
+      />
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="energy_type">
+    <xsd:simpleContent>
+      <xsd:extension base="lev_types:d_float">
+        <xsd:attribute name="units" type="lev_types:energy_attribute"/>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="transitions_type">
+    <xsd:sequence>
+      <xsd:element
+        name="transition"
+        type="lev_types:transition_type"
+        minOccurs="0"
+        maxOccurs="unbounded"
+      />
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="transition_type">
+    <xsd:sequence>
+      <xsd:element
+        name="optional_properties"
+        type="lev_types:optional_properties_type"
+        minOccurs="0"
+      />
+      <xsd:element name="to_energy" type="lev_types:energy_type"/>
+      <xsd:element name="to_multiplicity" type="lev_types:multiplicity_type"/>
+      <xsd:element name="a" type="lev_types:d_float"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="optional_properties_type">
+    <xsd:sequence>
+      <xsd:element
+        name="property"
+        type="lev_types:property_type"
+        minOccurs="0"
+        maxOccurs="unbounded"
+      />
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="property_type">
+    <xsd:simpleContent>
+      <xsd:extension base="lev_types:possible_names">
+        <xsd:attribute
+          name="name"
+          type="lev_types:possible_names"
+          use="required"
+        />
+        <xsd:attribute
+          name="tag1"
+          type="lev_types:possible_names"
+          use="optional"
+        />
+        <xsd:attribute
+          name="tag2"
+          type="lev_types:possible_names"
+          use="optional"
+        />
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+
+</xsd:schema>

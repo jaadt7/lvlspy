@@ -2,9 +2,16 @@
 A package of python routines to handle quantum-level system data.
 """
 
-from lvlspy.spcoll import *
-from lvlspy.species import *
-from lvlspy.level import *
-from lvlspy.transition import *
-from lvlspy.calculate import *
-from lvlspy.io import *
+# pylint: disable=duplicate-code
+
+from lvlspy.__about__ import __version__
+from lvlspy.core import Level, Properties, SpColl, Species, Transition
+
+__all__ = [
+    "__version__",
+    "Level",
+    "Properties",
+    "SpColl",
+    "Species",
+    "Transition",
+]

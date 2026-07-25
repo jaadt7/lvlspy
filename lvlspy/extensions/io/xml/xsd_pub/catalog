@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+
+  <system
+    systemId="https://liblvls.sourceforge.net/xsd_pub/2022-10-14/liblvls_input.xsd"
+    uri="liblvls_input.xsd"/>
+
+  <system
+    systemId="https://liblvls.sourceforge.net/xsd_pub/2022-10-14/levels.xsd"
+    uri="levels.xsd"/>
+
+  <system
+    systemId="https://liblvls.sourceforge.net/xsd_pub/2022-10-14/level_types.xsd"
+    uri="level_types.xsd"/>
+
+  <system
+    systemId="https://liblvls.sourceforge.net/xsd_pub/2022-10-14/spcoll.xsd"
+    uri="spcoll.xsd"/>
+
+  <system
+    systemId="https://liblvls.sourceforge.net/xsd_pub/2022-10-14/zones.xsd"
+    uri="zones.xsd"/>
+
+  <system
+    systemId="https://liblvls.sourceforge.net/xsd_pub/2022-10-14/zones_types.xsd"
+    uri="zones_types.xsd"/>
+
+</catalog>

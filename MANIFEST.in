@@ -1,0 +1,15 @@
+# Include the README
+include *.rst
+include CONTRIBUTING.md
+
+# Include the license file
+include LICENSE
+
+# Include schema provenance and maintenance tooling
+include XSD_REVISION
+include tools/update_xsd_pub.sh
+
+# Include the self-contained test suite in source distributions
+recursive-include tests *.py
+recursive-include lvlspy/extensions/io/xml/xsd_pub *.xsd
+recursive-include lvlspy/extensions/io/xml/xsd_pub README.md

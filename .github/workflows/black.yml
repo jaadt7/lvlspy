@@ -2,10 +2,16 @@ name: black
 
 on:
   push:
-      branches:
-        - develop
-        - main
-  
+    branches:
+      - develop
+      - main
+  pull_request:
+    branches:
+      - develop
+      - main
+
+permissions:
+  contents: read
 
 jobs:
   black:
@@ -16,3 +22,4 @@ jobs:
         with:
           options: "--check --verbose --line-length=79"
           src: "./lvlspy"
+          version: "26.5.1"

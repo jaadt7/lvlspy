@@ -10,6 +10,6 @@ __all__ = [
 
 __title__ = "lvlspy"
 __summary__ = "Python project to work with quantum level system data"
-__version__ = "4.0.1"
-__author__ = "Clemson University"
+__version__ = "5.0.0"
+__author__ = "Jaad A. Tannous and Bradley S. Meyer"
 __copyright__ = "Clemson University, 2022-2026"
