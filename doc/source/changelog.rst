@@ -32,6 +32,9 @@ Fix:
   * Included a pinned XML schema snapshot in source and wheel distributions so
     validation works after a standard installation without a build-time schema
     download.
+  * Refreshed the pinned XML schemas to the 2026-07-25 upstream revision,
+    updated their published namespace URLs, and corrected the XML catalog
+    mapping for ``zone_types.xsd``.
   * Corrected ENSDF spin-only assignments so unknown parity is not silently
     treated as a definite positive parity, and made parity-only assignments
     safe to parse.

@@ -7,7 +7,7 @@ schemas or depend on mutable upstream schema state.
 The schemas and `catalog` come from
 <https://bitbucket.org/mbradle/liblvls_xsd>.
 
-Upstream commit: `f7f114b81b3c7d9cbad1927eabd9836aa0a9bd05`
+Upstream commit: `c5bdac63adff854d42711a1efaa92a654d51056e`
 
 The same revision is recorded in the repository-root `XSD_REVISION` file. The
 schema files retain their original GPL-2.0-or-later notices; `lvlspy`

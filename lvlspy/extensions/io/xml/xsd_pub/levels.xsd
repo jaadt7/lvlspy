@@ -4,7 +4,7 @@
 // <file type="public">
 //
 //   <license>
-//      Copyright (c) 2006-2022 Clemson University.
+//      Copyright (c) 2006-2026 Clemson University.
 //
 //      This file is part of the Clemson Webnucleo group's
 //      liblvls module, originally developed by Fang Bao, Joseph P. Johnson,
@@ -56,7 +56,7 @@
 
 <xsd:schema
   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-  xmlns:lev_types="https://liblvls.sourceforge.net/xsd_pub/2022-10-14/level_types/"
+  xmlns:lev_types="https://liblvls.sourceforge.net/xsd_pub/2026-07-25/level_types/"
 >
 
 <!--############################################################################
@@ -64,8 +64,8 @@
 //###########################################################################-->
 
   <xsd:import
-    namespace="https://liblvls.sourceforge.net/xsd_pub/2022-10-14/level_types/"
-    schemaLocation="https://liblvls.sourceforge.net/xsd_pub/2022-10-14/level_types.xsd"
+    namespace="https://liblvls.sourceforge.net/xsd_pub/2026-07-25/level_types/"
+    schemaLocation="https://liblvls.sourceforge.net/xsd_pub/2026-07-25/level_types.xsd"
   />
 
 <!--############################################################################
