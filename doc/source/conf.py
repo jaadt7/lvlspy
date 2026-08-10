@@ -15,24 +15,6 @@
 import os
 import sys
 
-# We rewrite module names for internal modules like _xml so that
-# Sphinx shows clean paths (lvlspy.io.xml) but still links to source.
-
-def autodoc_skip_member(app, what, name, obj, skip, options):
-    return None  # Don't skip anything automatically
-
-
-def process_docstring(app, what, name, obj, options, lines):
-    # Rewrites module path in the generated documentation
-    if hasattr(obj, "__module__") and obj.__module__.endswith("._xml"):
-        fake_mod = obj.__module__.replace("._xml", "")
-        obj.__module__ = fake_mod
-
-
-def setup(app):
-    app.connect("autodoc-skip-member", autodoc_skip_member)
-    app.connect("autodoc-process-docstring", process_docstring)
-    
 sys.path.insert(0, os.path.abspath("../.."))
 
 base_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../..")
@@ -63,7 +45,6 @@ extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.doctest",
     "sphinx.ext.mathjax",
-    "sphinx.ext.intersphinx",
     "sphinx.ext.todo",
     "sphinx.ext.coverage",
     "sphinx.ext.viewcode",
@@ -77,7 +58,7 @@ templates_path = ["_templates"]
 # You can specify multiple suffix as a list of string:
 #
 # source_suffix = ['.rst', '.md']
-source_suffix = {'.rst': 'restructuredtext'}
+source_suffix = ".rst"
 
 # The master toctree document.
 master_doc = "index"
@@ -114,7 +95,7 @@ html_theme = "sphinx_rtd_theme"
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ["_static"]
+html_static_path = []
 
 # Custom sidebar templates, must be a dictionary that maps document names
 # to template names.
@@ -190,16 +171,6 @@ texinfo_documents = [
 
 
 # -- Extension configuration -------------------------------------------------
-
-# -- Options for intersphinx extension ---------------------------------------
-
-# Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {
-    "python": ("https://docs.python.org/3", None),
-    "numpy": ("https://docs.scipy.org/doc/numpy/", None),
-    "matplolib": ("https://matplotlib.org", None),
-    "h5py": ("http://docs.h5py.org/en/latest/", None),
-}
 
 # -- Options for todo extension ----------------------------------------------
 

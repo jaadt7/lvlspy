@@ -4,5 +4,3 @@ Documentation
 .. toctree::
 
    lvlspy
-
-

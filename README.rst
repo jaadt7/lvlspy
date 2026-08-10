@@ -38,22 +38,40 @@ Attribution
 To cite this code, please visit the `Zenodo <https://zenodo.org/badge/latestdoi/532987706>`_ page
 for this project.  From that page, you can export the appropriate reference in BibTex or other formats.
 
+Project History
+---------------
+
+``lvlspy`` is a joint effort of Jaad A. Tannous and Bradley S. Meyer.
+The project began while both authors were in the Department of Physics
+and Astronomy at Clemson University, where Tannous was a graduate
+student and Meyer was a professor. Following Tannous's appointment at
+the University of North Dakota, development of ``lvlspy`` continues as
+a collaboration between Clemson University and the University of North
+Dakota.
+
+The project supports open scientific collaboration, reproducible
+research, and community contributions.
+
 Authors
 -------
 
-- Jaad A. Tannous <jtannou@g.clemson.edu>
-- Bradley S. Meyer <mbradle@g.clemson.edu>
+- Jaad A. Tannous — Department of Physics and Astrophysics, University
+  of North Dakota
+- Bradley S. Meyer — Department of Physics and Astronomy, Clemson
+  University
 
 Contribute
 ----------
 
-- Issue Tracker: `<https://github.com/jaadt7/issues/>`_
+- Contribution Guide: `CONTRIBUTING.md <https://github.com/jaadt7/lvlspy/blob/main/CONTRIBUTING.md>`_
+- Issue Tracker: `<https://github.com/jaadt7/lvlspy/issues>`_
 - Source Code: `<https://github.com/jaadt7/lvlspy/>`_
 
 License
 -------
 
-The project is licensed under the GNU Public License v3 (or later).
+The project is licensed under the GNU General Public License v3 (or
+later).
 
 .. |pypi| image:: https://badge.fury.io/py/lvlspy.svg
     :target: https://badge.fury.io/py/lvlspy 
@@ -63,11 +81,11 @@ The project is licensed under the GNU Public License v3 (or later).
     :target: https://lvlspy.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
 .. |pytest| image:: https://github.com/jaadt7/lvlspy/actions/workflows/test.yml/badge.svg
-   :target: https://github.com/jaadt7/lvlspy/actions/workflows/test.yml
-   :alt: Pytest
+    :target: https://github.com/jaadt7/lvlspy/actions/workflows/test.yml
+    :alt: Pytest
 .. |pylint| image:: https://github.com/jaadt7/lvlspy/actions/workflows/lint.yml/badge.svg
-   :target: https://github.com/jaadt7/lvlspy/actions/workflows/lint.yml
-   :alt: Pylint
+    :target: https://github.com/jaadt7/lvlspy/actions/workflows/lint.yml
+    :alt: Pylint
 .. |black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/psf/black
 .. |zenodo| image:: https://zenodo.org/badge/DOI/10.5281/zenodo.8193378.svg
